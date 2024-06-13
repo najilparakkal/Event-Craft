@@ -10,20 +10,24 @@ const cors = require("cors");
 const database_1 = require("./database");
 const corsOptions = {
     origin: "http://localhost:5173",
-    methods: "GET,PUT,POST,DELETE,PATCH,HEAD,",
+    methods: ["GET", "PUT", "POST", "DELETE", "PATCH", "HEAD"],
     credentials: true,
-    exposeHeaders: ["x-auth-token"],
+    // exposeHeaders: ["x-auth-token"],
 };
 function configureExpress(app) {
     app.use(express_1.default.urlencoded({ extended: true }));
     app.use(express_1.default.json());
     app.use(cors(corsOptions));
+    app.use(cors({
+        origin: "http://localhost:5173",
+        methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
+    }));
     app.use((0, express_session_1.default)({
         secret: "secret",
         resave: false,
-        saveUnintialized: true,
-        cokkie: {
-            secure: "production",
+        saveUninitialized: true,
+        cookie: {
+            secure: process.env.NODE_ENV === "production",
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000,
         },

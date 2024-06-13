@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const userRepo_1 = require("../../repostitories/userRepo");
 const passwordHashing_1 = require("../../helpers/passwordHashing");
+const repositories_1 = require("../../repositories/repositories");
+const nodmailer_1 = require("../../helpers/nodmailer");
 exports.default = {
     registerUser: (userData) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -18,7 +19,8 @@ exports.default = {
                 throw new Error("Password is required");
             }
             const hashedPassword = yield passwordHashing_1.Encrypt.cryptPassword(userData.password);
-            const savedUser = yield (0, userRepo_1.createUser)(userData, hashedPassword);
+            console.log("hashedPassword");
+            const savedUser = yield (0, repositories_1.createUser)(userData, hashedPassword);
             console.log("new user ✅", savedUser);
             return savedUser;
         }
@@ -27,4 +29,24 @@ exports.default = {
             throw error;
         }
     }),
+    otpVerification: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield (0, repositories_1.validOtp)(data);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    resend: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const email = data.email;
+            const response = (0, nodmailer_1.sendOTP)(email);
+            const update = yield (0, repositories_1.updateOtp)(email, response);
+            return update;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    })
 };

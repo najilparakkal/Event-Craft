@@ -16,18 +16,17 @@ exports.connectDb = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const mongoUrl = process.env.MONGO_URL;
+const mongoUrl = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/EVENTPLANNER";
 function connectDb() {
     return __awaiter(this, void 0, void 0, function* () {
-        mongoose_1.default
-            .connect(mongoUrl)
-            .then(() => {
-            console.log("Connected to MongoDB");
-        })
-            .catch((error) => {
-            console.log(error);
+        console.log("Connecting to MongoDB at", mongoUrl);
+        try {
+            mongoose_1.default.connect(mongoUrl).then(() => console.log("Connected to MongoDB✅"));
+        }
+        catch (error) {
+            console.error("Error connecting to MongoDB:", error);
             process.exit(1);
-        });
+        }
     });
 }
 exports.connectDb = connectDb;

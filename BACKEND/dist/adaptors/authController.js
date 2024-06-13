@@ -16,23 +16,58 @@ const authentication_1 = __importDefault(require("../domain/usecases//auth/authe
 exports.default = {
     userRegistration: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            console.log(req.body);
-            const { name, email, password } = req.body;
-            console.log(name, email, password, "😂😂😂😂😂");
             const user = yield authentication_1.default.registerUser(req.body);
-            if (user) {
+            if (user.success === false) {
                 res
-                    .status(200)
-                    .json({ message: "User registered successfully", user });
+                    .status(201)
+                    .json({ status: 201, message: "suer is already registered", user });
             }
             else {
-                res.status(400).json({ message: "User registration failed" });
+                if (user) {
+                    res.status(200).json({
+                        status: 200,
+                        message: "User registered successfully",
+                        user,
+                    });
+                }
+                else {
+                    res.status(400).json({ message: "User registration failed" });
+                }
             }
         }
         catch (error) {
             console.error(error.message);
             res.status(400).json({ error: error.message });
             next(error);
+        }
+    }),
+    otpVerification: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const checkOtp = yield authentication_1.default.otpVerification(req.body);
+            console.log(checkOtp);
+            if (checkOtp.success === true) {
+                res.status(200)
+                    .json({ status: 200, message: "user otp verified" });
+            }
+            else if (checkOtp.success === false) {
+                res.status(201)
+                    .json({ status: 201, message: "user  otp denied" });
+            }
+            else {
+                res.status(400).json({ message: "otp verification failed" });
+            }
+        }
+        catch (error) { }
+    }),
+    resendOtp: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const resendOtp = yield authentication_1.default.resend(req.body);
+            if (resendOtp) {
+                res.status(200)
+                    .json({ status: 200, message: "otp resend" });
+            }
+        }
+        catch (error) {
         }
     })
 };
