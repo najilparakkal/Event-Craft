@@ -6,7 +6,7 @@ import { initialValue } from '../../../utils/validations/initialValue';
 import { userRegister } from '../../../API/services/user/userAuthService';
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-
+import { signupUser } from '../../../API/services/user/authSlice';
 
 
 const Signup: React.FC = () => {
@@ -14,9 +14,8 @@ const Signup: React.FC = () => {
 
     const handleSubmit = async (values: any) => {
         try {
-            // Wrap the userRegister call in toast.promise
             await toast.promise(
-                userRegister("/user/signup", values),
+                signupUser("/user/signup", values),
                 {
                     loading: 'Registering user...',
                     success: (response) => {

@@ -3,10 +3,10 @@ import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { CONFIG_KEY } from "../../../config";
 
 interface userData {
-  name: string;
-  email: string;
-  phoneNum: string;
-  password: string;
+  name?: string;
+  email?: string;
+  phoneNum?: string;
+  password?: string;
 }
 
 interface authResponse {
@@ -60,5 +60,19 @@ export const resendOtp = async (email: string): Promise<boolean> => {
   } catch (error) {
     console.error("Error resending OTP:", error);
     return false;
+  }
+}
+
+
+export const login = async(data:userData)=>{
+  try {
+    
+    const response = await authAxiosInstance.post("/user/login", { data });
+    
+    
+    
+    
+  } catch (error) {
+    
   }
 }

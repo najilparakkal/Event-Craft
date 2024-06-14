@@ -8,11 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateOtp = exports.validOtp = exports.createUser = void 0;
+exports.logingUser = exports.updateOtp = exports.validOtp = exports.createUser = void 0;
 const user_1 = require("../../framworks/database/models/user");
 const checkingUser_1 = require("../helpers/checkingUser");
 const nodmailer_1 = require("../helpers/nodmailer");
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const jwtGenarate_1 = require("../helpers/jwtGenarate");
 const createUser = (userData, hashedPassword) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (!userData.email ||
@@ -33,7 +38,7 @@ const createUser = (userData, hashedPassword) => __awaiter(void 0, void 0, void 
                 password: hashedPassword,
                 phoneNum: userData.phoneNum,
                 otp: {
-                    value: otp
+                    value: otp,
                 },
             });
             const userEmail = newUser.email;
@@ -73,7 +78,6 @@ const updateOtp = (email, otp) => __awaiter(void 0, void 0, void 0, function* ()
                 "otp.value": otp,
             },
         }, { new: true });
-        console.log(result, "😂😂😂😂😂");
         if (result) {
             console.log("OTP updated successfully for email:", email);
             return true;
@@ -89,3 +93,26 @@ const updateOtp = (email, otp) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.updateOtp = updateOtp;
+const logingUser = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield user_1.Users.findOne({ email });
+        if (!user) {
+            console.log('User not found');
+            return null;
+        }
+        console.log(user, "user");
+        const isMatch = yield bcrypt_1.default.compare(password, user.password);
+        if (isMatch) {
+            const token = yield (0, jwtGenarate_1.CreateToken)({ id: user._id, email: user.email }, true);
+            return token;
+        }
+        else {
+            return false;
+        }
+    }
+    catch (error) {
+        console.error('Error logging in user:', error);
+        return null;
+    }
+});
+exports.logingUser = logingUser;

@@ -69,5 +69,19 @@ exports.default = {
         }
         catch (error) {
         }
+    }),
+    login: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield authentication_1.default.login(req.body.data);
+            if (response) {
+                res.status(200).json({ status: 200, message: "user is valid", response });
+            }
+            else {
+                res.status(201).json({ status: 201, message: "user is not valid" });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

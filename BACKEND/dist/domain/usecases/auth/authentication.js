@@ -48,5 +48,16 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
-    })
+    }),
+    login: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const email = data.email;
+            const password = data.password;
+            const response = yield (0, repositories_1.logingUser)(email, password);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
 };

@@ -1,12 +1,15 @@
 import { Request } from "express";
-import { IUser } from "../../entities/user/user";
+import { IUser, Login } from "../../entities/user/user";
 import { Encrypt } from "../../helpers/passwordHashing";
-import { createUser, validOtp,updateOtp } from "../../repositories/repositories";
+import {
+  createUser,
+  validOtp,
+  updateOtp,
+  logingUser,
+} from "../../repositories/repositories";
 import { otpVeri } from "../../entities/user/user";
 import { sendOTP } from "../../helpers/nodmailer";
 import { ResendData } from "../../entities/user/user";
-
-
 
 export default {
   registerUser: async (userData: IUser) => {
@@ -26,10 +29,6 @@ export default {
     }
   },
 
-
-
-
-
   otpVerification: async (data: otpVeri) => {
     try {
       const response = await validOtp(data);
@@ -40,16 +39,26 @@ export default {
     }
   },
 
-
   resend: async (data: ResendData) => {
     try {
       const email: string = data.email;
-      const response:string = sendOTP(email);
-      
-    const update = await updateOtp(email, response); 
-         return update
+      const response: string = sendOTP(email);
+
+      const update = await updateOtp(email, response);
+      return update;
     } catch (error) {
       console.log(error);
     }
-  }
+  },
+
+  login: async (data: Login) => {
+    try {
+      const email = data.email;
+      const password = data.password;
+      const response = await logingUser(email, password);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };

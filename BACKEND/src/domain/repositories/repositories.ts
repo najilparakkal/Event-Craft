@@ -4,6 +4,8 @@ import { IUser } from "../entities/user/user";
 import { checkingUser } from "../helpers/checkingUser";
 import { sendOTP } from "../helpers/nodmailer";
 import { otpVeri } from "../entities/user/user";
+import bcrypt from 'bcrypt';
+import { CreateToken } from "../helpers/jwtGenarate";
 export interface CreateUserResponse {
   success: boolean;
   message?: string;
@@ -41,12 +43,11 @@ export const createUser = async (
         password: hashedPassword,
         phoneNum: userData.phoneNum,
         otp: {
-          value: otp   
+          value: otp,
         },
       });
 
       const userEmail = newUser.email;
-    
 
       return { checkResponse, userEmail };
     }
@@ -89,7 +90,6 @@ export const updateOtp = async (
       },
       { new: true }
     );
-    console.log(result, "😂😂😂😂😂");
 
     if (result) {
       console.log("OTP updated successfully for email:", email);
@@ -101,5 +101,34 @@ export const updateOtp = async (
   } catch (error) {
     console.error("Error updating OTP:", error);
     return false;
+  }
+};
+
+
+
+
+export const logingUser = async (email: string, password: string) => {
+  try {
+    const user = await Users.findOne({ email });
+    
+    if (!user) {
+      console.log('User not found');
+      return null; 
+    }
+
+    console.log(user, "user");
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    
+    if (isMatch) {
+      const token = await CreateToken({ id: user._id, email: user.email }, true)
+      return token      
+    } else {
+      return false;
+    }
+
+  } catch (error) { 
+    console.error('Error logging in user:', error);
+    return null;
   }
 };

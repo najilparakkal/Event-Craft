@@ -1,8 +1,8 @@
 interface FormValues {
-    name: string;
-    email: string;
-    password: string;
-    phoneNum: string;
+    name?: string;
+    email?: string;
+    password?: string;
+    phoneNum?: string;
   }
 
 

@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import userIterator from "../domain/usecases//auth/authentication";
-import otpVerification from "../domain/usecases//auth/authentication";
 
 export default {
   userRegistration: async (req: Request, res: Response, next: NextFunction) => {
@@ -55,6 +54,22 @@ export default {
        .json({status:200,message:"otp resend"})
       }
     } catch (error) {
+      
+    }
+  },
+
+  login:async(req:Request, res:Response)=>{
+    try {
+      
+      const response =  await userIterator.login(req.body.data)
+      if(response){
+        res.status(200).json({status:200,message:"user is valid",response})
+
+      }else{
+        res.status(201).json({status:201,message:"user is not valid"})
+      }
+    } catch (error) {
+      console.log(error);
       
     }
   }

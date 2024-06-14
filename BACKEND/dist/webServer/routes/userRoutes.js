@@ -9,4 +9,5 @@ const userRouter = express_1.default.Router();
 userRouter.post("/api/user/signup", authController_1.default.userRegistration);
 userRouter.post("/api/user/otp", authController_1.default.otpVerification);
 userRouter.post("/api/user/resendOtp", authController_1.default.resendOtp);
+userRouter.post("/api/user/login", authController_1.default.login);
 exports.default = userRouter;

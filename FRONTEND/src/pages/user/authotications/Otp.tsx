@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import OtpInput from 'react-otp-input';
-import { verifyOtp, resendOtp } from '../../../API/services/user/userAuthService'; // Assuming you have a function for resending OTP
+import { verifyOtp, resendOtp } from '../../../API/services/user/userAuthService'; 
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -68,7 +68,7 @@ const Otp: React.FC = () => {
                 toast.success('OTP verified successfully!', {
                     id: loadingToastId,
                 });
-                navigate('/home');
+                navigate('/login');
             } else {
                 toast.error('Invalid OTP. Please try again.', {
                     id: loadingToastId,
