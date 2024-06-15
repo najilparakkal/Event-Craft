@@ -16,7 +16,7 @@ const transporter = nodemailer_1.default.createTransport({
         pass: process.env.EMAIL_PASS,
     },
 });
-const sendOTPByEmail = (email, otp, req) => {
+const sendOTPByEmail = (email, otp) => {
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
@@ -39,3 +39,8 @@ const sendOTP = (email) => {
     return otp;
 };
 exports.sendOTP = sendOTP;
+// export const forgotSendOtp = (email: string, otp: string)=>{
+//   sendOTPByEmail(email, otp);
+//   console.log("OTP SENT", otp, email);
+//   return otp;
+// }

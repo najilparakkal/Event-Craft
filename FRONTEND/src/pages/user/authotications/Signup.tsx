@@ -3,33 +3,26 @@ import happyCoupleWeddingDay from '../../../assets/user/wp.webp';
 import { Formik, Form } from 'formik';
 import { validation } from '../../../utils/validations/validateSchema';
 import { initialValue } from '../../../utils/validations/initialValue';
-import { userRegister } from '../../../API/services/user/userAuthService';
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { signupUser } from '../../../API/services/user/authSlice';
-
+import { useDispatch } from 'react-redux';
 
 const Signup: React.FC = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const dispatch = useDispatch(); // Move useDispatch to the top level of the component
 
     const handleSubmit = async (values: any) => {
         try {
             await toast.promise(
-                signupUser("/user/signup", values),
+                dispatch(signupUser(values)).unwrap(),
                 {
                     loading: 'Registering user...',
-                    success: (response) => {
-                        if (response.status === 201) {
-                            throw new Error('Unexpected response status');
-
-                        } else {
-                            navigate("/otp");
-                            return 'User registered successfully!';
-                        }
-                    },
+                    success: 'User registered successfully!',
                     error: 'Email or Phone Number is already in use',
                 }
             );
+            navigate("/otp");
         } catch (err: any) {
             console.error(err);
             toast.error('An unexpected error occurred');
@@ -38,11 +31,7 @@ const Signup: React.FC = () => {
 
     return (
         <section className="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center justify-center">
-            {/* <ToastContainer className={"w-20 h-auto"} /> */}
-            <Toaster
-                position="top-center"
-                reverseOrder={false}
-            />
+            <Toaster position="top-center" reverseOrder={false} />
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 w-full max-w-2xl">
                 <div className="flex flex-col h-[80%] md:flex-row bg-white rounded-lg shadow dark:border dark:bg-gray-800 dark:border-gray-700 w-full">
                     <div
@@ -54,8 +43,8 @@ const Signup: React.FC = () => {
                             Create your Account
                         </h1>
                         <Formik initialValues={initialValue} validationSchema={validation} onSubmit={handleSubmit}>
-                            {({ handleChange, values, handleSubmit, touched, errors, isSubmitting }) => (
-                                <Form className="space-y-4 md:space-y-5" onSubmit={handleSubmit}>
+                            {({ handleChange, values, touched, errors, isSubmitting }) => (
+                                <Form className="space-y-4 md:space-y-5">
                                     <div>
                                         <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                             Your email
@@ -124,7 +113,7 @@ const Signup: React.FC = () => {
                                         Create an account
                                     </button>
                                     <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                                        Already have an account? <a href="#" className="font-medium text-primary-600 hover:underline dark:text-primary-500">Login here</a>
+                                        Already have an account? <a  className="font-medium text-primary-600 hover:underline dark:text-primary-500" onClick={()=>navigate("/login")}>Login here</a>
                                     </p>
                                 </Form>
                             )}

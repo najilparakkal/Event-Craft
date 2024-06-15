@@ -21,7 +21,6 @@ exports.default = {
             const hashedPassword = yield passwordHashing_1.Encrypt.cryptPassword(userData.password);
             console.log("hashedPassword");
             const savedUser = yield (0, repositories_1.createUser)(userData, hashedPassword);
-            console.log("new user ✅", savedUser);
             return savedUser;
         }
         catch (error) {
@@ -32,6 +31,15 @@ exports.default = {
     otpVerification: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield (0, repositories_1.validOtp)(data);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    forgotOtpVerification: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield (0, repositories_1.forgotValidOtp)(data);
             return response;
         }
         catch (error) {
@@ -60,4 +68,26 @@ exports.default = {
             console.log(error);
         }
     }),
+    checkEmail: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const email = data.email;
+            const response = yield (0, repositories_1.varifyEmail)(email);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    changePass: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const hashedPassword = yield passwordHashing_1.Encrypt.cryptPassword(data.password);
+            console.log(data);
+            console.log(hashedPassword, "💕💕💕");
+            const response = yield (0, repositories_1.updatePassword)(data.email, hashedPassword);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    })
 };

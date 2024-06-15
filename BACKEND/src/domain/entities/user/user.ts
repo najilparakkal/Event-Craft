@@ -8,14 +8,21 @@ export interface IUser {
 
 export interface otpVeri {
   otp?: string;
-  userEmail?: string;
+  email?: string;
 }
 
 export interface ResendData {
   email: string;
 }
 
-export interface Login{
-    email: string;
-    password: string;
+export interface Login {
+  email: string;
+  password: string;
+}
+
+export interface userDatas {
+  id: string;
+  email: string;
+  phoneNum: string;
+  name: string;
 }

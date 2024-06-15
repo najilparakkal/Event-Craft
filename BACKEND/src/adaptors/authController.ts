@@ -9,7 +9,7 @@ export default {
       if (user.success === false) {
         res
           .status(201)
-          .json({ status: 201, message: "suer is already registered", user });
+          .json({ status: 201, message: "user is already registered", user });
       } else {
         if (user) {
           res.status(200).json({
@@ -31,46 +31,90 @@ export default {
   otpVerification: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const checkOtp = await userIterator.otpVerification(req.body);
-      console.log(checkOtp);
-      if(checkOtp.success===true){
-        res.status(200)
-        .json({status:200,message:"user otp verified"})
-      }else if(checkOtp.success===false){
-        res.status(201)
-        .json({status:201,message:"user  otp denied"})
-      }else{
-        res.status(400).json({ message: "otp verification failed" });
 
+      if (checkOtp.success === true) {
+        res.status(200).json({ status: 200, message: "user otp verified" });
+      } else if (checkOtp.success === false) {
+        res.status(201).json({ status: 201, message: "user  otp denied" });
+      } else {
+        res.status(400).json({ message: "otp verification failed" });
       }
     } catch (error) {}
   },
 
-  resendOtp:async(req:Request, res:Response)=>{
+  forgototpVerification: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
-      const resendOtp = await userIterator.resend(req.body)
+      const checkOtp = await userIterator.forgotOtpVerification(req.body);
 
-      if(resendOtp){
-        res.status(200)
-       .json({status:200,message:"otp resend"})
+      if (checkOtp.success === true) {
+        res.status(200).json({ status: 200, message: "user otp verified" });
+      } else if (checkOtp.success === false) {
+        res.status(201).json({ status: 201, message: "user  otp denied" });
+      } else {
+        res.status(400).json({ message: "otp verification failed" });
       }
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   },
 
-  login:async(req:Request, res:Response)=>{
+  resendOtp: async (req: Request, res: Response) => {
     try {
-      
-      const response =  await userIterator.login(req.body.data)
-      if(response){
-        res.status(200).json({status:200,message:"user is valid",response})
+      const resendOtp = await userIterator.resend(req.body);
 
-      }else{
-        res.status(201).json({status:201,message:"user is not valid"})
+      if (resendOtp) {
+        res.status(200).json({ status: 200, message: "otp resend" });
+      }
+    } catch (error) {}
+  },
+
+  login: async (req: Request, res: Response) => {
+    try {
+      const { email, password } = req.body;
+      console.log(email, password);
+
+      const response = await userIterator.login(req.body);
+      console.log(response);
+
+      if (response.token && response.userDetails) {
+        res
+          .status(200)
+          .json({ status: 200, message: "User is valid", response });
+      } else {
+        res.status(201).json({ status: 201, message: "User is not valid" });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(500).json({ status: 500, message: "Internal server error" });
+    }
+  },
+  checkEmail: async (req: Request, res: Response) => {
+    try {
+      const response = await userIterator.checkEmail(req.body);
+
+      if (response.success) {
+        res.status(200).json({ status: 200, message: "User Founded" });
+      } else {
+        res.status(201).json({ status: 201, message: "User not Found" });
       }
     } catch (error) {
       console.log(error);
-      
     }
-  }
+  },
+
+
+  change: async (req: Request, res: Response) => {
+    try {
+      console.log(req.body);
+      
+      const response = await userIterator.changePass(req.body);
+      if (response) {
+        res.status(200).json({ status: 200, message: "password updated" });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };

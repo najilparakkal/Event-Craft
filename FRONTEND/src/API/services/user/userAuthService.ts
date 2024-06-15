@@ -1,6 +1,5 @@
+import { retry } from "@reduxjs/toolkit/query";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
-
-import { CONFIG_KEY } from "../../../config";
 
 interface userData {
   name?: string;
@@ -10,9 +9,19 @@ interface userData {
 }
 
 interface authResponse {
+  user: {
+    userDatas: {
+      id: string;
+      email: string;
+      name: string;
+      phoneNum: string;
+    };
+    token: string;
+  };
+  message: string;
   status: number;
-  massage: string;
 }
+
 const authAxiosInstance: AxiosInstance = axios.create({
   baseURL: "http://localhost:3000/api",
   headers: {
@@ -21,58 +30,164 @@ const authAxiosInstance: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-
-export const userRegister = async (endpoint: string, userData: userData) => {
-  console.log(userData, endpoint);
-
-  const response = await authAxiosInstance.post(`${endpoint}`, userData);
-
-  if (response.data.status === 200) {
-    const userEmail = response.data.user.userEmail;
-    localStorage.setItem("email", userEmail);
+export const userRegister = async (
+  endpoint: string,
+  userData: userData
+): Promise<authResponse> => {
+  const response: AxiosResponse<authResponse> = await authAxiosInstance.post(
+    endpoint,
+    userData
+  );
+  if (response.status === 200) {
+    return response.data;
+  } else if (response.status === 201) {
+    throw new Error("User already exists");
   } else {
-    console.error("User registration failed:", response.data.message);
+    throw new Error("An unexpected error occurred");
   }
-  return response.data;
 };
 
 export const verifyOtp = async (otp: string): Promise<boolean> => {
-  const userEmail = localStorage.getItem("email");
-  if (!userEmail) {
+  const user = localStorage.getItem("userDetails");
+  const userDetails = JSON.parse(user);
+  
+
+  
+  if (!userDetails) {
     console.error("User email not found in localStorage");
     return false;
   }
 
   try {
-    const response = await authAxiosInstance.post("/user/otp", { otp, userEmail });
-    return response.status === 200;  
+    const response = await authAxiosInstance.post("/user/otp", {
+      otp,
+      userDetails,
+    });
+    return response.status === 200;
   } catch (error) {
     console.error("Error verifying OTP:", error);
     return false;
   }
 };
 
-export const resendOtp = async (email: string): Promise<boolean> => {
+export const resendOtp = async (userEmail: any): Promise<boolean> => {
   try {
+    const email = userEmail?userEmail:localStorage.getItem("email")
+    
     const response = await authAxiosInstance.post("/user/resendOtp", { email });
     console.log("OTP resent response:", response);
-    return response.status === 200;
   } catch (error) {
     console.error("Error resending OTP:", error);
     return false;
   }
-}
+};
 
-
-export const login = async(data:userData)=>{
+export const login = async (
+  endpoint: string,
+  userData: userData
+): Promise<AuthResponse> => {
   try {
-    
-    const response = await authAxiosInstance.post("/user/login", { data });
-    
-    
-    
-    
+    const response: AxiosResponse<AuthResponse> = await authAxiosInstance.post(
+      endpoint,
+      userData
+    );
+
+    if (response.status === 200) {
+      return response.data.response;
+    } else {
+      throw new Error("User Not Found");
+    }
   } catch (error) {
+    throw new Error("User Not Found");
+  }
+};
+
+
+
+
+export const validEmail = async (email: string) => {
+  try {
+    const response = await authAxiosInstance.post("/user/validEmail", {
+      email,
+    });
+    if (response.status === 200) {
+      localStorage.setItem("email",email)
+      return true;
+    } else if (response.status === 201) {
+      return false;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+
+
+
+
+
+export const forgotOtp = async (otp:string) => {
+  const user = localStorage.getItem("email");
+  const data = JSON.parse(user);
+  const userEmail = data.email;
+
+  if (!userEmail) {
+    console.error("User email not found in localStorage");
+    return false;
+  }
+
+  try {
+    const response = await authAxiosInstance.post("/user/verifyOtp", {
+      otp,
+      userEmail,
+    });
+    return response.status === 200;
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    return false;
+  }
+};
+
+
+
+
+
+export const forgotVerifyOtp = async (otp: string): Promise<boolean> => {
+  const email = localStorage.getItem("email");
+  
+  console.log(email);
+  
+  if (!email) {
+    console.error("User email not found in localStorage");
+    return false;
+  }
+
+  try {
+    const response = await authAxiosInstance.post("/user/Fotp", {
+      otp,
+      email,
+    });
+    return response.status === 200;
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    return false;
+  }
+};
+
+
+export const changePassword = async(password:string)=>{
+  const email = localStorage.getItem("email");
+  try {
+    // console.log(password,email);
     
+    const response = await authAxiosInstance.post("/user/changePassword", {
+      password,
+      email,
+    });
+    return response.status === 200;
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    return false;
   }
 }

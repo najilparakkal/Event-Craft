@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendOTPByEmail = (email: string, otp: string,req:Request) => {
+const sendOTPByEmail = (email: string, otp: string) => {
   const mailOptions: nodemailer.SendMailOptions = {
     from: process.env.EMAIL_USER as string,
     to: email,
@@ -22,7 +22,7 @@ const sendOTPByEmail = (email: string, otp: string,req:Request) => {
     text: `Your OTP is ${otp}`,
   };
 
-  transporter.sendMail(mailOptions, (error: string, info: any) =>  {
+  transporter.sendMail(mailOptions, (error: Error | null, info: nodemailer.SentMessageInfo) => {
     if (error) {
       console.error("Error sending email:", error);
     } else {
@@ -38,3 +38,10 @@ export const sendOTP = (email: string) => {
   console.log("OTP SENT", otp, email);
   return otp;
 };
+
+
+// export const forgotSendOtp = (email: string, otp: string)=>{
+//   sendOTPByEmail(email, otp);
+//   console.log("OTP SENT", otp, email);
+//   return otp;
+// }

@@ -1,6 +1,6 @@
 import { response } from "express";
 import { Users } from "../../framworks/database/models/user";
-import { IUser } from "../entities/user/user";
+import { IUser,userDatas } from "../entities/user/user";
 import { checkingUser } from "../helpers/checkingUser";
 import { sendOTP } from "../helpers/nodmailer";
 import { otpVeri } from "../entities/user/user";
@@ -26,7 +26,8 @@ export const createUser = async (
       !userData.name ||
       !userData.password ||
       !userData.phoneNum
-    ) {
+    ) {   
+      
       throw new Error("Required fields are missing");
     }
 
@@ -35,6 +36,8 @@ export const createUser = async (
     if (checkResponse.success === false) {
       return checkResponse;
     } else if (checkResponse.success === true) {
+
+
       const otp: string = sendOTP(userData.email);
 
       const newUser = await Users.create({
@@ -46,10 +49,16 @@ export const createUser = async (
           value: otp,
         },
       });
+      const token = await CreateToken({ id: newUser._id, email: newUser.email }, true)
 
-      const userEmail = newUser.email;
+      const userDatas:userDatas = {
+        id: newUser._id as string,
+        email: newUser.email,
+        phoneNum: newUser.phoneNum,
+        name: newUser.userName
+      };
 
-      return { checkResponse, userEmail };
+      return { checkResponse, userDatas,token };
     }
   } catch (err) {
     console.error("An error occurred while creating the user:", err);
@@ -57,18 +66,47 @@ export const createUser = async (
   }
 };
 
+
+
+
 export const validOtp = async (data: otpVeri): Promise<OtpResponse | any> => {
   try {
-    const user = await Users.findOne({ email: data.userEmail });
+    console.log(data);
+    
+    const user = await Users.findOne({ email: data.userDetails.email });
+    
 
     if (!user) {
       return { success: false, message: "User not found" };
     }
 
     if (user.otp?.value === data.otp) {
+
       return { success: true, message: "OTP verified successfully" };
     } else {
-      return { success: false, message: "Invalid OTP" };
+      return { success: false, message: "Invalid OTP" };      
+    }
+  } catch (error) {
+    console.error("An error occurred during OTP verification:", error);
+    return { success: false, message: "An error occurred" };
+  }
+};
+
+export const forgotValidOtp = async (data: otpVeri): Promise<OtpResponse | any> => {
+  try {
+    
+    const user = await Users.findOne({ email: data.email });
+    
+
+    if (!user) {
+      return { success: false, message: "User not found" };
+    }
+
+    if (user.otp?.value === data.otp) {
+
+      return { success: true, message: "OTP verified successfully" };
+    } else {
+      return { success: false, message: "Invalid OTP" };      
     }
   } catch (error) {
     console.error("An error occurred during OTP verification:", error);
@@ -86,7 +124,7 @@ export const updateOtp = async (
       {
         $set: {
           "otp.value": otp,
-        },
+        },      
       },
       { new: true }
     );
@@ -103,7 +141,7 @@ export const updateOtp = async (
     return false;
   }
 };
-
+    
 
 
 
@@ -113,7 +151,7 @@ export const logingUser = async (email: string, password: string) => {
     
     if (!user) {
       console.log('User not found');
-      return null; 
+      return false 
     }
 
     console.log(user, "user");
@@ -121,8 +159,11 @@ export const logingUser = async (email: string, password: string) => {
     const isMatch = await bcrypt.compare(password, user.password);
     
     if (isMatch) {
+      const userDetails = {email:user.email,phoneNum:user.phoneNum,userName:user.userName,id:user._id}
+      console.log(userDetails,"😒");
+      
       const token = await CreateToken({ id: user._id, email: user.email }, true)
-      return token      
+      return {token,userDetails}      
     } else {
       return false;
     }
@@ -130,5 +171,68 @@ export const logingUser = async (email: string, password: string) => {
   } catch (error) { 
     console.error('Error logging in user:', error);
     return null;
+  }
+};
+
+
+export const varifyEmail= async(email:string)=>{
+  try {
+    const user = await Users.findOne({ email: email });
+    if (user) {
+      const otpValue: string = sendOTP(user.email);
+       await Users.findOneAndUpdate(
+        { email: email },
+        { $set: { 'otp.value': otpValue, 'otp.generatedAt': new Date() } },
+        { new: true }
+      );
+      
+      return { success: true, message: "User found" };
+    } else {
+      return { success: false, message: "User not found" };
+    }
+  } catch (error) {
+    console.log(error);
+    return { success: false, message: "Error occurred during email verification" };
+  }
+}
+
+
+export const validOtpF = async (data: otpVeri): Promise<OtpResponse | any> => {
+  try {
+    const user = await Users.findOne({ email: data.email });
+    
+
+    if (!user) {
+      return { success: false, message: "User not found" };
+    }
+    console.log(user.otp?.value,data.otp,"😒");
+
+    if (user.otp?.value === data.otp) {
+
+      return { success: true, message: "OTP verified successfully" };
+    } else {
+      return { success: false, message: "Invalid OTP" };    
+    }
+  } catch (error) {
+    console.error("An error occurred during OTP verification:", error);
+    return { success: false, message: "An error occurred" };
+  }
+};
+
+
+export const updatePassword = async (
+  userEmail: string,
+  hashedPassword: string
+): Promise<CreateUserResponse | any> => {
+  try {
+    const user = await Users.findOneAndUpdate(
+      { email: userEmail },
+      { $set: { password: hashedPassword } }
+    );
+    if (user) {
+      return { success: true,message:"password updated" };
+    }
+  } catch (error) {
+    console.log(error);
   }
 };

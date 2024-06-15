@@ -3,56 +3,58 @@ import OtpInput from 'react-otp-input';
 import { verifyOtp, resendOtp } from '../../../API/services/user/userAuthService'; 
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../../costumeHooks/costum';
 
 const Otp: React.FC = () => {
-    const email = localStorage.email;
+    const userDetails = useAppSelector((state) => state.user.userDetails);
+    const { _id, name, email, phoneNum } = userDetails;
+    
     const navigate = useNavigate();
     const [otp, setOtp] = useState('');
-    const time = Number(localStorage.getItem('currentTime') ?? 60);
-    const [timer, setTimer] = useState<number>(time);
-    const [inputVisible, setInputVisible] = useState(true);
+    const [timer, setTimer] = useState<number>(() => {
+        const savedTimer = localStorage.getItem('timer');
+        return savedTimer ? parseInt(savedTimer, 10) : 60; // Start with 60 if no saved timer
+    });
+    const [inputVisible, setInputVisible] = useState<boolean>(true); // Always start with inputs visible
     let timerInterval: NodeJS.Timeout;
 
     useEffect(() => {
-        // Timer interval
-        timerInterval = setInterval(() => {
-            setTimer((prevTimer) => {
-                if (prevTimer === 0) {
-                    clearInterval(timerInterval);
-                    setInputVisible(false);
-                    return 0;
-                }
-                localStorage.setItem('currentTime', (prevTimer - 1).toString());
-                return prevTimer - 1;
-            });
-        }, 1000);
+        if (timer > 0) {
+            startTimer();
+        }
 
         return () => {
             clearInterval(timerInterval);
         };
-    }, []);
+    }, [timer]);
+
+    const startTimer = () => {
+        timerInterval = setInterval(() => {
+            setTimer((prevTimer) => {
+                const newTimer = prevTimer - 1;
+                if (newTimer <= 0) {
+                    clearInterval(timerInterval);
+                    setInputVisible(false);
+                    localStorage.removeItem('timer'); // Clear timer from local storage when it reaches 0
+                    localStorage.setItem('inputVisible', JSON.stringify(false)); // Update input visibility state in local storage
+                } else {
+                    localStorage.setItem('timer', newTimer.toString()); // Update timer in local storage
+                }
+                return newTimer;
+            });
+        }, 1000);
+    };
 
     const handleResend = async () => {
         try {
-            localStorage.removeItem('currentTime');
-
             await resendOtp(email);
             toast.success('OTP resent successfully!');
             clearInterval(timerInterval);
             setTimer(60);
-            setInputVisible(true);
-
-            timerInterval = setInterval(() => {
-                setTimer((prevTimer) => {
-                    if (prevTimer === 0) {
-                        clearInterval(timerInterval);
-                        setInputVisible(false);
-                        return 0;
-                    }
-                    localStorage.setItem('currentTime', (prevTimer - 1).toString());
-                    return prevTimer - 1;
-                });
-            }, 1000);
+            localStorage.setItem('timer', '60'); // Reset timer in local storage when resend is clicked
+            setInputVisible(true); // Unhide inputs when Resend is clicked
+            localStorage.setItem('inputVisible', JSON.stringify(true)); // Update input visibility state in local storage
+            startTimer();
         } catch (error) {
             console.error('Error while resending OTP:', error);
             toast.error('Failed to resend OTP. Please try again later.');
@@ -68,7 +70,7 @@ const Otp: React.FC = () => {
                 toast.success('OTP verified successfully!', {
                     id: loadingToastId,
                 });
-                navigate('/login');
+                navigate('/home');
             } else {
                 toast.error('Invalid OTP. Please try again.', {
                     id: loadingToastId,
@@ -96,6 +98,11 @@ const Otp: React.FC = () => {
         }
     };
 
+    useEffect(() => {
+        // Log to track inputVisible state
+        console.log('inputVisible:', inputVisible);
+    }, [inputVisible]);
+
     return (
         <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-12">
             <Toaster position="top-center" reverseOrder={false} />
@@ -113,7 +120,7 @@ const Otp: React.FC = () => {
                     <div>
                         <form onSubmit={handleSubmit}>
                             <div className="flex flex-col space-y-16">
-                                {inputVisible && (
+                                {inputVisible && ( // Only show inputs if inputVisible is true
                                     <div className="flex flex-row items-center justify-center mx-auto w-full max-w-xs">
                                         <OtpInput
                                             value={otp}

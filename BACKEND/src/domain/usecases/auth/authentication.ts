@@ -6,6 +6,9 @@ import {
   validOtp,
   updateOtp,
   logingUser,
+  varifyEmail,
+  forgotValidOtp,
+  updatePassword
 } from "../../repositories/repositories";
 import { otpVeri } from "../../entities/user/user";
 import { sendOTP } from "../../helpers/nodmailer";
@@ -20,18 +23,28 @@ export default {
       const hashedPassword = await Encrypt.cryptPassword(userData.password);
       console.log("hashedPassword");
       const savedUser = await createUser(userData, hashedPassword);
-      console.log("new user ✅", savedUser);
-
+      
       return savedUser;
     } catch (error) {
       console.log(error);
-      throw error;
-    }
-  },
+      throw error;     
+    }       
+  },        
 
   otpVerification: async (data: otpVeri) => {
     try {
+
       const response = await validOtp(data);
+
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  forgotOtpVerification: async (data: otpVeri) => {
+    try {
+
+      const response = await forgotValidOtp(data);
 
       return response;
     } catch (error) {
@@ -61,4 +74,29 @@ export default {
       console.log(error);
     }
   },
+
+
+  checkEmail:async (data: ResendData)=>{
+    try {
+      const email :string = data.email
+      const response = await varifyEmail(email)
+      return response
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  changePass:async (data:any)=>{
+    try {
+      const hashedPassword = await Encrypt.cryptPassword(data.password);
+      console.log(data);  
+      console.log(hashedPassword,"💕💕💕");
+      
+      const response = await updatePassword(data.email, hashedPassword);
+      return response
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
 };

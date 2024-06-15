@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logingUser = exports.updateOtp = exports.validOtp = exports.createUser = void 0;
+exports.updatePassword = exports.validOtpF = exports.varifyEmail = exports.logingUser = exports.updateOtp = exports.forgotValidOtp = exports.validOtp = exports.createUser = void 0;
 const user_1 = require("../../framworks/database/models/user");
 const checkingUser_1 = require("../helpers/checkingUser");
 const nodmailer_1 = require("../helpers/nodmailer");
@@ -41,8 +41,14 @@ const createUser = (userData, hashedPassword) => __awaiter(void 0, void 0, void 
                     value: otp,
                 },
             });
-            const userEmail = newUser.email;
-            return { checkResponse, userEmail };
+            const token = yield (0, jwtGenarate_1.CreateToken)({ id: newUser._id, email: newUser.email }, true);
+            const userDatas = {
+                id: newUser._id,
+                email: newUser.email,
+                phoneNum: newUser.phoneNum,
+                name: newUser.userName
+            };
+            return { checkResponse, userDatas, token };
         }
     }
     catch (err) {
@@ -54,7 +60,8 @@ exports.createUser = createUser;
 const validOtp = (data) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const user = yield user_1.Users.findOne({ email: data.userEmail });
+        console.log(data);
+        const user = yield user_1.Users.findOne({ email: data.userDetails.email });
         if (!user) {
             return { success: false, message: "User not found" };
         }
@@ -71,6 +78,26 @@ const validOtp = (data) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.validOtp = validOtp;
+const forgotValidOtp = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
+    try {
+        const user = yield user_1.Users.findOne({ email: data.email });
+        if (!user) {
+            return { success: false, message: "User not found" };
+        }
+        if (((_b = user.otp) === null || _b === void 0 ? void 0 : _b.value) === data.otp) {
+            return { success: true, message: "OTP verified successfully" };
+        }
+        else {
+            return { success: false, message: "Invalid OTP" };
+        }
+    }
+    catch (error) {
+        console.error("An error occurred during OTP verification:", error);
+        return { success: false, message: "An error occurred" };
+    }
+});
+exports.forgotValidOtp = forgotValidOtp;
 const updateOtp = (email, otp) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield user_1.Users.findOneAndUpdate({ email: email }, {
@@ -98,13 +125,15 @@ const logingUser = (email, password) => __awaiter(void 0, void 0, void 0, functi
         const user = yield user_1.Users.findOne({ email });
         if (!user) {
             console.log('User not found');
-            return null;
+            return false;
         }
         console.log(user, "user");
         const isMatch = yield bcrypt_1.default.compare(password, user.password);
         if (isMatch) {
+            const userDetails = { email: user.email, phoneNum: user.phoneNum, userName: user.userName, id: user._id };
+            console.log(userDetails, "😒");
             const token = yield (0, jwtGenarate_1.CreateToken)({ id: user._id, email: user.email }, true);
-            return token;
+            return { token, userDetails };
         }
         else {
             return false;
@@ -116,3 +145,54 @@ const logingUser = (email, password) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.logingUser = logingUser;
+const varifyEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield user_1.Users.findOne({ email: email });
+        if (user) {
+            const otpValue = (0, nodmailer_1.sendOTP)(user.email);
+            yield user_1.Users.findOneAndUpdate({ email: email }, { $set: { 'otp.value': otpValue, 'otp.generatedAt': new Date() } }, { new: true });
+            return { success: true, message: "User found" };
+        }
+        else {
+            return { success: false, message: "User not found" };
+        }
+    }
+    catch (error) {
+        console.log(error);
+        return { success: false, message: "Error occurred during email verification" };
+    }
+});
+exports.varifyEmail = varifyEmail;
+const validOtpF = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c, _d;
+    try {
+        const user = yield user_1.Users.findOne({ email: data.email });
+        if (!user) {
+            return { success: false, message: "User not found" };
+        }
+        console.log((_c = user.otp) === null || _c === void 0 ? void 0 : _c.value, data.otp, "😒");
+        if (((_d = user.otp) === null || _d === void 0 ? void 0 : _d.value) === data.otp) {
+            return { success: true, message: "OTP verified successfully" };
+        }
+        else {
+            return { success: false, message: "Invalid OTP" };
+        }
+    }
+    catch (error) {
+        console.error("An error occurred during OTP verification:", error);
+        return { success: false, message: "An error occurred" };
+    }
+});
+exports.validOtpF = validOtpF;
+const updatePassword = (userEmail, hashedPassword) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield user_1.Users.findOneAndUpdate({ email: userEmail }, { $set: { password: hashedPassword } });
+        if (user) {
+            return { success: true, message: "password updated" };
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.updatePassword = updatePassword;
