@@ -8,7 +8,8 @@ import {
   logingUser,
   varifyEmail,
   forgotValidOtp,
-  updatePassword
+  updatePassword,
+  RegisterWithGoogle
 } from "../../repositories/repositories";
 import { otpVeri } from "../../entities/user/user";
 import { sendOTP } from "../../helpers/nodmailer";
@@ -94,6 +95,27 @@ export default {
       
       const response = await updatePassword(data.email, hashedPassword);
       return response
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  googleRegistration:async(data)=>{
+    try {
+      const hashedPassword = await Encrypt.cryptPassword(data.uid);
+      const response = await RegisterWithGoogle(data,hashedPassword)
+      return response
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  googleLogin:async(data)=>{
+    try {
+      const email = data.email;
+      const password = data.uid;
+      const response = await logingUser(email, password);
+       return response
     } catch (error) {
       console.log(error);
       

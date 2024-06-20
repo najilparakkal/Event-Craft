@@ -12,23 +12,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const authentication_1 = __importDefault(require("../domain/usecases//auth/authentication"));
+const authentication_1 = __importDefault(require("../domain/usecases/auth/authentication"));
 exports.default = {
     userRegistration: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const user = yield authentication_1.default.registerUser(req.body);
             if (user.success === false) {
-                res
-                    .status(201)
-                    .json({ status: 201, message: "user is already registered", user });
+                res.status(201).json({ status: 201, message: "User is already registered", user });
             }
             else {
                 if (user) {
-                    res.status(200).json({
-                        status: 200,
-                        message: "User registered successfully",
-                        user,
-                    });
+                    res.status(200).json({ status: 200, message: "User registered successfully", user });
                 }
                 else {
                     res.status(400).json({ message: "User registration failed" });
@@ -45,85 +39,138 @@ exports.default = {
         try {
             const checkOtp = yield authentication_1.default.otpVerification(req.body);
             if (checkOtp.success === true) {
-                res.status(200).json({ status: 200, message: "user otp verified" });
+                res.status(200).json({ status: 200, message: "User OTP verified" });
             }
             else if (checkOtp.success === false) {
-                res.status(201).json({ status: 201, message: "user  otp denied" });
+                res.status(201).json({ status: 201, message: "User OTP denied" });
             }
             else {
-                res.status(400).json({ message: "otp verification failed" });
+                res.status(400).json({ message: "OTP verification failed" });
             }
         }
-        catch (error) { }
+        catch (error) {
+            console.error(error.message);
+            res.status(400).json({ error: error.message });
+            next(error);
+        }
     }),
-    forgototpVerification: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    forgotOtpVerification: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const checkOtp = yield authentication_1.default.forgotOtpVerification(req.body);
             if (checkOtp.success === true) {
-                res.status(200).json({ status: 200, message: "user otp verified" });
+                res.status(200).json({ status: 200, message: "User OTP verified" });
             }
             else if (checkOtp.success === false) {
-                res.status(201).json({ status: 201, message: "user  otp denied" });
+                res.status(201).json({ status: 201, message: "User OTP denied" });
             }
             else {
-                res.status(400).json({ message: "otp verification failed" });
+                res.status(400).json({ message: "OTP verification failed" });
             }
         }
-        catch (error) { }
+        catch (error) {
+            console.error(error.message);
+            res.status(400).json({ error: error.message });
+            next(error);
+        }
     }),
-    resendOtp: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    resendOtp: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const resendOtp = yield authentication_1.default.resend(req.body);
             if (resendOtp) {
-                res.status(200).json({ status: 200, message: "otp resend" });
+                res.status(200).json({ status: 200, message: "OTP resent" });
+            }
+            else {
+                res.status(400).json({ message: "Failed to resend OTP" });
             }
         }
-        catch (error) { }
+        catch (error) {
+            console.error(error.message);
+            res.status(400).json({ error: error.message });
+            next(error);
+        }
     }),
-    login: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    login: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const { email, password } = req.body;
             console.log(email, password);
             const response = yield authentication_1.default.login(req.body);
             console.log(response);
             if (response.token && response.userDetails) {
-                res
-                    .status(200)
-                    .json({ status: 200, message: "User is valid", response });
+                res.status(200).json({ status: 200, message: "User is valid", response });
             }
             else {
                 res.status(201).json({ status: 201, message: "User is not valid" });
             }
         }
         catch (error) {
-            console.error("Login error:", error);
+            console.error("Login error:", error.message);
             res.status(500).json({ status: 500, message: "Internal server error" });
+            next(error);
         }
     }),
-    checkEmail: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    checkEmail: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield authentication_1.default.checkEmail(req.body);
             if (response.success) {
-                res.status(200).json({ status: 200, message: "User Founded" });
+                res.status(200).json({ status: 200, message: "User Found" });
             }
             else {
                 res.status(201).json({ status: 201, message: "User not Found" });
             }
         }
         catch (error) {
-            console.log(error);
+            console.error(error.message);
+            res.status(400).json({ error: error.message });
+            next(error);
         }
     }),
-    change: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    change: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             console.log(req.body);
             const response = yield authentication_1.default.changePass(req.body);
             if (response) {
-                res.status(200).json({ status: 200, message: "password updated" });
+                res.status(200).json({ status: 200, message: "Password updated" });
+            }
+            else {
+                res.status(400).json({ message: "Password update failed" });
+            }
+        }
+        catch (error) {
+            console.error(error.message);
+            res.status(400).json({ error: error.message });
+            next(error);
+        }
+    }),
+    googleRegistration: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield authentication_1.default.googleRegistration(req.body);
+            console.log(response, "💕💕");
+            if (response.success) {
+                res.status(200).json({ status: 200, message: "User registered successfully", response });
+            }
+            else {
+                res.status(201).json({ status: 201, message: "User already Registered", response });
+            }
+        }
+        catch (error) {
+            console.error(error.message);
+            res.status(400).json({ error: error.message });
+            next(error);
+        }
+    }),
+    googleLogin: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            console.log(req.body, "✅");
+            const response = yield authentication_1.default.googleLogin(req.body);
+            if (response.token && response.userDetails) {
+                res.status(200).json({ status: 200, message: "User is valid", response });
+            }
+            else {
+                res.status(201).json({ status: 201, message: "User is not valid" });
             }
         }
         catch (error) {
             console.log(error);
         }
-    }),
+    })
 };

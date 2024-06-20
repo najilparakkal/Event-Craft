@@ -1,25 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { userRegister,login } from './userAuthService';
+import { userRegister, login } from './userAuthService';
 
-interface UserDetails {
-  _id: string | null;
-  name: string | null;
-  email: string | null;
-  phoneNum: string | null;
-}
 
-interface UserState {
-  userDetails: UserDetails;
-  jwt: string | null;
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
-  error: string | null;
-}
+  const storedUserDetails: UserDetails | null = JSON.parse(localStorage.getItem('userDetails') || 'null');
+  const storedJWT: string | null = localStorage.getItem('jwt');
 
-// Function to retrieve stored user details from localStorage
-const storedUserDetails: UserDetails | null = JSON.parse(localStorage.getItem('userDetails') || 'null');
-const storedJWT: string | null = localStorage.getItem('jwt');
-
-// Initialize initialState
 const initialState: UserState = {
   userDetails: storedUserDetails ?? {
     _id: null,
@@ -56,6 +41,36 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const GoogleAuth = createAsyncThunk(
+  'user/googleUser',
+  async (userData: GoogleAuth, { rejectWithValue }) => {
+    try {
+      const response = await userRegister('/user/googleUser', userData);
+      console.log(response, "💕");
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const GoogleLogin = createAsyncThunk(
+  'user/googleLogin',
+  async (userData: any, { rejectWithValue }) => {
+    try {
+      const response = await login('/user/googleLogin', userData);
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message); 
+    }
+  }
+)
+
+
+
+
+
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -86,27 +101,71 @@ const userSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        console.log(action.payload,"///////////");
-        
+
         state.userDetails = {
           _id: action.payload.userDetails?.id,
           name: action.payload.userDetails?.name,
           email: action.payload.userDetails?.email,
           phoneNum: action.payload.userDetails?.phoneNum,
         };
-        state.jwt = action.payload.token;
-        localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
-        if(state.jwt) {
-
+        state.jwt = action.payload.token ?? null;
+                localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
+        if (state.jwt) {
           localStorage.setItem('jwt', state.jwt);
         }
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
-      });
+      })
+      .addCase(GoogleAuth.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(GoogleAuth.fulfilled, (state, action) => {
+     
+
+        state.status = 'succeeded';
+        state.userDetails = {
+          _id: action.payload.response.userDatas.id,
+          name: action.payload.response.userDatas.name,
+          email: action.payload.response.userDatas.email,
+          phoneNum: action.payload.response.userDatas.phoneNum,
+        };
+
+        state.jwt = action.payload.response.token;
+        localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
+        if (state.jwt) {
+          localStorage.setItem('jwt', state.jwt);
+        }   
+         })
+      .addCase(GoogleAuth.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      })
+      .addCase(GoogleLogin.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(GoogleLogin.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+
+        state.userDetails = {
+          _id: action.payload.userDetails?.id,
+          name: action.payload.userDetails?.name,
+          email: action.payload.userDetails?.email,
+          phoneNum: action.payload.userDetails?.phoneNum,
+        };
+        state.jwt = action.payload.token ?? null;
+                localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
+        if (state.jwt) {
+          localStorage.setItem('jwt', state.jwt);
+        }
+      })
+      .addCase(GoogleLogin.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      })
   },
 });
 
-// Export reducer
 export default userSlice.reducer;

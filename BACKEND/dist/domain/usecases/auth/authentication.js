@@ -89,5 +89,26 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    googleRegistration: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const hashedPassword = yield passwordHashing_1.Encrypt.cryptPassword(data.uid);
+            const response = yield (0, repositories_1.RegisterWithGoogle)(data, hashedPassword);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    googleLogin: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const email = data.email;
+            const password = data.uid;
+            const response = yield (0, repositories_1.logingUser)(email, password);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

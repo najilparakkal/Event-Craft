@@ -6,9 +6,11 @@ interface userData {
   email?: string;
   phoneNum?: string;
   password?: string;
+  uid?:string
 }
 
 interface authResponse {
+  response: any;
   user: {
     userDatas: {
       id: string;
@@ -34,16 +36,19 @@ export const userRegister = async (
   endpoint: string,
   userData: userData
 ): Promise<authResponse> => {
-  const response: AxiosResponse<authResponse> = await authAxiosInstance.post(
-    endpoint,
-    userData
-  );
-  if (response.status === 200) {
-    return response.data;
-  } else if (response.status === 201) {
-    throw new Error("User already exists");
-  } else {
-    throw new Error("An unexpected error occurred");
+  try {
+    const response: AxiosResponse<authResponse> = await authAxiosInstance.post(endpoint, userData);
+
+    if (response.status === 200) {
+      return response.data;
+    } else if (response.status === 201) {
+      throw new Error("User already exists");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  } catch (error: any) {
+    console.error("userRegister error:", error.response?.data || error.message); // Improved logging
+    throw error; 
   }
 };
 
@@ -75,7 +80,6 @@ export const resendOtp = async (userEmail: any): Promise<boolean> => {
     const email = userEmail?userEmail:localStorage.getItem("email")
     
     const response = await authAxiosInstance.post("/user/resendOtp", { email });
-    console.log("OTP resent response:", response);
   } catch (error) {
     console.error("Error resending OTP:", error);
     return false;
@@ -91,7 +95,6 @@ export const login = async (
       endpoint,
       userData
     );
-
     if (response.status === 200) {
       return response.data.response;
     } else {

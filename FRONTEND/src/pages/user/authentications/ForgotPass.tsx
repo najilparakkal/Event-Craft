@@ -135,7 +135,7 @@ const ForgotPass: React.FC = () => {
         localStorage.removeItem('timer');
         localStorage.removeItem('inputVisible');
         toast.success('Password reset successful!');
-        // navigate('/login');
+        navigate('/login');
     };
 
     return (

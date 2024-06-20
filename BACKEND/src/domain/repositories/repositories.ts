@@ -1,6 +1,6 @@
 import { response } from "express";
 import { Users } from "../../framworks/database/models/user";
-import { IUser,userDatas } from "../entities/user/user";
+import { IUser,googleRegistration,userDatas } from "../entities/user/user";
 import { checkingUser } from "../helpers/checkingUser";
 import { sendOTP } from "../helpers/nodmailer";
 import { otpVeri } from "../entities/user/user";
@@ -154,13 +154,11 @@ export const logingUser = async (email: string, password: string) => {
       return false 
     }
 
-    console.log(user, "user");
 
     const isMatch = await bcrypt.compare(password, user.password);
     
     if (isMatch) {
       const userDetails = {email:user.email,phoneNum:user.phoneNum,userName:user.userName,id:user._id}
-      console.log(userDetails,"😒");
       
       const token = await CreateToken({ id: user._id, email: user.email }, true)
       return {token,userDetails}      
@@ -234,5 +232,38 @@ export const updatePassword = async (
     }
   } catch (error) {
     console.log(error);
+  }
+};
+
+
+export const RegisterWithGoogle = async (
+  userData: googleRegistration,
+  hashedPassword:string
+): Promise<CreateUserResponse | any> => {
+  try {
+    const alreadyRegistered = await Users.findOne({ email: userData.email });
+    if (alreadyRegistered) {
+      return { success: false, message: "User already registered" };
+    } else {
+       
+      const newUser = await Users.create({
+        userName: userData.name,
+        email: userData.email,
+        password:hashedPassword,
+      });
+      const userDatas:userDatas = {
+        id: newUser._id ,
+        email: newUser.email,
+        phoneNum: newUser.phoneNum,
+        name: newUser.userName
+      };
+    
+      
+      const token = await CreateToken({ id: newUser._id, email: newUser.email }, true);
+      return { success: true, message: "User registered successfully", token,userDatas };
+    }
+  } catch (error) {
+    console.log(error);
+    return { success: false, message: "An error occurred during registration" };
   }
 };

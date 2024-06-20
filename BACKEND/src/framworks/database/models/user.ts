@@ -25,6 +25,7 @@ const userSchema = new Schema<IUser>({
   },
   phoneNum: {
     type: String,
+    default:"1234567890"
   },
   verified: {
     type: Boolean,

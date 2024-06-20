@@ -26,3 +26,10 @@ export interface userDatas {
   phoneNum: string;
   name: string;
 }
+
+
+export interface googleRegistration{
+  email?: string;
+  uid?:string;
+  name?:string;
+}

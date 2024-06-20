@@ -15,6 +15,7 @@ const userSchema = new mongoose_1.Schema({
     },
     phoneNum: {
         type: String,
+        default: "1234567890"
     },
     verified: {
         type: Boolean,

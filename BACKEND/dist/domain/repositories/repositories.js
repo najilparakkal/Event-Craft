@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePassword = exports.validOtpF = exports.varifyEmail = exports.logingUser = exports.updateOtp = exports.forgotValidOtp = exports.validOtp = exports.createUser = void 0;
+exports.RegisterWithGoogle = exports.updatePassword = exports.validOtpF = exports.varifyEmail = exports.logingUser = exports.updateOtp = exports.forgotValidOtp = exports.validOtp = exports.createUser = void 0;
 const user_1 = require("../../framworks/database/models/user");
 const checkingUser_1 = require("../helpers/checkingUser");
 const nodmailer_1 = require("../helpers/nodmailer");
@@ -127,11 +127,9 @@ const logingUser = (email, password) => __awaiter(void 0, void 0, void 0, functi
             console.log('User not found');
             return false;
         }
-        console.log(user, "user");
         const isMatch = yield bcrypt_1.default.compare(password, user.password);
         if (isMatch) {
             const userDetails = { email: user.email, phoneNum: user.phoneNum, userName: user.userName, id: user._id };
-            console.log(userDetails, "😒");
             const token = yield (0, jwtGenarate_1.CreateToken)({ id: user._id, email: user.email }, true);
             return { token, userDetails };
         }
@@ -196,3 +194,31 @@ const updatePassword = (userEmail, hashedPassword) => __awaiter(void 0, void 0, 
     }
 });
 exports.updatePassword = updatePassword;
+const RegisterWithGoogle = (userData, hashedPassword) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const alreadyRegistered = yield user_1.Users.findOne({ email: userData.email });
+        if (alreadyRegistered) {
+            return { success: false, message: "User already registered" };
+        }
+        else {
+            const newUser = yield user_1.Users.create({
+                userName: userData.name,
+                email: userData.email,
+                password: hashedPassword,
+            });
+            const userDatas = {
+                id: newUser._id,
+                email: newUser.email,
+                phoneNum: newUser.phoneNum,
+                name: newUser.userName
+            };
+            const token = yield (0, jwtGenarate_1.CreateToken)({ id: newUser._id, email: newUser.email }, true);
+            return { success: true, message: "User registered successfully", token, userDatas };
+        }
+    }
+    catch (error) {
+        console.log(error);
+        return { success: false, message: "An error occurred during registration" };
+    }
+});
+exports.RegisterWithGoogle = RegisterWithGoogle;
