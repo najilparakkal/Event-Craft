@@ -1,18 +1,8 @@
 import { Users } from "../../framworks/database/models/user";
 import { IUser } from "../entities/user/user";
-import { CreateUserResponse } from "../repositories/repositories";
+import { CreateUserResponse } from "../repositories/user/repositories";
 
-interface UserData {
-  email: string;
-  name: string;
-  password: string;
-  phoneNum: string;
-}
 
-interface CheckingUserResponse {
-  success: boolean;
-  message?: string;
-}
 
 export const checkingUser = async (data: IUser): Promise<CreateUserResponse> => {
   try {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import OtpInput from 'react-otp-input';
-import { forgotVerifyOtp, resendOtp, validEmail,changePassword } from '../../../API/services/user/userAuthService';
+import { forgotVerifyOtp, resendOtp, validEmail, changePassword } from '../../../API/services/user/userAuthService';
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { emailForgot, passwordForgot } from '../../../utils/validations/validateSchema';
@@ -8,7 +8,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 
 const ForgotPass: React.FC = () => {
     const navigate = useNavigate();
-
+    const [email, setEmail] = useState("")
     const [otp, setOtp] = useState('');
     const [timer, setTimer] = useState<number>(() => {
         const savedTimer = localStorage.getItem('timer');
@@ -16,7 +16,6 @@ const ForgotPass: React.FC = () => {
     });
     const [inputVisible, setInputVisible] = useState<boolean>(true);
 
-    // Retrieve the current step from localStorage
     const [step, setStep] = useState<number>(() => {
         const savedStep = localStorage.getItem('step');
         return savedStep ? parseInt(savedStep, 10) : 1;
@@ -28,7 +27,9 @@ const ForgotPass: React.FC = () => {
 
     const handleEmailSubmit = async (values: { email: string }) => {
         const response = await validEmail(values.email);
+        setEmail(values.email)
         if (response) {
+            localStorage.removeItem('timer');
             console.log(response);
             toast.success("Email verified");
             setStep(2);
@@ -69,7 +70,7 @@ const ForgotPass: React.FC = () => {
 
     const handleResend = async () => {
         try {
-            await resendOtp();
+            await resendOtp(email);
             toast.success('OTP resent successfully!');
             clearInterval(timerInterval);
             setTimer(60);
@@ -128,7 +129,10 @@ const ForgotPass: React.FC = () => {
     const initialValuePass: FormValues = {
         password: '',
     };
-
+    useEffect(() => {
+        setStep(1);
+        localStorage.setItem('step', '1');
+    }, []);
     const handlePassSubmit = async (values: FormValues) => {
         await changePassword(values.password)
         localStorage.removeItem('step');
@@ -139,13 +143,16 @@ const ForgotPass: React.FC = () => {
     };
 
     return (
-        <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-12">
+        <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-12" style={{ backgroundColor: '#1F2136' }}>
             <Toaster position="top-center" reverseOrder={false} />
 
             {step === 1 ? (
-                <div className="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl">
+                <div className="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl"
+                    style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)', backgroundColor: '#1F2136' }}>
+
+
                     <div className="mx-auto flex w-full max-w-md flex-col space-y-16">
-                        <div className="flex flex-col items-center justify-center text-center space-y-2">
+                        <div className="flex flex-col items-center justify-center text-gray-50 text-center space-y-2">
                             <div className="font-semibold text-3xl">
                                 <p>Email Verification</p>
                             </div>
@@ -164,7 +171,7 @@ const ForgotPass: React.FC = () => {
                                                     name="email"
                                                     id="email"
                                                     placeholder="Enter your email"
-                                                    className="w-full px-4 py-3 bg-gray-200 focus:bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:border-purple-400"
+                                                    className="bg-transparent border-b-2 border-white text-white sm:text-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                                     value={values.email}
                                                     onChange={handleChange}
                                                 />
@@ -172,7 +179,7 @@ const ForgotPass: React.FC = () => {
                                             </div>
                                             <div>
                                                 <button
-                                                    className="flex flex-row items-center justify-center text-center w-full border rounded-xl outline-none py-5 bg-blue-700 border-none text-white text-sm shadow-sm"
+                                                    className="flex flex-row items-center justify-center text-center w-full border rounded-xl outline-none py-5 bg-gray-900  border-none text-white text-m shadow-sm"
                                                     type="submit"
                                                     disabled={isSubmitting}
                                                 >
@@ -187,20 +194,23 @@ const ForgotPass: React.FC = () => {
                     </div>
                 </div>
             ) : step === 2 ? (
-                <div className="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl">
+                <div className="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl"
+
+                    style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)', backgroundColor: '#1F2136' }}>
+
                     <div className="mx-auto flex w-full max-w-md flex-col space-y-16">
                         <div className="flex flex-col items-center justify-center text-center space-y-2">
                             <div className="font-semibold text-3xl">
-                                <p>Email Verification</p>
+                                <p>OTP Verification</p>
                             </div>
                             <div className="flex flex-row text-sm font-medium text-gray-400">
-                                <p>We have sent a code to your email </p>
+                                <p>We have sent a OTP in to your {email} </p>
                             </div>
                         </div>
                         <div>
                             <form onSubmit={handleSubmit}>
                                 <div className="flex flex-col space-y-16">
-                                    {inputVisible && ( // Only show inputs if inputVisible is true
+                                    {inputVisible && (
                                         <div className="flex flex-row items-center justify-center mx-auto w-full max-w-xs">
                                             <OtpInput
                                                 value={otp}
@@ -222,7 +232,7 @@ const ForgotPass: React.FC = () => {
                                     <div className="flex flex-col space-y-5">
                                         <div>
                                             <button
-                                                className="flex flex-row items-center justify-center text-center w-full border rounded-xl outline-none py-5 bg-blue-700 border-none text-white text-sm shadow-sm"
+                                                className="flex flex-row items-center justify-center text-center w-full border rounded-xl outline-none py-5 bg-gray-900 border-none text-white text-sm shadow-sm"
                                                 type="submit"
                                             >
                                                 Verify Account
@@ -233,7 +243,8 @@ const ForgotPass: React.FC = () => {
                                                 <p>
                                                     Didn't receive code?{' '}
                                                     <button
-                                                        className="text-blue-600 underline"
+                                                    type='button'
+                                                        className="text-black underline"
                                                         onClick={handleResend}
                                                     >
                                                         Resend
@@ -250,10 +261,13 @@ const ForgotPass: React.FC = () => {
                     </div>
                 </div>
             ) : (
-                <div className="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl">
+                <div className="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl"
+
+                    style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)', backgroundColor: '#1F2136' }}>
+
                     <div className="mx-auto flex w-full max-w-md flex-col space-y-16">
                         <div className="flex flex-col items-center justify-center text-center space-y-2">
-                            <div className="font-semibold text-3xl">
+                            <div className="font-semibold text-3xl text-white">
                                 <p>New Password</p>
                             </div>
                             <div className="flex flex-row text-sm font-medium text-gray-400">
@@ -270,13 +284,13 @@ const ForgotPass: React.FC = () => {
                                                     type="password"
                                                     name="password"
                                                     placeholder="Enter your password"
-                                                    className="w-full px-4 py-3 bg-gray-200 focus:bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:border-purple-400"
+                                                    className="bg-transparent border-b-2 border-white text-white sm:text-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                                 />
                                                 <ErrorMessage name="password" component="div" className="text-red-500" />
                                             </div>
                                             <div>
                                                 <button
-                                                    className="flex flex-row items-center justify-center text-center w-full border rounded-xl outline-none py-5 bg-blue-700 border-none text-white text-sm shadow-sm"
+                                                    className="flex flex-row items-center justify-center text-center w-full border rounded-xl outline-none py-5 bg-gray-900 border-none text-white text-m shadow-sm"
                                                     type="submit"
                                                     disabled={isSubmitting}
                                                 >

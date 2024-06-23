@@ -1,5 +1,5 @@
 import express from "express";
-import authController from "../../adaptors/authController";
+import authController from "../../adaptors/userController/authController";
 const   userRouter = express.Router();
 
 userRouter.post("/api/user/signup",authController.userRegistration)

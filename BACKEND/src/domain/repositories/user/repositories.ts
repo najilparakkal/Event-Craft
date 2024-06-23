@@ -1,20 +1,17 @@
 import { response } from "express";
-import { Users } from "../../framworks/database/models/user";
-import { IUser,googleRegistration,userDatas } from "../entities/user/user";
-import { checkingUser } from "../helpers/checkingUser";
-import { sendOTP } from "../helpers/nodmailer";
-import { otpVeri } from "../entities/user/user";
-import bcrypt from 'bcrypt';
-import { CreateToken } from "../helpers/jwtGenarate";
-export interface CreateUserResponse {
-  success: boolean;
-  message?: string;
-}
-
-export interface OtpResponse {
-  success: boolean;
-  message?: string;
-}
+import { Users } from "../../../framworks/database/models/user";
+import {
+  CreateUserResponse,
+  IUser,
+  OtpResponse,
+  googleRegistration,
+  userDatas,
+} from "../../entities/user/user";
+import { checkingUser } from "../../helpers/checkingUser";
+import { sendOTP } from "../../helpers/nodmailer";
+import { otpVeri } from "../../entities/user/user";
+import bcrypt from "bcrypt";
+import { CreateToken } from "../../helpers/jwtGenarate";
 
 export const createUser = async (
   userData: IUser,
@@ -26,8 +23,7 @@ export const createUser = async (
       !userData.name ||
       !userData.password ||
       !userData.phoneNum
-    ) {   
-      
+    ) {
       throw new Error("Required fields are missing");
     }
 
@@ -36,8 +32,6 @@ export const createUser = async (
     if (checkResponse.success === false) {
       return checkResponse;
     } else if (checkResponse.success === true) {
-
-
       const otp: string = sendOTP(userData.email);
 
       const newUser = await Users.create({
@@ -49,16 +43,19 @@ export const createUser = async (
           value: otp,
         },
       });
-      const token = await CreateToken({ id: newUser._id, email: newUser.email }, true)
+      const token = await CreateToken(
+        { id: newUser._id, email: newUser.email },
+        true
+      );
 
-      const userDatas:userDatas = {
+      const userDatas: userDatas = {
         id: newUser._id as string,
         email: newUser.email,
         phoneNum: newUser.phoneNum,
-        name: newUser.userName
+        name: newUser.userName,
       };
 
-      return { checkResponse, userDatas,token };
+      return { checkResponse, userDatas, token };
     }
   } catch (err) {
     console.error("An error occurred while creating the user:", err);
@@ -66,25 +63,20 @@ export const createUser = async (
   }
 };
 
-
-
-
 export const validOtp = async (data: otpVeri): Promise<OtpResponse | any> => {
   try {
     console.log(data);
-    
+
     const user = await Users.findOne({ email: data.userDetails.email });
-    
 
     if (!user) {
       return { success: false, message: "User not found" };
     }
 
     if (user.otp?.value === data.otp) {
-
       return { success: true, message: "OTP verified successfully" };
     } else {
-      return { success: false, message: "Invalid OTP" };      
+      return { success: false, message: "Invalid OTP" };
     }
   } catch (error) {
     console.error("An error occurred during OTP verification:", error);
@@ -92,21 +84,18 @@ export const validOtp = async (data: otpVeri): Promise<OtpResponse | any> => {
   }
 };
 
-export const forgotValidOtp = async (data: otpVeri): Promise<OtpResponse | any> => {
+export const forgotValidOtp = async (
+  data: otpVeri
+): Promise<OtpResponse | any> => {
   try {
-    
     const user = await Users.findOne({ email: data.email });
     
+    if (!user) return { success: false, message: "User not found" };
 
-    if (!user) {
-      return { success: false, message: "User not found" };
-    }
-
-    if (user.otp?.value === data.otp) {
-
+    if (user.otp+"" === data.otp) {
       return { success: true, message: "OTP verified successfully" };
     } else {
-      return { success: false, message: "Invalid OTP" };      
+      return { success: false, message: "Invalid OTP" };
     }
   } catch (error) {
     console.error("An error occurred during OTP verification:", error);
@@ -123,8 +112,8 @@ export const updateOtp = async (
       { email: email },
       {
         $set: {
-          "otp.value": otp,
-        },      
+          "otp": otp,
+        },
       },
       { new: true }
     );
@@ -141,82 +130,82 @@ export const updateOtp = async (
     return false;
   }
 };
-    
-
-
 
 export const logingUser = async (email: string, password: string) => {
   try {
     const user = await Users.findOne({ email });
-    
+
     if (!user) {
-      console.log('User not found');
-      return false 
-    }
-
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    
-    if (isMatch) {
-      const userDetails = {email:user.email,phoneNum:user.phoneNum,userName:user.userName,id:user._id}
-      
-      const token = await CreateToken({ id: user._id, email: user.email }, true)
-      return {token,userDetails}      
-    } else {
+      console.log("User not found");
       return false;
     }
 
-  } catch (error) { 
-    console.error('Error logging in user:', error);
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (isMatch) {
+      const userDetails = {
+        email: user.email,
+        phoneNum: user.phoneNum,
+        userName: user.userName,
+        id: user._id,
+      };
+
+      const token = await CreateToken(
+        { id: user._id, email: user.email },
+        true
+      );
+      return { token, userDetails };
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Error logging in user:", error);
     return null;
   }
 };
 
-
-export const varifyEmail= async(email:string)=>{
+export const varifyEmail = async (email: string) => {
   try {
     const user = await Users.findOne({ email: email });
     if (user) {
       const otpValue: string = sendOTP(user.email);
-       await Users.findOneAndUpdate(
+      await Users.findOneAndUpdate(
         { email: email },
-        { $set: { 'otp.value': otpValue, 'otp.generatedAt': new Date() } },
+        { $set: { otp: otpValue } },
         { new: true }
       );
-      
+
       return { success: true, message: "User found" };
     } else {
       return { success: false, message: "User not found" };
     }
   } catch (error) {
     console.log(error);
-    return { success: false, message: "Error occurred during email verification" };
+    return {
+      success: false,
+      message: "Error occurred during email verification",
+    };
   }
-}
-
+};
 
 export const validOtpF = async (data: otpVeri): Promise<OtpResponse | any> => {
   try {
     const user = await Users.findOne({ email: data.email });
-    
 
     if (!user) {
       return { success: false, message: "User not found" };
     }
-    console.log(user.otp?.value,data.otp,"😒");
 
-    if (user.otp?.value === data.otp) {
-
+    if (user.otp+"" === data.otp) {
       return { success: true, message: "OTP verified successfully" };
     } else {
-      return { success: false, message: "Invalid OTP" };    
+      return { success: false, message: "Invalid OTP" };
     }
   } catch (error) {
     console.error("An error occurred during OTP verification:", error);
     return { success: false, message: "An error occurred" };
   }
 };
-
 
 export const updatePassword = async (
   userEmail: string,
@@ -228,42 +217,49 @@ export const updatePassword = async (
       { $set: { password: hashedPassword } }
     );
     if (user) {
-      return { success: true,message:"password updated" };
+      return { success: true, message: "password updated" };
     }
   } catch (error) {
     console.log(error);
   }
 };
 
-
 export const RegisterWithGoogle = async (
   userData: googleRegistration,
-  hashedPassword:string
+  hashedPassword: string
 ): Promise<CreateUserResponse | any> => {
   try {
     const alreadyRegistered = await Users.findOne({ email: userData.email });
     if (alreadyRegistered) {
       return { success: false, message: "User already registered" };
     } else {
-       
       const newUser = await Users.create({
         userName: userData.name,
         email: userData.email,
-        password:hashedPassword,
+        password: hashedPassword,
       });
-      const userDatas:userDatas = {
-        id: newUser._id ,
+      const userDatas: userDatas = {
+        id: newUser._id + "",
         email: newUser.email,
         phoneNum: newUser.phoneNum,
-        name: newUser.userName
+        name: newUser.userName,
       };
-    
-      
-      const token = await CreateToken({ id: newUser._id, email: newUser.email }, true);
-      return { success: true, message: "User registered successfully", token,userDatas };
+
+      const token = await CreateToken(
+        { id: newUser._id, email: newUser.email },
+        true
+      );
+      return {
+        success: true,
+        message: "User registered successfully",
+        token,
+        userDatas,
+      };
     }
   } catch (error) {
     console.log(error);
     return { success: false, message: "An error occurred during registration" };
   }
 };
+
+export { CreateUserResponse };

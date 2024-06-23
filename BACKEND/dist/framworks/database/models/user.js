@@ -15,16 +15,14 @@ const userSchema = new mongoose_1.Schema({
     },
     phoneNum: {
         type: String,
-        default: "1234567890"
+        default: "1234567890",
     },
     verified: {
         type: Boolean,
         default: false,
     },
     otp: {
-        value: {
-            type: String,
-        }
+        type: String,
     },
 });
 exports.Users = (0, mongoose_1.model)("Users", userSchema);

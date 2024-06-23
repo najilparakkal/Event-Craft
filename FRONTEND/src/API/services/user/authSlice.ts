@@ -1,9 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { userRegister, login } from './userAuthService';
 
-
-  const storedUserDetails: UserDetails | null = JSON.parse(localStorage.getItem('userDetails') || 'null');
-  const storedJWT: string | null = localStorage.getItem('jwt');
+const storedUserDetails: UserDetails | null = JSON.parse(localStorage.getItem('userDetails') || 'null');
+const storedJWT: string | null = localStorage.getItem('jwt');
 
 const initialState: UserState = {
   userDetails: storedUserDetails ?? {
@@ -24,7 +23,7 @@ export const signupUser = createAsyncThunk(
       const response = await userRegister('/user/signup', userData);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message); // Return the error message
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -36,7 +35,7 @@ export const loginUser = createAsyncThunk(
       const response = await login('/user/login', userData);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message); // Return the error message
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -46,7 +45,6 @@ export const GoogleAuth = createAsyncThunk(
   async (userData: GoogleAuth, { rejectWithValue }) => {
     try {
       const response = await userRegister('/user/googleUser', userData);
-      console.log(response, "💕");
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -61,20 +59,27 @@ export const GoogleLogin = createAsyncThunk(
       const response = await login('/user/googleLogin', userData);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message); 
+      return rejectWithValue(error.message);
     }
   }
-)
-
-
-
-
-
+);
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    logout(state) {
+      state.userDetails = {
+        _id: null,
+        name: null,
+        email: null,
+        phoneNum: null,
+      };
+      state.jwt = null;
+      state.status = 'idle';
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(signupUser.pending, (state) => {
@@ -101,7 +106,6 @@ const userSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.status = 'succeeded';
-
         state.userDetails = {
           _id: action.payload.userDetails?.id,
           name: action.payload.userDetails?.name,
@@ -109,7 +113,7 @@ const userSlice = createSlice({
           phoneNum: action.payload.userDetails?.phoneNum,
         };
         state.jwt = action.payload.token ?? null;
-                localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
+        localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
         if (state.jwt) {
           localStorage.setItem('jwt', state.jwt);
         }
@@ -123,8 +127,6 @@ const userSlice = createSlice({
         state.error = null;
       })
       .addCase(GoogleAuth.fulfilled, (state, action) => {
-     
-
         state.status = 'succeeded';
         state.userDetails = {
           _id: action.payload.response.userDatas.id,
@@ -132,13 +134,12 @@ const userSlice = createSlice({
           email: action.payload.response.userDatas.email,
           phoneNum: action.payload.response.userDatas.phoneNum,
         };
-
         state.jwt = action.payload.response.token;
         localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
         if (state.jwt) {
           localStorage.setItem('jwt', state.jwt);
-        }   
-         })
+        }
+      })
       .addCase(GoogleAuth.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
@@ -148,7 +149,6 @@ const userSlice = createSlice({
       })
       .addCase(GoogleLogin.fulfilled, (state, action) => {
         state.status = 'succeeded';
-
         state.userDetails = {
           _id: action.payload.userDetails?.id,
           name: action.payload.userDetails?.name,
@@ -156,7 +156,7 @@ const userSlice = createSlice({
           phoneNum: action.payload.userDetails?.phoneNum,
         };
         state.jwt = action.payload.token ?? null;
-                localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
+        localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
         if (state.jwt) {
           localStorage.setItem('jwt', state.jwt);
         }
@@ -164,8 +164,9 @@ const userSlice = createSlice({
       .addCase(GoogleLogin.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
-      })
+      });
   },
 });
 
+export const { logout } = userSlice.actions;
 export default userSlice.reducer;

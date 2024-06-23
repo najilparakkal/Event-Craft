@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
 import OtpInput from 'react-otp-input';
-import { verifyOtp, resendOtp } from '../../../API/services/user/userAuthService'; 
+import { verifyOtp, resendOtp } from '../../../API/services/user/userAuthService';
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../../costumeHooks/costum';
 
 const Otp: React.FC = () => {
     const userDetails = useAppSelector((state) => state.user.userDetails);
-    const { _id, name, email, phoneNum } = userDetails;
-    
+    const { email } = userDetails;
+
     const navigate = useNavigate();
     const [otp, setOtp] = useState('');
     const [timer, setTimer] = useState<number>(() => {
         const savedTimer = localStorage.getItem('timer');
-        return savedTimer ? parseInt(savedTimer, 10) : 60; // Start with 60 if no saved timer
+        return savedTimer ? parseInt(savedTimer, 10) : 60;
     });
-    const [inputVisible, setInputVisible] = useState<boolean>(true); // Always start with inputs visible
+    const [inputVisible, setInputVisible] = useState<boolean>(true);
     let timerInterval: NodeJS.Timeout;
 
     useEffect(() => {
@@ -26,19 +26,20 @@ const Otp: React.FC = () => {
         return () => {
             clearInterval(timerInterval);
         };
-    }, [timer]);
+    }, []);
 
     const startTimer = () => {
         timerInterval = setInterval(() => {
             setTimer((prevTimer) => {
                 const newTimer = prevTimer - 1;
+                if (newTimer === -1) { localStorage.removeItem('timer'); }
+
                 if (newTimer <= 0) {
                     clearInterval(timerInterval);
                     setInputVisible(false);
-                    localStorage.removeItem('timer'); // Clear timer from local storage when it reaches 0
-                    localStorage.setItem('inputVisible', JSON.stringify(false)); // Update input visibility state in local storage
+                    localStorage.setItem('inputVisible', JSON.stringify(false));
                 } else {
-                    localStorage.setItem('timer', newTimer.toString()); // Update timer in local storage
+                    localStorage.setItem('timer', newTimer.toString());
                 }
                 return newTimer;
             });
@@ -51,9 +52,9 @@ const Otp: React.FC = () => {
             toast.success('OTP resent successfully!');
             clearInterval(timerInterval);
             setTimer(60);
-            localStorage.setItem('timer', '60'); // Reset timer in local storage when resend is clicked
-            setInputVisible(true); // Unhide inputs when Resend is clicked
-            localStorage.setItem('inputVisible', JSON.stringify(true)); // Update input visibility state in local storage
+            localStorage.setItem('timer', '60');
+            setInputVisible(true);
+            localStorage.setItem('inputVisible', JSON.stringify(true));
             startTimer();
         } catch (error) {
             console.error('Error while resending OTP:', error);
@@ -104,12 +105,13 @@ const Otp: React.FC = () => {
     }, [inputVisible]);
 
     return (
-        <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-12">
+        <div className="relative flex min-h-screen flex-col justify-center overflow-hidden py-12" style={{ backgroundColor: '#1F2136' }}>
             <Toaster position="top-center" reverseOrder={false} />
-            <div className="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl">
+            <div className="relative bg-gray-200 px-6 pt-10 pb-9 mx-auto w-full max-w-lg rounded-2xl"
+                style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)', backgroundColor: '#1F2136' }}>
                 <div className="mx-auto flex w-full max-w-md flex-col space-y-16">
                     <div className="flex flex-col items-center justify-center text-center space-y-2">
-                        <div className="font-semibold text-3xl">
+                        <div className="font-semibold text-white text-3xl">
                             <p>Email Verification</p>
                         </div>
                         <div className="flex flex-row text-sm font-medium text-gray-400">
@@ -143,7 +145,7 @@ const Otp: React.FC = () => {
                                 <div className="flex flex-col space-y-5">
                                     <div>
                                         <button
-                                            className="flex flex-row items-center justify-center text-center w-full border rounded-xl outline-none py-5 bg-blue-700 border-none text-white text-sm shadow-sm"
+                                            className="flex flex-row bg-gray-900 items-center justify-center text-center w-full border rounded-xl outline-none py-5  border-none text-white text-sm shadow-sm"
                                             type="submit"
                                         >
                                             Verify Account
@@ -153,9 +155,10 @@ const Otp: React.FC = () => {
                                     <div className="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
                                         {timer === 0 ? (
                                             <p>
-                                                Didn't receive code?{' '}
+                                                Didn't receive code?{'     '}
                                                 <button
-                                                    className="text-blue-600 underline"
+                                                    type='button'
+                                                    className=" underline text-black"
                                                     onClick={handleResend}
                                                 >
                                                     Resend

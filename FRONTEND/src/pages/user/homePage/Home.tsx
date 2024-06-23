@@ -1,4 +1,4 @@
-import React from 'react';
+import { useLogout } from '../../../API/services/user/userAuthService';
 import { useAppSelector } from '../../../costumeHooks/costum';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,12 +6,16 @@ const Home = () => {
   const userDetails = useAppSelector((state) => state.user.userDetails);
   const { email } = userDetails;
   const navigate = useNavigate();
-
+  const handleLogout = useLogout(); 
+  const logoutBtn = async ()=>{
+    handleLogout();
+    navigate("/login");
+  }
   return (
     <div>
-      <h1>{email}</h1>
-      <h1 onClick={() => navigate("/login")}>login</h1>
-      <h1 onClick={() => navigate("/signup")}>signup</h1>
+   
+      <h1>HOME PAGE OF USER {email}</h1>
+      <button onClick={logoutBtn} className='bg-red-900'> Logout</button>
     </div>
   );
 };

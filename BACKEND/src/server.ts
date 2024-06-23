@@ -3,6 +3,7 @@ import { configureExpress } from './config/express';
 import userRouter from './webServer/routes/userRoutes';
 import session from 'express-session';
 import morgan from "morgan"
+import vendorRouter from './webServer/routes/vendorRoutes';
 
 
 const app:Application = express()  
@@ -19,9 +20,11 @@ app.use(morgan("dev"))
 
 
 configureExpress(app);
-app.use(userRouter)
-  
 
+app.use(userRouter)
+app.use(vendorRouter) 
+  
+  
 app.listen(port,() => {
     console.log(`Backend app listening at http://localhost:${port}`)
 })  

@@ -1,6 +1,6 @@
 import { Request } from "express";
-import { IUser, Login } from "../../entities/user/user";
-import { Encrypt } from "../../helpers/passwordHashing";
+import { IUser, Login, googleRegistration } from "../../../entities/user/user";
+import { Encrypt } from "../../../helpers/passwordHashing";
 import {
   createUser,
   validOtp,
@@ -10,10 +10,10 @@ import {
   forgotValidOtp,
   updatePassword,
   RegisterWithGoogle
-} from "../../repositories/repositories";
-import { otpVeri } from "../../entities/user/user";
-import { sendOTP } from "../../helpers/nodmailer";
-import { ResendData } from "../../entities/user/user";
+} from "../../../repositories/user/repositories";
+import { otpVeri } from "../../../entities/user/user";
+import { sendOTP } from "../../../helpers/nodmailer";
+import { ResendData } from "../../../entities/user/user";
 
 export default {
   registerUser: async (userData: IUser) => {
@@ -46,8 +46,9 @@ export default {
     try {
 
       const response = await forgotValidOtp(data);
-
-      return response;
+      console.log(response);
+      
+      return response;  
     } catch (error) {
       console.log(error);
     }
@@ -57,7 +58,7 @@ export default {
     try {
       const email: string = data.email;
       const response: string = sendOTP(email);
-
+      
       const update = await updateOtp(email, response);
       return update;
     } catch (error) {
@@ -91,7 +92,6 @@ export default {
     try {
       const hashedPassword = await Encrypt.cryptPassword(data.password);
       console.log(data);  
-      console.log(hashedPassword,"💕💕💕");
       
       const response = await updatePassword(data.email, hashedPassword);
       return response
@@ -100,7 +100,7 @@ export default {
       
     }
   },
-  googleRegistration:async(data)=>{
+  googleRegistration:async(data: any)=>{
     try {
       const hashedPassword = await Encrypt.cryptPassword(data.uid);
       const response = await RegisterWithGoogle(data,hashedPassword)
@@ -110,7 +110,7 @@ export default {
       
     }
   },
-  googleLogin:async(data)=>{
+  googleLogin:async(data:any)=>{
     try {
       const email = data.email;
       const password = data.uid;

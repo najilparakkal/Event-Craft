@@ -207,7 +207,7 @@ const RegisterWithGoogle = (userData, hashedPassword) => __awaiter(void 0, void 
                 password: hashedPassword,
             });
             const userDatas = {
-                id: newUser._id,
+                id: newUser._id + "",
                 email: newUser.email,
                 phoneNum: newUser.phoneNum,
                 name: newUser.userName

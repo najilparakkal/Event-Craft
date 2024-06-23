@@ -25,17 +25,14 @@ const userSchema = new Schema<IUser>({
   },
   phoneNum: {
     type: String,
-    default:"1234567890"
+    default: "1234567890",
   },
   verified: {
     type: Boolean,
     default: false,
   },
   otp: {
-    value: {
-      type: String,
-    }
-    
+    type: String,
   },
 });
 

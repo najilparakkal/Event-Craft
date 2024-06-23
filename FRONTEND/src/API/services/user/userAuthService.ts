@@ -1,5 +1,6 @@
-import { retry } from "@reduxjs/toolkit/query";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
+import { useDispatch } from 'react-redux';
+import { logout } from "./authSlice";
 
 interface userData {
   name?: string;
@@ -47,39 +48,41 @@ export const userRegister = async (
       throw new Error("An unexpected error occurred");
     }
   } catch (error: any) {
-    console.error("userRegister error:", error.response?.data || error.message); // Improved logging
+    console.error("userRegister error:", error.response?.data || error.message);
     throw error; 
   }
 };
 
+
 export const verifyOtp = async (otp: string): Promise<boolean> => {
-  const user = localStorage.getItem("userDetails");
-  const userDetails = JSON.parse(user);
-  
+  const user: string | null = localStorage.getItem("userDetails");
+  if (user !== null) {
+    const userDetails = JSON.parse(user);
 
-  
-  if (!userDetails) {
-    console.error("User email not found in localStorage");
-    return false;
-  }
+    if (!userDetails) {
+      console.error("User email not found in localStorage");
+      return false;
+    }
 
-  try {
-    const response = await authAxiosInstance.post("/user/otp", {
-      otp,
-      userDetails,
-    });
-    return response.status === 200;
-  } catch (error) {
-    console.error("Error verifying OTP:", error);
-    return false;
+    try {
+      const response = await authAxiosInstance.post("/user/otp", {
+        otp,
+        userDetails,
+      });
+      return response.status === 200;
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      return false;
+    }
   }
+  return false; 
 };
 
-export const resendOtp = async (userEmail: any): Promise<boolean> => {
+
+export const resendOtp = async (userEmail: any) => {
   try {
-    const email = userEmail?userEmail:localStorage.getItem("email")
-    
-    const response = await authAxiosInstance.post("/user/resendOtp", { email });
+    const email = userEmail
+    await authAxiosInstance.post("/user/resendOtp", { email });
   } catch (error) {
     console.error("Error resending OTP:", error);
     return false;
@@ -96,6 +99,7 @@ export const login = async (
       userData
     );
     if (response.status === 200) {
+      
       return response.data.response;
     } else {
       throw new Error("User Not Found");
@@ -132,7 +136,7 @@ export const validEmail = async (email: string) => {
 
 export const forgotOtp = async (otp:string) => {
   const user = localStorage.getItem("email");
-  const data = JSON.parse(user);
+  const data = user !== null ? JSON.parse(user) : null;
   const userEmail = data.email;
 
   if (!userEmail) {
@@ -194,3 +198,16 @@ export const changePassword = async(password:string)=>{
     return false;
   }
 }
+
+
+export const useLogout = () => {
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    localStorage.removeItem('userDetails');
+    localStorage.removeItem('jwt');
+    dispatch(logout());
+  };
+
+  return handleLogout;
+};

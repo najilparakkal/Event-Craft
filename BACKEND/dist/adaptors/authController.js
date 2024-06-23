@@ -94,8 +94,7 @@ exports.default = {
             const { email, password } = req.body;
             console.log(email, password);
             const response = yield authentication_1.default.login(req.body);
-            console.log(response);
-            if (response.token && response.userDetails) {
+            if (response && response.token && response.userDetails) {
                 res.status(200).json({ status: 200, message: "User is valid", response });
             }
             else {
@@ -111,7 +110,7 @@ exports.default = {
     checkEmail: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield authentication_1.default.checkEmail(req.body);
-            if (response.success) {
+            if (response === null || response === void 0 ? void 0 : response.success) {
                 res.status(200).json({ status: 200, message: "User Found" });
             }
             else {
@@ -160,9 +159,8 @@ exports.default = {
     }),
     googleLogin: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            console.log(req.body, "✅");
             const response = yield authentication_1.default.googleLogin(req.body);
-            if (response.token && response.userDetails) {
+            if (response && response.token && response.userDetails) {
                 res.status(200).json({ status: 200, message: "User is valid", response });
             }
             else {

@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const mongoUrl: string = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/EVENTPLANNER";
+const mongoUrl: string = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/EVENTCRAFT";
 
 export async function connectDb() {
   console.log("Connecting to MongoDB at", mongoUrl); 
@@ -15,3 +15,4 @@ export async function connectDb() {
     process.exit(1);
   }
 }
+  

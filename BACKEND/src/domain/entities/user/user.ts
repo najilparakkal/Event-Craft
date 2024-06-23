@@ -7,6 +7,7 @@ export interface IUser {
 }
 
 export interface otpVeri {
+  [x: string]: any;
   otp?: string;
   email?: string;
 }
@@ -32,4 +33,25 @@ export interface googleRegistration{
   email?: string;
   uid?:string;
   name?:string;
+}
+
+
+export interface loginService{
+  token?:string;
+  userDetails?:{
+    id?:string;
+    email?:string;
+    phoneNum?:string;
+    name?:string;
+  }
+}
+
+export interface CreateUserResponse {
+  success: boolean;
+  message?: string;
+}
+
+export interface OtpResponse {
+  success: boolean;
+  message?: string;
 }

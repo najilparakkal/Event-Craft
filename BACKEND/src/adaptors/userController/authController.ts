@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import userIterator from "../domain/usecases/auth/authentication";
+import userIterator from "../../domain/usecases/user/auth/authentication";
 
 export default {
   userRegistration: async (req: Request, res: Response, next: NextFunction) => {
@@ -42,6 +42,8 @@ export default {
 
   forgotOtpVerification: async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log(req.body);
+      
       const checkOtp = await userIterator.forgotOtpVerification(req.body);
 
       if (checkOtp.success === true) {
@@ -80,9 +82,8 @@ export default {
       console.log(email, password);
 
       const response = await userIterator.login(req.body);
-      console.log(response);
 
-      if (response.token && response.userDetails) {
+      if (response && response.token && response.userDetails) {
         res.status(200).json({ status: 200, message: "User is valid", response });
       } else {
         res.status(201).json({ status: 201, message: "User is not valid" });
@@ -96,9 +97,11 @@ export default {
 
   checkEmail: async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log("❌❌");
+      
       const response = await userIterator.checkEmail(req.body);
 
-      if (response.success) {
+      if (response?.success) {
         res.status(200).json({ status: 200, message: "User Found" });
       } else {
         res.status(201).json({ status: 201, message: "User not Found" });
@@ -130,7 +133,6 @@ export default {
   googleRegistration: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const response = await userIterator.googleRegistration(req.body);
-      console.log(response,"💕💕");
       
       if (response.success) {
         res.status(200).json({ status: 200, message: "User registered successfully", response });
@@ -145,9 +147,8 @@ export default {
   },
   googleLogin:async(req: Request, res: Response) => {
     try {
-      console.log(req.body,"✅");
       const response = await userIterator.googleLogin(req.body);
-      if (response.token && response.userDetails) {
+      if (response && response.token && response.userDetails) {
         res.status(200).json({ status: 200, message: "User is valid", response });
       } else {
         res.status(201).json({ status: 201, message: "User is not valid" });

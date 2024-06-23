@@ -16,7 +16,7 @@ exports.connectDb = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const mongoUrl = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/EVENTPLANNER";
+const mongoUrl = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/EVENTCRAFT";
 function connectDb() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("Connecting to MongoDB at", mongoUrl);

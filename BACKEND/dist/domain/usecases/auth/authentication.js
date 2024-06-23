@@ -82,7 +82,6 @@ exports.default = {
         try {
             const hashedPassword = yield passwordHashing_1.Encrypt.cryptPassword(data.password);
             console.log(data);
-            console.log(hashedPassword, "💕💕💕");
             const response = yield (0, repositories_1.updatePassword)(data.email, hashedPassword);
             return response;
         }
