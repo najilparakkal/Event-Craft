@@ -6,10 +6,9 @@ export interface IUser extends Document {
   password: string;
   phoneNum: string;
   verified: boolean;
-  otp: {
-    value: string;
-    generatedAt: Date;
-  };
+  otp: string;
+  registered: Date; 
+  blocked:boolean
 }
 
 const userSchema = new Schema<IUser>({
@@ -25,15 +24,23 @@ const userSchema = new Schema<IUser>({
   },
   phoneNum: {
     type: String,
-    default: "1234567890",
+    default: "not provided",
   },
   verified: {
     type: Boolean,
     default: false,
+  }, 
+  blocked: {
+    type: Boolean,
+    default: false,
   },
   otp: {
-    type: String,
+    type:String,
   },
+  registered: {
+    type: Date,
+    default: Date.now,
+  }
 });
 
 export const Users = model<IUser>("Users", userSchema);

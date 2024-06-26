@@ -1,5 +1,4 @@
 import {   Routes, Route } from "react-router-dom";
-import OuterPage from "../pages/outerPage/OuterPage";
 import Signup from "../pages/user/authentications/Signup";
 import Otp from "../pages/user/authentications/Otp";
 import Login from "../pages/user/authentications/Login";

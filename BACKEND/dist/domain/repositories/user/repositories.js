@@ -37,9 +37,7 @@ const createUser = (userData, hashedPassword) => __awaiter(void 0, void 0, void 
                 email: userData.email,
                 password: hashedPassword,
                 phoneNum: userData.phoneNum,
-                otp: {
-                    value: otp,
-                },
+                otp: otp,
             });
             const token = yield (0, jwtGenarate_1.CreateToken)({ id: newUser._id, email: newUser.email }, true);
             const userDatas = {
@@ -57,15 +55,13 @@ const createUser = (userData, hashedPassword) => __awaiter(void 0, void 0, void 
     }
 });
 exports.createUser = createUser;
-const validOtp = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+const validOtp = (data, email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(data);
-        const user = yield user_1.Users.findOne({ email: data.userDetails.email });
+        const user = yield user_1.Users.findOneAndUpdate({ email: email }, { $set: { verified: true } });
         if (!user) {
             return { success: false, message: "User not found" };
         }
-        if (((_a = user.otp) === null || _a === void 0 ? void 0 : _a.value) === data.otp) {
+        if (user.otp + "" === data.otp) {
             return { success: true, message: "OTP verified successfully" };
         }
         else {
@@ -120,7 +116,7 @@ const updateOtp = (email, otp) => __awaiter(void 0, void 0, void 0, function* ()
 exports.updateOtp = updateOtp;
 const logingUser = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield user_1.Users.findOne({ email });
+        const user = yield user_1.Users.findOne({ email: email, verified: true });
         if (!user) {
             console.log("User not found");
             return false;

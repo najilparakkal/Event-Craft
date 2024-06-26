@@ -5,13 +5,11 @@ export interface IVendors extends Document {
     name?: string;
     phoneNum?: string;
     verified?: boolean;
-    is_blocked?: boolean;
-    is_vendor?: boolean;
-    otp?: {
-      value: string;
-      generatedAt: Date;
-    };
-    
+    blocked?: boolean;
+    vendor?: boolean;
+    otp?: string;
+    registered: Date; 
+
   }
 
 

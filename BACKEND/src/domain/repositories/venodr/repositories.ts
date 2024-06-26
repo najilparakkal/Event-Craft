@@ -20,7 +20,7 @@ export const RegisterVendor = async (
     if (checkVendor.success) {
       const otp: string = sendOTP(data.email + "");
       const newVendor = await Vendors.create({
-        userName: data.name,
+        vendorName: data.name,
         email: data.email,
         password: hashedPassword,
         phoneNum: data.phoneNum,
@@ -47,9 +47,9 @@ export const RegisterVendor = async (
 
 export const checkOtp = async (data: otpVeri) => {
   try {
-    const findVendor = await Vendors.findOne({
+    const findVendor = await Vendors.findOneAndUpdate({
       email: data.vendorDetails.email,
-    });
+    },{$set:{verified:true}});
 
     if (findVendor?.otp === data.otp) {
       return { success: true, message: "vendor Found" };
@@ -91,8 +91,7 @@ export const updateOtp = async (
 
 export const logingVendor = async (email: string, password: string) => {
   try {
-    const vendor = await Vendors.findOne({ email });
-    console.log(vendor, "👍");
+    const vendor = await Vendors.findOne({ email:email,verified:true});
 
     if (!vendor) {
       console.log('vendor not found');

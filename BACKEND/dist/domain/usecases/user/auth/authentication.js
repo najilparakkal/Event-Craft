@@ -30,7 +30,8 @@ exports.default = {
     }),
     otpVerification: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const response = yield (0, repositories_1.validOtp)(data);
+            const email = data.userDetails.email ? data.userDetails.email : data.email;
+            const response = yield (0, repositories_1.validOtp)(data, email);
             return response;
         }
         catch (error) {

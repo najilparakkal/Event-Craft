@@ -24,6 +24,8 @@ export default {
 
   otpVerification: async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log(req.body);
+      
       const checkOtp = await userIterator.otpVerification(req.body);
 
       if (checkOtp.success === true) {
@@ -35,14 +37,13 @@ export default {
       }
     } catch (error: any) {
       console.error(error.message);
-      res.status(400).json({ error: error.message });
+      res.status(400).json({ error: error.message });   
       next(error);
     }
   },
 
   forgotOtpVerification: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log(req.body);
       
       const checkOtp = await userIterator.forgotOtpVerification(req.body);
 

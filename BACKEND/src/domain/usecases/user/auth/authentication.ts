@@ -34,8 +34,8 @@ export default {
 
   otpVerification: async (data: otpVeri) => {
     try {
-
-      const response = await validOtp(data);
+     const email =   data.userDetails.email ? data.userDetails.email:data.email
+      const response = await validOtp(data,email);
 
       return response;
     } catch (error) {

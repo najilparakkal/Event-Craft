@@ -14,23 +14,27 @@ const userSchema = new Schema<IVendors>({
   },
   phoneNum: {
     type: String,
-    default: "1234567890",
+    default: "not provided",
   },
   verified: {
     type: Boolean,
     default: false,
   },
-  is_blocked: {
+  blocked: {
     type: Boolean,
     default: false,
   },
-  is_vendor: {
+  vendor: {
     type: Boolean,
     default: false,
   },
   otp: {
     type: String,
   },
+  registered: {
+    type: Date,
+    default: Date.now,
+  }
 }); 
 
 export const Vendors = model<IVendors>("Vendors", userSchema);

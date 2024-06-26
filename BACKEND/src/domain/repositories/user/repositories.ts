@@ -39,10 +39,9 @@ export const createUser = async (
         email: userData.email,
         password: hashedPassword,
         phoneNum: userData.phoneNum,
-        otp: {
-          value: otp,
-        },
+        otp:otp,
       });
+      
       const token = await CreateToken(
         { id: newUser._id, email: newUser.email },
         true
@@ -63,17 +62,17 @@ export const createUser = async (
   }
 };
 
-export const validOtp = async (data: otpVeri): Promise<OtpResponse | any> => {
+export const validOtp = async (data: otpVeri,email:string): Promise<OtpResponse | any> => {
   try {
-    console.log(data);
 
-    const user = await Users.findOne({ email: data.userDetails.email });
-
+    const user = await Users.findOneAndUpdate({ email: email },{$set:{verified:true}});
+    
+    
     if (!user) {
       return { success: false, message: "User not found" };
     }
 
-    if (user.otp?.value === data.otp) {
+    if (user.otp+"" === data.otp) {
       return { success: true, message: "OTP verified successfully" };
     } else {
       return { success: false, message: "Invalid OTP" };
@@ -133,7 +132,7 @@ export const updateOtp = async (
 
 export const logingUser = async (email: string, password: string) => {
   try {
-    const user = await Users.findOne({ email });
+    const user = await Users.findOne({ email:email,verified:true });
 
     if (!user) {
       console.log("User not found");

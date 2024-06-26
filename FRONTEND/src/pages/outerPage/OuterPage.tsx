@@ -14,7 +14,7 @@ const OuterPage: React.FC = () => {
       <header className="bg-black shadow-lg">
         <div className="container mx-auto py-4 px-6 flex justify-between items-center">
           {/* Adjust the height of the logo to match the text height */}
-          <img src="src/assets/logo-no-background.png" className="h-8 sm:h-8" alt="Event Planner Logo" />
+          <img src="/logo-no-background.png" className="h-8 sm:h-8" alt="Event Planner Logo" />
           <nav className="hidden md:flex space-x-4">
             <a href="#" className="text-gray-600 hover:text-white">Vendors</a>
             <a href="#" className="text-gray-600 hover:text-white">Blogs</a>
@@ -41,7 +41,7 @@ const OuterPage: React.FC = () => {
 
       <main>
         <section className="relative">
-          <img src="src/assets/outerPage/pexels-emma-bauso-1183828-2253870.jpg" alt="Wedding" className="w-full h-[450px] sm:h-[550px] object-cover" />
+          <img src="/outerPage/pexels-leah-newhouse-50725-540522.jpg" alt="Wedding" className="w-full h-[450px] sm:h-[550px] object-cover" />
           <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-end items-center text-white pb-8 sm:pb-12 px-4">
             <h2 className="text-2xl sm:text-4xl font-bold mb-2 sm:mb-4 text-center">India's Largest <span className="text-red-500">Wedding Services</span> Marketplace</h2>
             <p className="text-base sm:text-lg mb-4 sm:mb-6">(For Delhi Services only)</p>
@@ -57,12 +57,12 @@ const OuterPage: React.FC = () => {
           <h3 className="text-2xl font-bold mb-8 text-center sm:text-left">Vendor categories</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              { title: 'Decorations', price: '30.00', img: 'src/assets/outerPage/pexels-arunodhai-568948.jpg' },
-              { title: 'Planners', price: '34.00', img: 'src/assets/outerPage/pexels-divinetechygirl-1181366.jpg' },
-              { title: 'Mehendi Artists', price: '13.00', img: 'src/assets/outerPage/pexels-rarayna-13102907.jpg' },
-              { title: 'Jewellery', price: '22.00', img: 'src/assets/outerPage/pexels-jamalyahyayev-4961963.jpg' },
-              { title: 'Catering Services', price: '25.00', img: 'src/assets/outerPage/pexels-jonathanborba-18853367.jpg' },
-              { title: 'Photographers', price: '11.00', img: 'src/assets/outerPage/pexels-photosbyrakesh-318651.jpg' },
+              { title: 'Decorations', price: '30.00', img: '/outerPage/pexels-arunodhai-568948.jpg' },
+              { title: 'Planners', price: '34.00', img: '/outerPage/pexels-divinetechygirl-1181366.jpg' },
+              { title: 'Mehendi Artists', price: '13.00', img: '/outerPage/pexels-rarayna-13102907.jpg' },
+              { title: 'Jewellery', price: '22.00', img: '/outerPage/pexels-jamalyahyayev-4961963.jpg' },
+              { title: 'Catering Services', price: '25.00', img: '/outerPage/pexels-jonathanborba-18853367.jpg' },
+              { title: 'Photographers', price: '11.00', img: '/outerPage/pexels-photosbyrakesh-318651.jpg' },
             ].map((category, index) => (
               <div key={index} className="bg-gray-300 p-1 rounded-lg shadow-md text-center">
                 <img src={category.img} alt={category.title} className="w-full h-48 object-cover rounded-lg mb-4" />

@@ -23,7 +23,7 @@ const Login: React.FC = () => {
 
       if (vendorLogin.fulfilled.match(resultAction)) {
         toast.success('Login successful');
-        navigate('/vendor/home');
+        navigate('/vendor/services');
       } else {
         if (resultAction.payload) {
           console.log(resultAction);

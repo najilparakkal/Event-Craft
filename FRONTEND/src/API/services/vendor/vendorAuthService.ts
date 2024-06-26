@@ -1,12 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
+import { authAxiosInstance } from "../AxiosInstance";
 
-const authAxiosInstance: AxiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true,
-});
+
 
 export const vendorRegister = async (
   endpoint: string,

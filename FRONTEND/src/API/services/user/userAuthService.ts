@@ -1,6 +1,7 @@
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import  axios, {  AxiosInstance, AxiosResponse } from "axios";
 import { useDispatch } from 'react-redux';
 import { logout } from "./authSlice";
+import { authAxiosInstance } from "../AxiosInstance";
 
 interface userData {
   name?: string;
@@ -25,13 +26,7 @@ interface authResponse {
   status: number;
 }
 
-const authAxiosInstance: AxiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true,
-});
+
 
 export const userRegister = async (
   endpoint: string,

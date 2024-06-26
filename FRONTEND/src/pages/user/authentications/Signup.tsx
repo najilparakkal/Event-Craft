@@ -60,7 +60,7 @@ const Signup: React.FC = () => {
                 <div className="flex flex-col md:flex-row rounded-lg shadow w-full "  style={{ backgroundColor: '#1F2136' }}>
                     <div className="md:w-1/2 flex flex-col justify-center p-8 text-white rounded-l-lg ">
                         <img
-                            src="src/assets/user/the-future-of-project-management-liquidplanner-1.jpg"
+                            src="/user/the-future-of-project-management-liquidplanner-1.jpg"
                             className="w-full h-full object-cover"
                         />
                     </div>

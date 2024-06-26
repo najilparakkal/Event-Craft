@@ -24,7 +24,7 @@ const RegisterVendor = (data, hashedPassword) => __awaiter(void 0, void 0, void 
         if (checkVendor.success) {
             const otp = (0, nodmailer_1.sendOTP)(data.email + "");
             const newVendor = yield vendor_1.Vendors.create({
-                userName: data.name,
+                vendorName: data.name,
                 email: data.email,
                 password: hashedPassword,
                 phoneNum: data.phoneNum,
@@ -50,9 +50,9 @@ const RegisterVendor = (data, hashedPassword) => __awaiter(void 0, void 0, void 
 exports.RegisterVendor = RegisterVendor;
 const checkOtp = (data) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const findVendor = yield vendor_1.Vendors.findOne({
+        const findVendor = yield vendor_1.Vendors.findOneAndUpdate({
             email: data.vendorDetails.email,
-        });
+        }, { $set: { verified: true } });
         if ((findVendor === null || findVendor === void 0 ? void 0 : findVendor.otp) === data.otp) {
             return { success: true, message: "vendor Found" };
         }
@@ -89,8 +89,7 @@ const updateOtp = (email, otp) => __awaiter(void 0, void 0, void 0, function* ()
 exports.updateOtp = updateOtp;
 const logingVendor = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const vendor = yield vendor_1.Vendors.findOne({ email });
-        console.log(vendor, "👍");
+        const vendor = yield vendor_1.Vendors.findOne({ email: email, verified: true });
         if (!vendor) {
             console.log('vendor not found');
             return { success: false, message: 'vendor not found' };

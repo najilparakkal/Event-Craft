@@ -73,7 +73,7 @@ const Otp: React.FC = () => {
                 toast.success('OTP verified successfully!', {
                     id: loadingToastId,
                 });
-                navigate('/vendor/home');
+                navigate('/vendor/services');
             } else {
                 toast.error('Invalid OTP. Please try again.', {
                     id: loadingToastId,

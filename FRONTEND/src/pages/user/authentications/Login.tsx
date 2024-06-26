@@ -61,7 +61,7 @@ const Login: React.FC = () => {
       <div className="relative min-h-screen sm:flex sm:flex-row justify-center bg-transparent rounded-3xl shadow-xl">
         <div className="flex-col flex self-center lg:px-1 mr-10 sm:max-w-4xl xl:max-w-md z-10">
           <div className="self-start hidden lg:flex flex-col text-gray-300 items-center">
-            <img src="src/assets/logo-no-background.png" className="w-60 h-auto mt-10" alt="Event Craft Logo" />
+            <img src="user/logo-no-background.png" className="w-60 h-auto mt-10" alt="Event Craft Logo" />
             <p className="pr-3 text-sm opacity-75 mt-10 text-white">
               Event Craft simplifies event planning with intuitive tools for scheduling, budgeting, and coordination. From weddings to corporate events, manage every detail seamlessly with our expert resources and customizable templates.
             </p>
