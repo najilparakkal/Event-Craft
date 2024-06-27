@@ -9,6 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const awsConfig_1 = require("../../../config/awsConfig");
+const categorie_1 = require("../../../framworks/database/models/categorie");
+const licence_1 = require("../../../framworks/database/models/licence");
 const user_1 = require("../../../framworks/database/models/user");
 const vendor_1 = require("../../../framworks/database/models/vendor");
 exports.default = {
@@ -97,5 +100,78 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
-    })
+    }),
+    categoryAdding: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const checkCategory = yield categorie_1.Categories.findOne({ name: data.name });
+            if (checkCategory) {
+                return { success: false, message: "Category not found" };
+            }
+            else {
+                const url = yield (0, awsConfig_1.uploadImage)(data.image.filepath);
+                console.log(url, "❌");
+                const newCategory = yield categorie_1.Categories.create({
+                    name: data.name,
+                    image: url,
+                });
+                return {
+                    success: false,
+                    message: "Category Created successfully",
+                    newCategory,
+                };
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    listCategory: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const categories = yield categorie_1.Categories.find();
+            return { success: true, data: categories };
+        }
+        catch (error) {
+            console.error("Error fetching categories:", error);
+            return { success: false, message: "Failed to fetch categories", error };
+        }
+    }),
+    updateCategory: (_id) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const update = yield categorie_1.Categories.findByIdAndDelete(_id);
+            if (update) {
+                return { success: true };
+            }
+            else {
+                return { success: false };
+            }
+        }
+        catch (error) {
+            console.error("Error in dashRepositories.updateCategory:", error);
+            throw error;
+        }
+    }),
+    addRequest: (datas, images) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const filePaths = images['licenseOrCertificates[]'].map(file => (0, awsConfig_1.uploadImage)(file.filepath));
+            const uploadResults = yield Promise.all(filePaths);
+            // console.log(uploadResults,"🏫");
+            const createDb = yield licence_1.Licence.create({
+                applicantName: datas.applicantName[0],
+                businessName: datas.businessName[0],
+                certificateExpirationDate: datas.certificateExpirationDate[0],
+                emailAddress: datas.emailAddress[0],
+                phoneNumber: datas.phoneNumber[0],
+                secondPhoneNumber: datas.phoneNumber2[0],
+                upiIdOrPhoneNumber: datas.upiIdOrPhoneNumber[0],
+                accountNumber: datas.accountNumber[0],
+                servicesYouChose: datas.servicesYouChose[0],
+                whatWillYouSell: datas.whatWillYouSell[0],
+                licence: uploadResults
+            });
+            console.log(createDb, "🍽️🍽️🍽️");
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
 };

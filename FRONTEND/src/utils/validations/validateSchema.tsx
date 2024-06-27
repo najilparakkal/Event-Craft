@@ -1,50 +1,92 @@
 import * as Yup from "yup"
 
 export const validation = Yup.object({
-    name:Yup.string()
-    .max(30,"name have over length")
-    .required("Required"),
-    email:Yup.string()
-    .email("invalid email address")
-    .required("Required"),
-    phoneNum:Yup.string()
-    .required("Required")
-    .matches(/^\d{10}$/, 'Invalid phone number, must be 10 digits'),
-    password:Yup.string()
-    .required('Required')
-    .min(8, 'Must be at least 8 characters')
-    .matches(/[A-Z]/, 'Must contain at least one uppercase letter')
-    .matches(/[a-z]/, 'Must contain at least one lowercase letter')
-    .matches(/[0-9]/, 'Must contain at least one number')
-    .matches(/[!@#$%^&*]/, 'Must contain at least one special character'),
+    name: Yup.string()
+        .max(30, "name have over length")
+        .required("Required"),
+    email: Yup.string()
+        .email("invalid email address")
+        .required("Required"),
+    phoneNum: Yup.string()
+        .required("Required")
+        .matches(/^\d{10}$/, 'Invalid phone number, must be 10 digits'),
+    password: Yup.string()
+        .required('Required')
+        .min(8, 'Must be at least 8 characters')
+        .matches(/[A-Z]/, 'Must contain at least one uppercase letter')
+        .matches(/[a-z]/, 'Must contain at least one lowercase letter')
+        .matches(/[0-9]/, 'Must contain at least one number')
+        .matches(/[!@#$%^&*]/, 'Must contain at least one special character'),
 })
 
 
 export const loginValidation = Yup.object({
-    email:Yup.string()
-   .email("invalid email address")
-   .required("Required"),
-    password:Yup.string()
-    .required('Required')
-    .min(8, 'Must be at least 8 characters')
-    .matches(/[A-Z]/, 'Must contain at least one uppercase letter')
-    .matches(/[a-z]/, 'Must contain at least one lowercase letter')
-    .matches(/[0-9]/, 'Must contain at least one number')
-    .matches(/[!@#$%^&*]/, 'Must contain at least one special character'),
+    email: Yup.string()
+        .email("invalid email address")
+        .required("Required"),
+    password: Yup.string()
+        .required('Required')
+        .min(8, 'Must be at least 8 characters')
+        .matches(/[A-Z]/, 'Must contain at least one uppercase letter')
+        .matches(/[a-z]/, 'Must contain at least one lowercase letter')
+        .matches(/[0-9]/, 'Must contain at least one number')
+        .matches(/[!@#$%^&*]/, 'Must contain at least one special character'),
 })
 
 export const emailForgot = Yup.object({
-    email:Yup.string()
-    .email("invalid email address")
-    .required("Required")
+    email: Yup.string()
+        .email("invalid email address")
+        .required("Required")
 })
 
 export const passwordForgot = Yup.object({
-    password:Yup.string()
-    .required('Required')
-    .min(8, 'Must be at least 8 characters')
-    .matches(/[A-Z]/, 'Must contain at least one uppercase letter')
-    .matches(/[a-z]/, 'Must contain at least one lowercase letter')
-    .matches(/[0-9]/, 'Must contain at least one number')
-    .matches(/[!@#$%^&*]/, 'Must contain at least one special character'),
+    password: Yup.string()
+        .required('Required')
+        .min(8, 'Must be at least 8 characters')
+        .matches(/[A-Z]/, 'Must contain at least one uppercase letter')
+        .matches(/[a-z]/, 'Must contain at least one lowercase letter')
+        .matches(/[0-9]/, 'Must contain at least one number')
+        .matches(/[!@#$%^&*]/, 'Must contain at least one special character'),
 })
+
+export const categoryValidation = Yup.object().shape({
+    category: Yup.string()
+        .matches(/^[A-Z\s]*$/, 'Category must be in uppercase letters')
+        .max(30, 'Category name is too long')
+        .required('Required')
+});;
+
+
+
+export const LisenseValidation = Yup.object().shape({
+    applicantName: Yup.string()
+        .matches(/^[A-Za-z0-9 ]*$/, 'check the number')
+        .matches(/^[A-Z]/, 'First letter must be uppercase')
+        .required('Applicant name is required'),
+    businessName: Yup.string()
+        .matches(/^[A-Za-z0-9 ]*$/, 'check the number')
+        .matches(/^[A-Z]/, 'First letter must be uppercase')
+        .required('Business name is required'),
+    certificateExpirationDate: Yup.date()
+        .required(' required'),
+    emailAddress: Yup.string()
+        .email('Invalid email address')
+        .required('Email address is required'),
+    phoneNumber: Yup.string()
+        .matches(/^\d{10}$/, 'Phone number must be exactly 10 digits')
+        .required('Phone number is required'),
+    phoneNumber2: Yup.string()
+        .matches(/^\d{10}$/, 'Phone number must be exactly 10 digits'),
+    upiIdOrPhoneNumber: Yup.string()
+        .required('UPI ID or Verified Phone number is required'),
+    accountNumber: Yup.string()
+        .matches(/^[A-Za-z0-9]{14}$/, 'Account number must be exactly 14 alphanumeric characters')
+        .required('Account Number is required'),
+    servicesYouChose: Yup.string()
+        .required('Services You Chose is required'),
+    whatWillYouSell: Yup.string()
+        .min(15, 'What will you sell? must be at least 15 characters')
+        .required('Services You Chose is required'),
+
+
+});

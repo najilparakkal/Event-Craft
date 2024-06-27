@@ -12,4 +12,8 @@ adminRouter.post("/api/admin/Users", dashBoardController_1.default.usersListing)
 adminRouter.post("/api/admin/Vendors", dashBoardController_1.default.vendorsListing);
 adminRouter.put("/api/admin/block", dashBoardController_1.default.blockorUnblock);
 adminRouter.patch("/api/admin/blockUser", dashBoardController_1.default.blockorUnblockUser);
+adminRouter.post("/api/admin/addCategory", dashBoardController_1.default.addCategory);
+adminRouter.get("/api/admin/getCategory", dashBoardController_1.default.getCategory);
+adminRouter.patch("/api/admin/removeCategory", dashBoardController_1.default.removeCategory);
+adminRouter.put("/api/admin/request", dashBoardController_1.default.request);
 exports.default = adminRouter;

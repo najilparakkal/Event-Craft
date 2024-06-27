@@ -19,3 +19,6 @@ export interface IAdmin extends Document {
   export interface vendorBlock{
     id:string;
   }
+   export interface RemoveCategoryData {
+    _id: string;
+}

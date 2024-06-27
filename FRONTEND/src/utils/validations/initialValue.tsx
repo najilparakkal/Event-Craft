@@ -20,4 +20,30 @@ export interface vendor {
   phoneNum?: string;
 }
 
-  
+export interface LicenseFormValues {
+  applicantName: string;
+  businessName: string;
+  certificateExpirationDate: string;
+  emailAddress: string;
+  phoneNumber: string;
+  phoneNumber2?: string;
+  upiIdOrPhoneNumber: string;
+  accountNumber: string;
+  servicesYouChose: string;
+  whatWillYouSell: string;
+  licenseOrCertificates: any[];
+}
+
+export const licenseInitialValues: LicenseFormValues = {
+  applicantName: '',
+  businessName: '',
+  certificateExpirationDate: '',
+  emailAddress: '',
+  phoneNumber: '',
+  phoneNumber2: '',
+  upiIdOrPhoneNumber: '',
+  accountNumber: '',
+  servicesYouChose: '',
+  whatWillYouSell: '',
+  licenseOrCertificates: []
+}

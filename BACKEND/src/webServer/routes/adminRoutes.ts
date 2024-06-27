@@ -8,6 +8,10 @@ adminRouter.post("/api/admin/Users",dashBoardController.usersListing)
 adminRouter.post("/api/admin/Vendors",dashBoardController.vendorsListing)
 adminRouter.put("/api/admin/block",dashBoardController.blockorUnblock)
 adminRouter.patch("/api/admin/blockUser",dashBoardController.blockorUnblockUser)
+adminRouter.post("/api/admin/addCategory",dashBoardController.addCategory)
+adminRouter.get("/api/admin/getCategory",dashBoardController.getCategory)
+adminRouter.patch("/api/admin/removeCategory",dashBoardController.removeCategory)
+adminRouter.put("/api/admin/request",dashBoardController.request)
 
 
-export default adminRouter
+export default adminRouter  

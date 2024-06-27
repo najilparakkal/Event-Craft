@@ -4,7 +4,7 @@ import { faSearch, faSignInAlt, faBell } from '@fortawesome/free-solid-svg-icons
 
 const Header = () => {
   return (
-    <div className="flex justify-between items-center p-4 bg-white shadow-md">
+    <div className="flex justify-between items-center p-4 bg-gray-200 shadow-md">
       <div className="text-2xl font-semibold">Dashboard</div>
       <div className="flex items-center">
         <div className="relative">
