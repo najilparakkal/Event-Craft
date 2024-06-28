@@ -9,10 +9,13 @@ export interface ILicence extends Document {
   secondPhoneNumber: string;
   upiIdOrPhoneNumber: string;
   accountNumber: string;
-  servicesYouChose: string;
-  whatWillYouSell: string;
+  services: string;
+  description: string;
   licence: [string];
   verified: boolean;
+  profilePicture: string;
+  requestedDate:Date
+  vendorId: string;
 }
 
 const licenceSchema = new Schema<ILicence>({
@@ -35,16 +38,19 @@ const licenceSchema = new Schema<ILicence>({
   upiIdOrPhoneNumber: {
     type: String
   },
-  servicesYouChose: {
+  services: {
     type: String
   },
   accountNumber: {
     type: String
   },
-  whatWillYouSell: {
+  description: {
     type: String
   },
   certificateExpirationDate: {
+    type: String
+  },
+  profilePicture:{
     type: String
   },
   licence: {
@@ -53,6 +59,13 @@ const licenceSchema = new Schema<ILicence>({
   verified: {
     type: Boolean,
     default: false
+  },
+  vendorId: {
+    type: String
+  },
+  requestedDate:{
+    type: Date,
+    default: Date.now()
   }
 });
 

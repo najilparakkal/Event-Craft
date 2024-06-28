@@ -1,23 +1,38 @@
 import React, { useState } from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup'; // Import Yup for validation
+import { Formik, Form, Field } from 'formik';
 import { LisenseValidation } from '../../../utils/validations/validateSchema';
 import { LicenseFormValues, licenseInitialValues } from '../../../utils/validations/initialValue';
-import { uploadRequest } from '../../../API/services/admin/Dashboard';
+import { uploadRequest } from '../../../API/services/vendor/services';
+import { useAppSelector } from '../../../costumeHooks/costum';
+import { toast,Toaster } from 'react-hot-toast';
 
 const License: React.FC = () => {
     const [error, setError] = useState("");
-    const [selected, setSelected] = useState(false);
+    const [selected] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
-
+    const [profileImage, setProfileImage] = useState<string | null>(null);
+    const vendorDetails = useAppSelector((state) => state.vendor.vendorDetails);
+    const { _id } = vendorDetails;
+    
     const handleSubmit = async (values: LicenseFormValues) => {
-        console.log(values);
-        const upload = await uploadRequest(values);
-        setIsSubmitted(true); // Set form as submitted
+        toast.promise(
+            uploadRequest(values, _id + ""),
+            {
+              loading: 'Uploading...',
+              success: 'Uploaded successfully!',
+              error: 'Upload failed. Please try again.',
+            }
+          ).then(() => {
+            setIsSubmitted(true);
+          }).catch((error) => {
+            console.error('Upload failed:', error);
+          });
     };
 
     return (
         <div className="min-h-screen flex flex-col items-center bg-gray-200" style={{ background: '#CFCAC9' }}>
+                        <Toaster position="top-center" reverseOrder={false} />
+
             <main className="flex flex-col items-center w-full">
                 {isSubmitted ? (
                     <div className="bg-white p-8 mt-4 rounded-lg shadow-md w-full max-w-5xl text-center">
@@ -25,11 +40,35 @@ const License: React.FC = () => {
                     </div>
                 ) : (
                     <Formik initialValues={licenseInitialValues} validationSchema={LisenseValidation} onSubmit={handleSubmit}>
-                        {({ handleChange, values, handleSubmit, isSubmitting, errors, touched, setFieldValue }) => (
-                            <Form className="bg-white p-8 mt-4 rounded-lg shadow-md w-full max-w-5xl space-y-4">
-                                <img src="/black.png" className="h-8 sm:h-8 mt-3 mb-4" alt="Event Planner Logo" />
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                    <div>
+                        {({ values, isSubmitting, errors, touched, setFieldValue }) => (
+                            <Form className="bg-white p-8 mt-1 rounded-lg shadow-md w-full max-w-5xl space-y-3">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <img src="/black.png" className="h-8 sm:h-8 mt-3 " alt="Event Planner Logo" />
+                                    <div className="flex items-end justify-end">
+                                        <label className="cursor-pointer">
+                                            <input
+                                                type="file"
+                                                name="profileImage"
+                                                onChange={(e) => {
+                                                    if (e.target && e.target.files) {
+                                                        const file = e.target.files[0];
+                                                        setFieldValue('profileImage', file);
+                                                        setProfileImage(URL.createObjectURL(file)); // Set the selected image
+                                                    }
+                                                }}
+                                                className="hidden"
+                                            />
+                                            {profileImage ? (
+                                                <img src={profileImage} className="h-24 w-24 rounded-full border border-gray-300" alt="Profile" />
+                                            ) : (
+                                                <div className="h-24 w-24 rounded-full border border-gray-300 flex items-center justify-center">
+                                                    <span>Add profile</span>
+                                                </div>
+                                            )}
+                                        </label>
+
+                                    </div>
+                                    <div >
                                         <label className="block mb-1">
                                             {errors.applicantName && touched.applicantName ? (
                                                 <span className="text-red-500">{errors.applicantName}</span>
@@ -209,7 +248,7 @@ const License: React.FC = () => {
                                                 }}
                                                 type="file"
                                                 name={`licenseOrCertificates[${index}]`}
-                                                // className={`w-full p-2 border rounded ${errors.licenseOrCertificates && errors.licenseOrCertificates[index] && touched.licenseOrCertificates && touched.licenseOrCertificates[index] ? 'border-red-500' : 'border-gray-300'}`}
+                                            // className={`w-full p-2 border rounded ${errors.licenseOrCertificates && errors.licenseOrCertificates[index] && touched.licenseOrCertificates && touched.licenseOrCertificates[index] ? 'border-red-500' : 'border-gray-300'}`}
                                             />
                                         </div>
                                     ))}

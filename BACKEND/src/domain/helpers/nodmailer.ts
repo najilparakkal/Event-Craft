@@ -40,8 +40,22 @@ export const sendOTP = (email: string) => {
 };
 
 
-// export const forgotSendOtp = (email: string, otp: string)=>{
-//   sendOTPByEmail(email, otp);
-//   console.log("OTP SENT", otp, email);
-//   return otp;
-// }
+
+export const vendorReject = (email: string , text:string) => {
+
+  const mailOptions: nodemailer.SendMailOptions = {
+    from: process.env.EMAIL_USER as string,
+    to: email,   
+    subject: "Vendor Request verification",
+    text: ` Reason for Rejecting : ${text}`,
+  };
+console.log(mailOptions,"💕");
+
+  transporter.sendMail(mailOptions, (error: Error | null, info: nodemailer.SentMessageInfo) => {
+    if (error) {
+      console.error("Error sending email:", error);
+    } else {
+      console.log("Email sent:", info.response);
+    }
+  });
+}

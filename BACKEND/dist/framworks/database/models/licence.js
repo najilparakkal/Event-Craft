@@ -21,16 +21,19 @@ const licenceSchema = new mongoose_1.Schema({
     upiIdOrPhoneNumber: {
         type: String
     },
-    servicesYouChose: {
+    services: {
         type: String
     },
     accountNumber: {
         type: String
     },
-    whatWillYouSell: {
+    description: {
         type: String
     },
     certificateExpirationDate: {
+        type: String
+    },
+    profilePicture: {
         type: String
     },
     licence: {
@@ -39,6 +42,13 @@ const licenceSchema = new mongoose_1.Schema({
     verified: {
         type: Boolean,
         default: false
+    },
+    vendorId: {
+        type: String
+    },
+    requestedDate: {
+        type: Date,
+        default: Date.now()
     }
 });
 exports.Licence = (0, mongoose_1.model)("Licence", licenceSchema);

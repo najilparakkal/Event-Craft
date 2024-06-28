@@ -16,11 +16,6 @@ exports.uploadImage = void 0;
 const user_random_name_generator_1 = require("user_random_name_generator");
 const client_s3_1 = require("@aws-sdk/client-s3");
 const fs_1 = __importDefault(require("fs"));
-// AWS.config.update({
-//     region: process.env.AWS_REGION,
-//     accessKeyId: process.env.AWS_ACCESS_KEY,
-//     secretAccessKey: process.env.AWS_SECRET_KEY
-// });
 const s3 = new client_s3_1.S3Client({
     region: process.env.AWS_REGION + "",
     credentials: {
@@ -43,8 +38,8 @@ function uploadImage(image) {
             return `https://${params.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`;
         }
         catch (error) {
-            console.error('Error uploading file:', error);
-            throw new Error('File upload failed');
+            console.error("Error uploading file:", error);
+            throw new Error("File upload failed");
         }
     });
 }

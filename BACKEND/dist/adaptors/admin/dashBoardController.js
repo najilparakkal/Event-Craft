@@ -99,8 +99,56 @@ exports.default = {
     request: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const { files, fields } = yield (0, formidable_1.multipartFormSubmission)(req);
-            //    const filePaths = files['licenseOrCertificates[]'].map(file => file.filepath);
             const response = yield dashboard_1.default.request(fields, files);
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                res.status(200).json({
+                    status: 200,
+                    message: "Request submitted successfully",
+                });
+            }
+            else {
+                res.status(400).json({
+                    status: 400,
+                    message: "Invalid request",
+                });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    listRequest: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield dashboard_1.default.listRequest();
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    reject: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield dashboard_1.default.rejectVendor(req.body);
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                res.status(200).json(response);
+            }
+            else {
+                res.status(400).json(response);
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    accept: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield dashboard_1.default.acceptVendor(req.body.dataa);
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                res.status(200).json(response);
+            }
+            else {
+                res.status(400).json(response);
+            }
         }
         catch (error) {
             console.log(error);

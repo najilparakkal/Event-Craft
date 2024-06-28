@@ -32,6 +32,7 @@ export interface LicenseFormValues {
   servicesYouChose: string;
   whatWillYouSell: string;
   licenseOrCertificates: any[];
+  profileImage:any
 }
 
 export const licenseInitialValues: LicenseFormValues = {
@@ -45,5 +46,6 @@ export const licenseInitialValues: LicenseFormValues = {
   accountNumber: '',
   servicesYouChose: '',
   whatWillYouSell: '',
-  licenseOrCertificates: []
+  licenseOrCertificates: [],
+  profileImage:""
 }

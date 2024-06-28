@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const nodmailer_1 = require("../../../helpers/nodmailer");
 const dashRepositories_1 = __importDefault(require("../../../repositories/admin/dashRepositories"));
 exports.default = {
     listUsers: (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -77,5 +78,39 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
-    })
+    }),
+    listRequest: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield dashRepositories_1.default.listRequest();
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    rejectVendor: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield dashRepositories_1.default.rejectVendor(data.id);
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                if (response === null || response === void 0 ? void 0 : response.email)
+                    (0, nodmailer_1.vendorReject)(response.email, data.reason);
+                return response;
+            }
+            else {
+                return response;
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    acceptVendor: (id) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield dashRepositories_1.default.acceptVendor(id);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
 };

@@ -100,15 +100,13 @@ export default {
     }
   },
 
-  categoryAdding: async (data) => {
+  categoryAdding: async (data:any) => {
     try {
       const checkCategory = await Categories.findOne({ name: data.name });
       if (checkCategory) {
         return { success: false, message: "Category not found" };
       } else {
         const url = await uploadImage(data.image.filepath);
-        console.log(url, "❌");
-
         const newCategory = await Categories.create({
           name: data.name,
           image: url,
@@ -146,28 +144,76 @@ export default {
       throw error;
     }
   },
-  addRequest: async (datas, images) => {
+  addRequest: async (datas: any, images: any) => {
     try {
-      const filePaths =  images['licenseOrCertificates[]'].map(file => uploadImage(file.filepath));
-      const uploadResults = await Promise.all(filePaths);
+      const filePaths = images["values[licenseOrCertificates][0]"].map(
+        (file: any) => uploadImage(file.filepath)
+      );
 
-      // console.log(uploadResults,"🏫");
-      
+      const uploadResults = await Promise.all(filePaths);
+      const profilePicture = await uploadImage(
+        images["values[profileImage]"][0].filepath
+      );
       const createDb = await Licence.create({
-        applicantName:datas.applicantName[0],
-        businessName:datas.businessName[0],
-        certificateExpirationDate:datas.certificateExpirationDate[0],
-        emailAddress:datas.emailAddress[0],
-        phoneNumber:datas.phoneNumber[0],
-        secondPhoneNumber:datas.phoneNumber2[0],
-        upiIdOrPhoneNumber:datas.upiIdOrPhoneNumber[0],
-        accountNumber:datas.accountNumber[0],
-        servicesYouChose:datas.servicesYouChose[0],
-        whatWillYouSell:datas.whatWillYouSell[0],
-        licence:uploadResults
-      })      
-      console.log(createDb ,"🍽️🍽️🍽️");
-      
+        applicantName: datas["values[applicantName]"][0],
+        businessName: datas["values[businessName]"][0],
+        certificateExpirationDate:
+          datas["values[certificateExpirationDate]"][0],
+        emailAddress: datas["values[emailAddress]"][0],
+        phoneNumber: datas["values[phoneNumber]"][0],
+        secondPhoneNumber: datas["values[phoneNumber2]"][0],
+        upiIdOrPhoneNumber: datas["values[upiIdOrPhoneNumber]"][0],
+        accountNumber: datas["values[accountNumber]"][0],
+        services: datas["values[servicesYouChose]"][0],
+        description: datas["values[whatWillYouSell]"][0],
+        licence: uploadResults,
+        vendorId: datas.id[0],
+        profilePicture: profilePicture,
+      });
+      if (createDb) {
+        return { success: true, message: "Request created successfully" };
+      } else {
+        return { success: false, message: "something went wrong" };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  listRequest: async () => {
+    try {
+      const getAll = await Licence.find({ verified: false });
+      console.log(getAll);
+
+      return getAll;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  rejectVendor: async (_id: string) => {
+    try {
+      const deleteRequest = await Licence.findByIdAndDelete({ _id });
+
+      if (deleteRequest) {
+        return { success: true, email: deleteRequest.emailAddress };
+      } else {
+        return { success: false };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  acceptVendor: async (_id: string) => {
+    try {
+      const acceptRequest = await Licence.findByIdAndUpdate(
+        { _id },
+        { $set: { verified: true } }
+      );
+      if (acceptRequest) {
+        return { success: true };
+      } else {
+        return { success: false };
+      }
     } catch (error) {
       console.log(error);
     }

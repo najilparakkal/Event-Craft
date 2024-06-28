@@ -31,13 +31,13 @@ export default {
   addCategory: async (req: Request, res: Response) => {
     try {
       const { files, fields } = await multipartFormSubmission(req);
-    
+
       const name = fields?.category?.[0];
       const image = files?.image?.[0];
 
       const response = await dashboard.addCategory({ name, image });
       if (response?.success) {
-        res.status(200).json({    
+        res.status(200).json({
           status: 200,
           message: "category added successfully",
           response,
@@ -81,17 +81,57 @@ export default {
         .json({ success: false, message: "Internal Server Error" });
     }
   },
-  request:async(req: Request, res: Response) => {
+  request: async (req: Request, res: Response) => {
+    try {
+      const { files, fields } = await multipartFormSubmission(req);      
+      const response = await dashboard.request(fields, files);
+      if (response?.success) {
+        res.status(200).json({
+          status: 200,
+          message: "Request submitted successfully",
+        });
+      } else {
+        res.status(400).json({
+          status: 400,
+          message: "Invalid request",
+        });
+      }
+    } catch (error) {
+      console.log(error); 
+    }
+  },
+  listRequest: async (req: Request, res: Response) => {
+    try {
+      const response = await dashboard.listRequest();
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  reject: async (req: Request, res: Response) => {
+    try {
+      const response = await dashboard.rejectVendor(req.body);
+      if (response?.success) {
+        res.status(200).json(response);
+      } else {
+        res.status(400).json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  accept:async( req: Request, res: Response) => {
     try {
         
-       const {files,fields} =  await multipartFormSubmission(req);
-    //    const filePaths = files['licenseOrCertificates[]'].map(file => file.filepath);
-
-        const response = await dashboard.request(fields,files);
-  
+        const response = await dashboard.acceptVendor(req.body.dataa)
+        if(response?.success) {
+            res.status(200).json(response);
+        }else{
+            res.status(400).json(response);
+        }
     } catch (error) {
-        console.log(error);   
+        console.log(error);
         
-    }  
+    }
   }
 };

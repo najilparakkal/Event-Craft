@@ -22,3 +22,7 @@ export interface IAdmin extends Document {
    export interface RemoveCategoryData {
     _id: string;
 }
+export interface rejectingVendor{
+  id:string;
+  reason:string;
+}

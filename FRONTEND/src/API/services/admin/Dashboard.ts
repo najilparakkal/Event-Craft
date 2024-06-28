@@ -76,17 +76,34 @@ export const removeCategory = async (_id: string) => {
 };
 
 
-export const uploadRequest = async(data:LicenseFormValues)=>{
-  try {
-    
-      const response = await authAxiosInstance.put("admin/request",data,{
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
 
+export const fetchRequest = async () => {
+  try {
+    const { data } = await authAxiosInstance.get("admin/request");
+    return data;
   } catch (error) {
     console.log(error);
-    
   }
-}
+};
+
+export const rejectVendor = async (id: string,reason:string) => {
+  try {
+    console.log(id,reason);
+    
+   const {data} =  await authAxiosInstance.post("admin/rejectVendor", { id,reason });
+   return data.success
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const acceptVendor = async (dataa: string) => {
+  try {
+    const { data } = await authAxiosInstance.post("admin/acceptVendor", {
+      dataa,
+    });
+
+    return data.success;
+  } catch (error) {
+    console.log(error);
+  }
+};

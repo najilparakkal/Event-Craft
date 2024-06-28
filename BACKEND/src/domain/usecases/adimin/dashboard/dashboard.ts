@@ -3,8 +3,10 @@ import {
   RemoveCategoryData,
   listUsers,
   listVendors,
+  rejectingVendor,
   vendorBlock,
 } from "../../../entities/admin/admin";
+import { vendorReject } from "../../../helpers/nodmailer";
 import dashRepositories from "../../../repositories/admin/dashRepositories";
 
 export default {
@@ -54,7 +56,7 @@ export default {
     }
   },
   removeCategory: async (data: RemoveCategoryData) => {
-    try {      
+    try {
       const response = await dashRepositories.updateCategory(data._id);
       return response;
     } catch (error) {
@@ -62,13 +64,41 @@ export default {
       throw error;
     }
   },
-  request:async(datas,images)=>{
-   try {
-    const response = await dashRepositories.addRequest(datas,images);
-    return response;
-   } catch (error) {
-    console.log(error);
-    
-   }
-  }
+  request: async (datas, images) => {
+    try {
+      const response = await dashRepositories.addRequest(datas, images);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  listRequest: async () => {
+    try {
+      const response = await dashRepositories.listRequest();
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  rejectVendor: async (data:rejectingVendor) => {
+    try {
+      const response = await dashRepositories.rejectVendor(data.id);
+      if (response?.success) {
+        if (response?.email) vendorReject(response.email, data.reason);
+        return response;
+      } else {
+        return response;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  acceptVendor: async (id: string) => {
+    try {
+      const response = await dashRepositories.acceptVendor(id);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
