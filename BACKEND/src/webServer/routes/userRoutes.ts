@@ -12,8 +12,10 @@ userRouter.post("/api/user/Fotp",authController.checkEmail)
 userRouter.post("/api/user/changePassword",authController.change)
 userRouter.post("/api/user/googleUser",authController.googleRegistration)
 userRouter.post("/api/user/googleLogin",authController.googleLogin)
+userRouter.post("/api/user/vendors",authController.listVendors) // after review need to change this to another controller
+userRouter.get("/api/user/services",authController.listServices) // after review need to change this to another controller
 
 
 
 
-export default userRouter        
+export default userRouter            

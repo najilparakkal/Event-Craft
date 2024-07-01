@@ -13,7 +13,6 @@ const OuterPage: React.FC = () => {
     <div className="min-h-screen bg-black">
       <header className="bg-black shadow-lg">
         <div className="container mx-auto py-4 px-6 flex justify-between items-center">
-          {/* Adjust the height of the logo to match the text height */}
           <img src="/logo-no-background.png" className="h-8 sm:h-8" alt="Event Planner Logo" />
           <nav className="hidden md:flex space-x-4">
             <a href="#" className="text-gray-600 hover:text-white">Vendors</a>
@@ -45,11 +44,11 @@ const OuterPage: React.FC = () => {
           <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-end items-center text-white pb-8 sm:pb-12 px-4">
             <h2 className="text-2xl sm:text-4xl font-bold mb-2 sm:mb-4 text-center">India's Largest <span className="text-red-500">Wedding Services</span> Marketplace</h2>
             <p className="text-base sm:text-lg mb-4 sm:mb-6">(For Delhi Services only)</p>
-            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mb-4 sm:mb-8">
+            {/* <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mb-4 sm:mb-8">
               <input type="text" placeholder="Search for vendors" className="px-4 py-2 rounded-md bg-gray-300 text-black placeholder-gray-700 w-full sm:w-auto"/>
               <input type="text" placeholder="Search for location" className="px-4 py-2 rounded-md bg-gray-300 text-black placeholder-gray-700 w-full sm:w-auto"/>
               <button className="bg-red-500 text-white px-6 py-2 rounded-md w-full sm:w-auto">Find Vendors</button>
-            </div>
+            </div> */}
           </div>
         </section>
 
@@ -77,4 +76,4 @@ const OuterPage: React.FC = () => {
   );
 };
 
-export default OuterPage;
+export default React.memo(OuterPage);

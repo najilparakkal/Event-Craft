@@ -16,4 +16,6 @@ userRouter.post("/api/user/Fotp", authController_1.default.checkEmail);
 userRouter.post("/api/user/changePassword", authController_1.default.change);
 userRouter.post("/api/user/googleUser", authController_1.default.googleRegistration);
 userRouter.post("/api/user/googleLogin", authController_1.default.googleLogin);
+userRouter.post("/api/user/vendors", authController_1.default.listVendors); // after review need to change this to another controller
+userRouter.get("/api/user/services", authController_1.default.listServices); // after review need to change this to another controller
 exports.default = userRouter;

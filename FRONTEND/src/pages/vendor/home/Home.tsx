@@ -1,19 +1,14 @@
 import React from 'react'
-import { useAppSelector } from '../../../costumeHooks/costum'
-// import { useNavigate } from 'react-router-dom'
+import Navbar from '../../../compounents/vendor/Navbar'
 
-const Home:React.FC = () => {
+const Home: React.FC = () => {
 
-    const vendorDetails = useAppSelector((state)=>state.vendor.vendorDetails)
-    const {email} = vendorDetails
-    // const navigate = useNavigate()
+
   return (
     <div>
-      
-      <h1>home </h1>
-      <h3>vendor :  {email}</h3>
+      <Navbar />
     </div>
   )
 }
 
-export default Home
+export default React.memo(Home)

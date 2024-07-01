@@ -5,7 +5,6 @@ import User from "../pages/admin/home/user/User";
 import Vendor from "../pages/admin/home/vendor/Vendor";
 import Categories from "../pages/admin/home/categories/Categories";
 import Payments from "../pages/admin/home/payments/Payments";
-import Reports from "../pages/admin/home/reports/Reports";
 import Requtes from "../pages/admin/home/Requstes/Requests";
 
 const UserRouter: React.FC = () => {

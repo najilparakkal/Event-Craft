@@ -106,6 +106,7 @@ export default {
       if (checkCategory) {
         return { success: false, message: "Category not found" };
       } else {
+        
         const url = await uploadImage(data.image.filepath);
         const newCategory = await Categories.create({
           name: data.name,
@@ -123,7 +124,7 @@ export default {
   },
   listCategory: async () => {
     try {
-      const categories = await Categories.find();
+      const categories = await Categories.find(); 
 
       return { success: true, data: categories };
     } catch (error) {
@@ -144,41 +145,7 @@ export default {
       throw error;
     }
   },
-  addRequest: async (datas: any, images: any) => {
-    try {
-      const filePaths = images["values[licenseOrCertificates][0]"].map(
-        (file: any) => uploadImage(file.filepath)
-      );
-
-      const uploadResults = await Promise.all(filePaths);
-      const profilePicture = await uploadImage(
-        images["values[profileImage]"][0].filepath
-      );
-      const createDb = await Licence.create({
-        applicantName: datas["values[applicantName]"][0],
-        businessName: datas["values[businessName]"][0],
-        certificateExpirationDate:
-          datas["values[certificateExpirationDate]"][0],
-        emailAddress: datas["values[emailAddress]"][0],
-        phoneNumber: datas["values[phoneNumber]"][0],
-        secondPhoneNumber: datas["values[phoneNumber2]"][0],
-        upiIdOrPhoneNumber: datas["values[upiIdOrPhoneNumber]"][0],
-        accountNumber: datas["values[accountNumber]"][0],
-        services: datas["values[servicesYouChose]"][0],
-        description: datas["values[whatWillYouSell]"][0],
-        licence: uploadResults,
-        vendorId: datas.id[0],
-        profilePicture: profilePicture,
-      });
-      if (createDb) {
-        return { success: true, message: "Request created successfully" };
-      } else {
-        return { success: false, message: "something went wrong" };
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  },
+  
 
   listRequest: async () => {
     try {

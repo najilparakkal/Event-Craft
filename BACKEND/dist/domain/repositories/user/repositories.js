@@ -12,12 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RegisterWithGoogle = exports.updatePassword = exports.validOtpF = exports.varifyEmail = exports.logingUser = exports.updateOtp = exports.forgotValidOtp = exports.validOtp = exports.createUser = void 0;
+exports.listServices = exports.listVendors = exports.RegisterWithGoogle = exports.updatePassword = exports.validOtpF = exports.varifyEmail = exports.logingUser = exports.updateOtp = exports.forgotValidOtp = exports.validOtp = exports.createUser = void 0;
 const user_1 = require("../../../framworks/database/models/user");
 const checkingUser_1 = require("../../helpers/checkingUser");
 const nodmailer_1 = require("../../helpers/nodmailer");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jwtGenarate_1 = require("../../helpers/jwtGenarate");
+const vendor_1 = require("../../../framworks/database/models/vendor");
+const categorie_1 = require("../../../framworks/database/models/categorie");
 const createUser = (userData, hashedPassword) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (!userData.email ||
@@ -96,7 +98,7 @@ const updateOtp = (email, otp) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const result = yield user_1.Users.findOneAndUpdate({ email: email }, {
             $set: {
-                "otp": otp,
+                otp: otp,
             },
         }, { new: true });
         if (result) {
@@ -227,3 +229,24 @@ const RegisterWithGoogle = (userData, hashedPassword) => __awaiter(void 0, void 
     }
 });
 exports.RegisterWithGoogle = RegisterWithGoogle;
+const listVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const vendors = yield vendor_1.Vendors.find({ vendor: true, services: { $regex: new RegExp(data, 'i') } });
+        return vendors;
+    }
+    catch (error) {
+        console.log(error);
+        return [];
+    }
+});
+exports.listVendors = listVendors;
+const listServices = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const services = yield categorie_1.Categories.find();
+        return services;
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.listServices = listServices;

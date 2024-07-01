@@ -87,6 +87,19 @@ export const LisenseValidation = Yup.object().shape({
     whatWillYouSell: Yup.string()
         .min(15, 'What will you sell? must be at least 15 characters')
         .required('Services You Chose is required'),
+    profileImage: Yup.mixed().test('fileSize', 'Profile image is required', (value) => {
+        if (Array.isArray(value)) {
+            return value.length > 0;
+        } else {
+            return Boolean(value);
+        }
+    }),
 
+});
 
+export const postValidation = Yup.object().shape({
+    title: Yup.string().required('Title is required'),
+    description: Yup.string().required('description is required'),
+    category: Yup.string().required('Category is required'),
+    image: Yup.mixed().required('Image is required'),
 });

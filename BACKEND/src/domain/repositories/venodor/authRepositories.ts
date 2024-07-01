@@ -1,16 +1,18 @@
+import { Categories } from "../../../framworks/database/models/categorie";
+import { Licence } from "../../../framworks/database/models/licence";
 import { Vendors } from "../../../framworks/database/models/vendor";
 import {
-  CreateVendorResponse,
+  ICreateVendorResponse,
   IVendors,
-  Login,
-  googleRegistration,
-  otpVeri,
-  vendorDetails,
+  ILogin,
+  IgoogleRegistration,
+  IotpVeri,
+  IvendorDetails,
 } from "../../entities/vendor/vendor";
 import { checkingVendor } from "../../helpers/chekingVendors";
 import { CreateToken } from "../../helpers/jwtGenarate";
 import { sendOTP } from "../../helpers/nodmailer";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 export const RegisterVendor = async (
   data: IVendors,
   hashedPassword: string
@@ -30,13 +32,18 @@ export const RegisterVendor = async (
         { id: newVendor._id, email: newVendor.email },
         true
       );
-      const vendorDetails: vendorDetails = {
+      const vendorDetails: IvendorDetails = {
         id: newVendor._id + "",
         name: newVendor.vendorName + "",
         email: newVendor.email + "",
         phoneNum: newVendor.phoneNum + "",
       };
-      return { success: true, token: token, vendorDetails };
+      return {
+        success: true,
+        token: token,
+        vendorDetails,
+        isVendor: newVendor.vendor,
+      };
     } else {
       return { success: false, message: checkVendor.message };
     }
@@ -45,11 +52,14 @@ export const RegisterVendor = async (
   }
 };
 
-export const checkOtp = async (data: otpVeri) => {
+export const checkOtp = async (data: IotpVeri) => {
   try {
-    const findVendor = await Vendors.findOneAndUpdate({
-      email: data.vendorDetails.email,
-    },{$set:{verified:true}});
+    const findVendor = await Vendors.findOneAndUpdate(
+      {
+        email: data.vendorDetails.email,
+      },
+      { $set: { verified: true } }
+    );
 
     if (findVendor?.otp === data.otp) {
       return { success: true, message: "vendor Found" };
@@ -91,25 +101,23 @@ export const updateOtp = async (
 
 export const logingVendor = async (email: string, password: string) => {
   try {
-    const vendor = await Vendors.findOne({ email:email,verified:true});
+    const vendor = await Vendors.findOne({ email: email, verified: true });
 
     if (!vendor) {
-      console.log('vendor not found');
-      return { success: false, message: 'vendor not found' };
+      console.log("vendor not found");
+      return { success: false, message: "vendor not found" };
     }
-
     if (!password) {
-      console.log('No password provided');
-      return { success: false, message: 'No password provided' };
+      console.log("No password provided");
+      return { success: false, message: "No password provided" };
     }
 
     if (!vendor.password) {
-      console.log('Vendor has no password set');
-      return { success: false, message: 'Vendor has no password set' };
+      console.log("Vendor has no password set");
+      return { success: false, message: "Vendor has no password set" };
     }
 
     const isMatch = await bcrypt.compare(password, vendor.password);
-    console.log('Password match result:', isMatch);
 
     if (isMatch) {
       const vendorDetails = {
@@ -117,17 +125,19 @@ export const logingVendor = async (email: string, password: string) => {
         phoneNum: vendor.phoneNum,
         vendorName: vendor.vendorName,
         id: vendor._id,
+        profilePicture: vendor.profilePicture,
       };
-
-      const token = await CreateToken({ id: vendor._id, email: vendor.email }, true);
-      return { success: true, token, vendorDetails };
+      const token = await CreateToken(
+        { id: vendor._id, email: vendor.email },
+        true
+      );
+      return { success: true, token, vendorDetails, isVendor: vendor.vendor };
     } else {
-      return { success: false, message: 'password not match' };
+      return { success: false, message: "password not match" };
     }
-
   } catch (error) {
-    console.error('Error logging in vendor:', error);
-    return { success: false, message: 'An error occurred during login' };
+    console.error("Error logging in vendor:", error);
+    return { success: false, message: "An error occurred during login" };
   }
 };
 
@@ -148,8 +158,8 @@ export const checkingEmail = async (email: string) => {
 
 export const checkingOtp = async (email: string, otp: string) => {
   try {
-    console.log(email,otp);
-    
+    console.log(email, otp);
+
     const findVendor = await Vendors.findOne({ email: email, otp: otp });
     if (findVendor) {
       return true;
@@ -179,12 +189,10 @@ export const updatePassword = async (password: string, email: string) => {
 };
 
 export const RegisterWithGoogle = async (
-  data: googleRegistration,
+  data: IgoogleRegistration,
   hashedPassword: string
-): Promise<CreateVendorResponse | any> => {
+): Promise<ICreateVendorResponse | any> => {
   try {
-    console.log(hashedPassword,data,"😒😒😒😒");
-    
     const alreadyRegistered = await Vendors.findOne({ email: data.email });
     if (alreadyRegistered) {
       return { success: false, message: "vendor already registered" };
@@ -192,9 +200,10 @@ export const RegisterWithGoogle = async (
       const newvendor = await Vendors.create({
         vendorName: data.name,
         email: data.email,
-        password: hashedPassword, 
+        password: hashedPassword,
+        verified: true,
       });
-      const vendorDetails: vendorDetails = {
+      const vendorDetails: IvendorDetails = {
         id: newvendor._id + "",
         email: newvendor.email + "",
         phoneNum: newvendor.phoneNum + "",
@@ -210,6 +219,7 @@ export const RegisterWithGoogle = async (
         message: "vendor registered successfully",
         token,
         vendorDetails,
+        isVendor: newvendor.vendor,
       };
     }
   } catch (error) {

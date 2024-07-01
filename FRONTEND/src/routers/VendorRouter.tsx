@@ -7,6 +7,8 @@ import Otp from "../pages/vendor/authentications/Otp";
 import ForgotPass from "../pages/vendor/authentications/ForgotPass";
 import Services from "../pages/vendor/services/Services";
 import License from "../pages/vendor/services/License";
+import Post from "../pages/vendor/home/Post";
+import Vendor from "../routeAuth/Vendor";
 
 const VendorRouter: React.FC = () => {
   return (
@@ -16,12 +18,15 @@ const VendorRouter: React.FC = () => {
 
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/home" element={<Home />} />
         <Route path="/otp" element={<Otp />} />
         <Route path="/forgot" element={<ForgotPass />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/license" element={<License />} />
-        
+
+        <Route path="" element={<Vendor />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/license" element={<License />} />
+            <Route path="/addPost/:id" element={<Post />} />
+        </Route>
       </Routes>
     </div>
   )

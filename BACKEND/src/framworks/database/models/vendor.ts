@@ -28,8 +28,15 @@ const userSchema = new Schema<IVendors>({
     type: Boolean,
     default: false,
   },
+  services:{
+    type:String
+  },
   otp: {
     type: String,
+  },
+  profilePicture:{
+    type: String,
+    default: "not provided"
   },
   registered: {
     type: Date,

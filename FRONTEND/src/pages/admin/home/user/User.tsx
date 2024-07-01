@@ -3,7 +3,7 @@ import Dashboard from './Dashboard'
 
 const Home:React.FC = () => {
   return (
-    <div>
+    <div className='bg-[#171E31]'>
       <Dashboard />
 
     </div>

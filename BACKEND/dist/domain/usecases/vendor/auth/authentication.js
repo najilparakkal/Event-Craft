@@ -11,22 +11,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodmailer_1 = require("../../../helpers/nodmailer");
 const passwordHashing_1 = require("../../../helpers/passwordHashing");
-const repositories_1 = require("../../../repositories/venodr/repositories");
+const authRepositories_1 = require("../../../repositories/vendor/authRepositories");
 exports.default = {
     signup: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const hashedPassword = yield passwordHashing_1.Encrypt.cryptPassword(data.password + "");
-        const register = yield (0, repositories_1.RegisterVendor)(data, hashedPassword);
+        const register = yield (0, authRepositories_1.RegisterVendor)(data, hashedPassword);
         return register;
     }),
     checkOtp: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield (0, repositories_1.checkOtp)(data);
+        const response = yield (0, authRepositories_1.checkOtp)(data);
         return response;
     }),
     resend: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const email = data.email;
             const response = (0, nodmailer_1.sendOTP)(email);
-            const update = yield (0, repositories_1.updateOtp)(email, response);
+            const update = yield (0, authRepositories_1.updateOtp)(email, response);
             return update;
         }
         catch (error) {
@@ -37,7 +37,7 @@ exports.default = {
         try {
             const email = data.email;
             const password = data.password;
-            const response = yield (0, repositories_1.logingVendor)(email, password);
+            const response = yield (0, authRepositories_1.logingVendor)(email, password);
             return response;
         }
         catch (error) {
@@ -46,7 +46,7 @@ exports.default = {
     }),
     checkEmail: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const response = yield (0, repositories_1.checkingEmail)(data.email);
+            const response = yield (0, authRepositories_1.checkingEmail)(data.email);
             return response;
         }
         catch (error) {
@@ -55,7 +55,7 @@ exports.default = {
     }),
     checkFotp: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const response = yield (0, repositories_1.checkingOtp)(data.email, data.otp);
+            const response = yield (0, authRepositories_1.checkingOtp)(data.email, data.otp);
             return response;
         }
         catch (error) {
@@ -65,7 +65,7 @@ exports.default = {
     updatePassword: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const hashedPassword = yield passwordHashing_1.Encrypt.cryptPassword(data.password);
-            const update = yield (0, repositories_1.updatePassword)(hashedPassword, data.email);
+            const update = yield (0, authRepositories_1.updatePassword)(hashedPassword, data.email);
             return update;
         }
         catch (error) {
@@ -75,7 +75,7 @@ exports.default = {
     googleRegistration: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const hashedPassword = yield passwordHashing_1.Encrypt.cryptPassword(data.uid);
-            const response = yield (0, repositories_1.RegisterWithGoogle)(data, hashedPassword);
+            const response = yield (0, authRepositories_1.RegisterWithGoogle)(data, hashedPassword);
             return response;
         }
         catch (error) {
@@ -84,16 +84,14 @@ exports.default = {
     }),
     googleLogin: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            // const email = data.email;
-            // const password = data.uid;
             const email = data.email;
             const password = data.uid;
-            const response = yield (0, repositories_1.logingVendor)(email, password);
+            const response = yield (0, authRepositories_1.logingVendor)(email, password);
             console.log(response);
             return response;
         }
         catch (error) {
             console.log(error);
         }
-    })
+    }),
 };

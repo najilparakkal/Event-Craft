@@ -1,8 +1,8 @@
 import React from 'react';
-import { FaTachometerAlt, FaFileInvoiceDollar, FaEnvelopeOpenText, FaStore, FaThList, FaUser, FaGem } from 'react-icons/fa';
+import { FaTachometerAlt, FaFileInvoiceDollar, FaEnvelopeOpenText, FaStore, FaThList, FaUser } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC = ( ) => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -16,12 +16,9 @@ const Sidebar: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen w-50 bg-blue-100 shadow-lg">
-          <div className="flex items-center px-4 py-4">
-                <img src="/black.png" alt="EVENT CRAFT Logo" className="w-13 h-5" />
-            </div>
-            <div className="mt-10">
-                <nav className="flex flex-col space-y-2">
+        <div className="min-h-screen w-16 bg-[#292F45] shadow-lg flex flex-col items-center py-4">
+            <div className="mt-10 space-y-4">
+                <nav className="flex flex-col items-center space-y-4">
                     {menuItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = location.pathname === item.path;
@@ -32,12 +29,11 @@ const Sidebar: React.FC = () => {
                                     e.preventDefault();
                                     navigate(item.path);
                                 }}
-                                className={`flex items-center px-6 py-3 rounded-lg font-medium ${
-                                    isActive ? 'bg-white shadow-md text-gray-800' : 'text-gray-800 hover:bg-gray-100'
+                                className={`flex flex-col items-center justify-center w-full py-3 rounded-lg ${
+                                    isActive ? 'bg-[#3A3F51] text-white' : 'text-gray-100 hover:bg-[#3A3F51]'
                                 }`}
                             >
-                                <Icon className={`w-5 h-5 mr-3 ${isActive ? 'text-red-600' : 'text-blue-400'}`} />
-                                {item.name}
+                                <Icon className={`w-6 h-6 ${isActive ? 'text-white' : 'text-gray-400'}`} />
                             </a>
                         );
                     })}

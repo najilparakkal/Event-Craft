@@ -12,6 +12,8 @@ import { sendOTP } from "../../helpers/nodmailer";
 import { otpVeri } from "../../entities/user/user";
 import bcrypt from "bcrypt";
 import { CreateToken } from "../../helpers/jwtGenarate";
+import { Vendors } from "../../../framworks/database/models/vendor";
+import { Categories } from "../../../framworks/database/models/categorie";
 
 export const createUser = async (
   userData: IUser,
@@ -39,9 +41,9 @@ export const createUser = async (
         email: userData.email,
         password: hashedPassword,
         phoneNum: userData.phoneNum,
-        otp:otp,
+        otp: otp,
       });
-      
+
       const token = await CreateToken(
         { id: newUser._id, email: newUser.email },
         true
@@ -62,17 +64,21 @@ export const createUser = async (
   }
 };
 
-export const validOtp = async (data: otpVeri,email:string): Promise<OtpResponse | any> => {
+export const validOtp = async (
+  data: otpVeri,
+  email: string
+): Promise<OtpResponse | any> => {
   try {
+    const user = await Users.findOneAndUpdate(
+      { email: email },
+      { $set: { verified: true } }
+    );
 
-    const user = await Users.findOneAndUpdate({ email: email },{$set:{verified:true}});
-    
-    
     if (!user) {
       return { success: false, message: "User not found" };
     }
 
-    if (user.otp+"" === data.otp) {
+    if (user.otp + "" === data.otp) {
       return { success: true, message: "OTP verified successfully" };
     } else {
       return { success: false, message: "Invalid OTP" };
@@ -88,10 +94,10 @@ export const forgotValidOtp = async (
 ): Promise<OtpResponse | any> => {
   try {
     const user = await Users.findOne({ email: data.email });
-    
+
     if (!user) return { success: false, message: "User not found" };
 
-    if (user.otp+"" === data.otp) {
+    if (user.otp + "" === data.otp) {
       return { success: true, message: "OTP verified successfully" };
     } else {
       return { success: false, message: "Invalid OTP" };
@@ -111,7 +117,7 @@ export const updateOtp = async (
       { email: email },
       {
         $set: {
-          "otp": otp,
+          otp: otp,
         },
       },
       { new: true }
@@ -132,7 +138,7 @@ export const updateOtp = async (
 
 export const logingUser = async (email: string, password: string) => {
   try {
-    const user = await Users.findOne({ email:email,verified:true });
+    const user = await Users.findOne({ email: email, verified: true });
 
     if (!user) {
       console.log("User not found");
@@ -195,7 +201,7 @@ export const validOtpF = async (data: otpVeri): Promise<OtpResponse | any> => {
       return { success: false, message: "User not found" };
     }
 
-    if (user.otp+"" === data.otp) {
+    if (user.otp + "" === data.otp) {
       return { success: true, message: "OTP verified successfully" };
     } else {
       return { success: false, message: "Invalid OTP" };
@@ -262,3 +268,20 @@ export const RegisterWithGoogle = async (
 };
 
 export { CreateUserResponse };
+export const listVendors = async (data:string) => {
+  try {
+    const vendors = await Vendors.find({ vendor: true, services: { $regex: new RegExp(data, 'i') } });    
+    return vendors;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+export const listServices = async () => {
+  try {
+    const services = await Categories.find();
+    return services;
+  } catch (error) {
+    console.log(error);
+  }
+};

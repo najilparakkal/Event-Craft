@@ -1,7 +1,7 @@
 import React from 'react'
 import Dashboard from './Dashboard'
 
-const Reports:React.FC = () => {
+const Reports: React.FC = () => {
   return (
     <div>
       <Dashboard />

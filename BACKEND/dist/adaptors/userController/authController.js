@@ -18,11 +18,19 @@ exports.default = {
         try {
             const user = yield authentication_1.default.registerUser(req.body);
             if (user.success === false) {
-                res.status(201).json({ status: 201, message: "User is already registered", user });
+                res
+                    .status(201)
+                    .json({ status: 201, message: "User is already registered", user });
             }
             else {
                 if (user) {
-                    res.status(200).json({ status: 200, message: "User registered successfully", user });
+                    res
+                        .status(200)
+                        .json({
+                        status: 200,
+                        message: "User registered successfully",
+                        user,
+                    });
                 }
                 else {
                     res.status(400).json({ message: "User registration failed" });
@@ -96,7 +104,9 @@ exports.default = {
             console.log(email, password);
             const response = yield authentication_1.default.login(req.body);
             if (response && response.token && response.userDetails) {
-                res.status(200).json({ status: 200, message: "User is valid", response });
+                res
+                    .status(200)
+                    .json({ status: 200, message: "User is valid", response });
             }
             else {
                 res.status(201).json({ status: 201, message: "User is not valid" });
@@ -110,7 +120,6 @@ exports.default = {
     }),
     checkEmail: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            console.log("❌❌");
             const response = yield authentication_1.default.checkEmail(req.body);
             if (response === null || response === void 0 ? void 0 : response.success) {
                 res.status(200).json({ status: 200, message: "User Found" });
@@ -146,10 +155,18 @@ exports.default = {
         try {
             const response = yield authentication_1.default.googleRegistration(req.body);
             if (response.success) {
-                res.status(200).json({ status: 200, message: "User registered successfully", response });
+                res
+                    .status(200)
+                    .json({
+                    status: 200,
+                    message: "User registered successfully",
+                    response,
+                });
             }
             else {
-                res.status(201).json({ status: 201, message: "User already Registered", response });
+                res
+                    .status(201)
+                    .json({ status: 201, message: "User already Registered", response });
             }
         }
         catch (error) {
@@ -162,11 +179,31 @@ exports.default = {
         try {
             const response = yield authentication_1.default.googleLogin(req.body);
             if (response && response.token && response.userDetails) {
-                res.status(200).json({ status: 200, message: "User is valid", response });
+                res
+                    .status(200)
+                    .json({ status: 200, message: "User is valid", response });
             }
             else {
                 res.status(201).json({ status: 201, message: "User is not valid" });
             }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    listVendors: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield authentication_1.default.listVendors(req.body.data);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    listServices: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield authentication_1.default.listServices();
+            res.status(200).json(response);
         }
         catch (error) {
             console.log(error);

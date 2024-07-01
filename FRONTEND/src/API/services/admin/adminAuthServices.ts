@@ -1,5 +1,4 @@
-import axios, { AxiosInstance } from "axios";
-import { authAxiosInstance } from "../AxiosInstance";
+import { authAxiosInstance } from "./axios/AxiosInstance";
 
 
 

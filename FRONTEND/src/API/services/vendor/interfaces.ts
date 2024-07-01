@@ -3,6 +3,7 @@ interface vendorDetails {
     name?: string | null;
     email?: string | null;
     phoneNum?: string | null;
+    profilePicture?: string | null; 
   }
 
 

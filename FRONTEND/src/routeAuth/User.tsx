@@ -4,10 +4,9 @@ import { useAppSelector } from "../costumeHooks/costum";
 
 
 const User :React.FC = () => {
-    const userDetails = useAppSelector((state) => state.user.userDetails);
-    
+    const userDetails = useAppSelector((state) => state.user.jwt);
     return (
-    userDetails.email ? <Outlet/>: <Navigate to={"/login"} />
+    userDetails  ? <Outlet/>: <Navigate to={"/login"} />
   )
 }
 

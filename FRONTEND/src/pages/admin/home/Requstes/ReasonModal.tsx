@@ -19,7 +19,7 @@ const ReasonModal: React.FC<ReasonModalProps> = ({ submit, setOpen, open }) => {
 
     const handleClose = () => {
         setOpen(false);
-        setError(false); // reset error state on close
+        setError(false);
     };
 
     const handleReport = () => {
@@ -29,7 +29,7 @@ const ReasonModal: React.FC<ReasonModalProps> = ({ submit, setOpen, open }) => {
         }
         submit(text);
         setOpen(false);
-        setError(false); // reset error state on successful submission
+        setError(false); 
     };
 
     return (
@@ -37,8 +37,8 @@ const ReasonModal: React.FC<ReasonModalProps> = ({ submit, setOpen, open }) => {
             <DialogTitle>Report</DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    If you found any illegal content from the video or live, you can report it here.
-                    We will review it and take necessary actions.
+                    If you found any illegal content from the Details of Vendor , you can report it here.
+                    it will send to Vendor.
                 </DialogContentText>
                 <TextField
                     autoFocus

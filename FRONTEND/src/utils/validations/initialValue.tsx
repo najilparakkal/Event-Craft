@@ -21,31 +21,31 @@ export interface vendor {
 }
 
 export interface LicenseFormValues {
-  applicantName: string;
+  applicantName: string | null;
   businessName: string;
   certificateExpirationDate: string;
-  emailAddress: string;
-  phoneNumber: string;
+  emailAddress: string | null;
+  phoneNumber: string | null;
   phoneNumber2?: string;
   upiIdOrPhoneNumber: string;
   accountNumber: string;
   servicesYouChose: string;
   whatWillYouSell: string;
   licenseOrCertificates: any[];
-  profileImage:any
+  profileImage: any;
 }
 
-export const licenseInitialValues: LicenseFormValues = {
-  applicantName: '',
-  businessName: '',
-  certificateExpirationDate: '',
-  emailAddress: '',
-  phoneNumber: '',
-  phoneNumber2: '',
-  upiIdOrPhoneNumber: '',
-  accountNumber: '',
-  servicesYouChose: '',
-  whatWillYouSell: '',
-  licenseOrCertificates: [],
-  profileImage:""
-}
+// export const licenseInitialValues: LicenseFormValues = {
+//   applicantName: '',
+//   businessName: '',
+//   certificateExpirationDate: '',
+//   emailAddress: '',
+//   phoneNumber: '',
+//   phoneNumber2: '',
+//   upiIdOrPhoneNumber: '',
+//   accountNumber: '',
+//   servicesYouChose: services.join(', '),
+//   whatWillYouSell: '',
+//   licenseOrCertificates: [],
+//   profileImage:""
+// }

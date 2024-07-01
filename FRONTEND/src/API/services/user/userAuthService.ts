@@ -1,7 +1,7 @@
-import  axios, {  AxiosInstance, AxiosResponse } from "axios";
+import   {   AxiosResponse } from "axios";
 import { useDispatch } from 'react-redux';
 import { logout } from "./authSlice";
-import { authAxiosInstance } from "../AxiosInstance";
+import { authAxiosInstance } from "../vendor/axios/AxiosInstance";
 
 interface userData {
   name?: string;

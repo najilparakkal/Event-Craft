@@ -1,5 +1,4 @@
-import { LicenseFormValues } from "../../../utils/validations/initialValue";
-import { authAxiosInstance } from "../AxiosInstance";
+import { authAxiosInstance } from "../vendor/axios/AxiosInstance";
 
 export const fetchUsers = async (list: string) => {
   try {
@@ -31,22 +30,22 @@ export const fetchVendors = async (list: string) => {
 
 export const blockorUnBlock = async (id: string) => {
   try {
-    const response = await authAxiosInstance.put("admin/block", { id });
+    await authAxiosInstance.put("admin/block", { id });
   } catch (error) {
     console.log(error);
   }
 };
 export const blockorUnBlockUsers = async (id: string) => {
   try {
-    const response = await authAxiosInstance.patch("admin/blockUser", { id });
+    await authAxiosInstance.patch("admin/blockUser", { id });
   } catch (error) {
     console.log(error);
   }
 };
 
-export const addCategory = async (datas) => {
+export const addCategory = async (datas:any) => {
   try {
-    const response = await authAxiosInstance.post("admin/addCategory", datas, {
+    await authAxiosInstance.post("admin/addCategory", datas, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -67,7 +66,7 @@ export const getCategory = async () => {
 
 export const removeCategory = async (_id: string) => {
   try {
-    const response = await authAxiosInstance.patch("admin/removeCategory", {
+     await authAxiosInstance.patch("admin/removeCategory", {
       data: { _id },
     });
   } catch (error) {

@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
     <div className="flex">
       <Sidebar />
       <div className="flex-1 bg-secondary">
-        <Header />
+        <Header name="Dashboard" />
         <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <DashboardCard title="Today's Money" value="$53,000" description="+55% since yesterday" icon={<FontAwesomeIcon icon={faDollarSign} />} bgColor="bg-primary" />
           <DashboardCard title="Today's Users" value="2,300" description="+3% since last week" icon={<FontAwesomeIcon icon={faUsers} />} bgColor="bg-accent" />

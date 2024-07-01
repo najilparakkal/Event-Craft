@@ -70,15 +70,6 @@ exports.default = {
             throw error;
         }
     }),
-    request: (datas, images) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const response = yield dashRepositories_1.default.addRequest(datas, images);
-            return response;
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }),
     listRequest: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield dashRepositories_1.default.listRequest();

@@ -1,11 +1,11 @@
 import {
   IVendors,
-  Login,
-  checkFOtp,
-  forgotPasswod,
-  otpVeri,
-  resendOtp,
-  varifyEmail,
+  ILogin,
+  IcheckFOtp,
+  IforgotPasswod,
+  IotpVeri,
+  IresendOtp,
+  IvarifyEmail,
 } from "../../../entities/vendor/vendor";
 import { checkingVendor } from "../../../helpers/chekingVendors";
 import { sendOTP } from "../../../helpers/nodmailer";
@@ -19,8 +19,7 @@ import {
   checkingOtp,
   updatePassword,
   RegisterWithGoogle,
-  
-} from "../../../repositories/venodr/repositories";
+} from "../../../repositories/vendor/authRepositories";
 
 export default {
   signup: async (data: IVendors) => {
@@ -30,13 +29,13 @@ export default {
     const register = await RegisterVendor(data, hashedPassword);
     return register;
   },
-  checkOtp: async (data: otpVeri) => {
+  checkOtp: async (data: IotpVeri) => {
     const response = await checkOtp(data);
 
     return response;
   },
 
-  resend: async (data: resendOtp) => {
+  resend: async (data: IresendOtp) => {
     try {
       const email: string = data.email;
       const response: string = sendOTP(email);
@@ -47,17 +46,17 @@ export default {
       console.log(error);
     }
   },
-  login: async (data: Login) => {
+  login: async (data: ILogin) => {
     try {
       const email = data.email;
       const password = data.password;
-      const response = await logingVendor(email,password);
-      return response
+      const response = await logingVendor(email, password);
+      return response;
     } catch (error) {
       console.log(error);
     }
   },
-  checkEmail: async (data: varifyEmail) => {
+  checkEmail: async (data: IvarifyEmail) => {
     try {
       const response = await checkingEmail(data.email);
       return response;
@@ -65,7 +64,7 @@ export default {
       console.log(error);
     }
   },
-  checkFotp: async (data: checkFOtp) => {
+  checkFotp: async (data: IcheckFOtp) => {
     try {
       const response = await checkingOtp(data.email, data.otp);
       return response;
@@ -73,7 +72,7 @@ export default {
       console.log(error);
     }
   },
-  updatePassword: async (data: forgotPasswod) => {
+  updatePassword: async (data: IforgotPasswod) => {
     try {
       const hashedPassword: string = await Encrypt.cryptPassword(data.password);
       const update = await updatePassword(hashedPassword, data.email);
@@ -82,30 +81,26 @@ export default {
       console.log(error);
     }
   },
-   googleRegistration:async(data: any)=>{
+  googleRegistration: async (data: any) => {
     try {
       const hashedPassword = await Encrypt.cryptPassword(data.uid);
-      const response = await RegisterWithGoogle(data,hashedPassword)
-      return response
+      const response = await RegisterWithGoogle(data, hashedPassword);
+      return response;
     } catch (error) {
       console.log(error);
-      
     }
   },
-  googleLogin:async(data:any)=>{
+  googleLogin: async (data: any) => {
     try {
-      // const email = data.email;
-      // const password = data.uid;
       const email = data.email;
       const password = data.uid;
-      
-      const response = await logingVendor(email,password);
+
+      const response = await logingVendor(email, password);
       console.log(response);
-      
-       return response
+
+      return response;
     } catch (error) {
       console.log(error);
-      
     }
-  }
+  },
 };

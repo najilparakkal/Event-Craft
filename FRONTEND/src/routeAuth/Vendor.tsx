@@ -4,10 +4,9 @@ import { useAppSelector } from "../costumeHooks/costum";
 
 
 const Vendor :React.FC = () => {
-    const vendorDetails = useAppSelector((state) => state.vendor.vendorDetails);
-    
+    const vendorDetails = useAppSelector((state) => state.vendor.jwt);
     return (
-        vendorDetails ? <Outlet/>: <Navigate to={"/login"} />
+        vendorDetails ? <Outlet/>: <Navigate to={"/vendor/login"} />
   )
 }
 

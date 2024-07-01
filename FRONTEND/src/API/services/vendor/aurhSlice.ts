@@ -31,14 +31,12 @@ export const signupVendor = createAsyncThunk(
   }
 );
 
-
 export const vendorLogin = createAsyncThunk(
-  'vendor/login',
+  "vendor/login",
   async (vendorData: any, { rejectWithValue }) => {
     try {
-      const response = await login('/vendor/login', vendorData);
-      console.log(response);
-      
+      const response = await login("/vendor/login", vendorData);
+
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -46,14 +44,11 @@ export const vendorLogin = createAsyncThunk(
   }
 );
 
-
 export const GoogleAuth = createAsyncThunk(
-  'vendor/googlesignup',
+  "vendor/googlesignup",
   async (vendorData: GoogleAuth, { rejectWithValue }) => {
     try {
-      console.log(vendorData,"🤺");
-      
-      const response = await vendorRegister('/vendor/googlesignup', vendorData);
+      const response = await vendorRegister("/vendor/googlesignup", vendorData);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -62,10 +57,10 @@ export const GoogleAuth = createAsyncThunk(
 );
 
 export const GoogleLogin = createAsyncThunk(
-  'vendeor/googleLogin',
+  "vendeor/googleLogin",
   async (vendeorData: any, { rejectWithValue }) => {
     try {
-      const response = await login('/vendor/googleLogin', vendeorData);
+      const response = await login("/vendor/googleLogin", vendeorData);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -73,9 +68,18 @@ export const GoogleLogin = createAsyncThunk(
   }
 );
 
-
+// export const fetchDatas = createAsyncThunk(
+//   "vendor/details",
+//   async (id: string) => {
+//     try {
+//        await fetchVendorDatas("/vendor/details", id);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+// );
 const vendorSlice = createSlice({
-  name: 'vendor',
+  name: "vendor",
   initialState,
   reducers: {
     logout(state) {
@@ -86,71 +90,109 @@ const vendorSlice = createSlice({
         phoneNum: null,
       };
       state.jwt = null;
-      state.status = 'idle';
+      state.status = "idle";
       state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(signupVendor.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(signupVendor.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status = "succeeded";
         state.vendorDetails = {
           _id: action.payload.response.vendorDetails.id,
-          name: action.payload.response.vendorDetails.name,
+          name: action.payload.response.vendorDetails.vendorName,
           email: action.payload.response.vendorDetails.email,
           phoneNum: action.payload.response.vendorDetails.phoneNum,
+          profilePicture: action.payload.response.vendorDetails?.profilePicture,
+
         };
         state.jwt = action.payload.response.token;
-        localStorage.setItem('vendorDetails', JSON.stringify(state.vendorDetails));
-        if (state.jwt) localStorage.setItem('jwt', state.jwt);
+        localStorage.setItem(
+          "vendorDetails",
+          JSON.stringify(state.vendorDetails)
+        );
+        if (state.jwt) localStorage.setItem("jwt", state.jwt);
       })
       .addCase(signupVendor.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status = "failed";
         state.error = action.payload as string;
       })
       .addCase(vendorLogin.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(vendorLogin.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status = "succeeded";
         state.vendorDetails = {
           _id: action.payload.vendorDetails?.id,
-          name: action.payload.vendorDetails?.name,
+          name: action.payload.vendorDetails?.vendorName,
           email: action.payload.vendorDetails?.email,
           phoneNum: action.payload.vendorDetails?.phoneNum,
+          profilePicture: action.payload.vendorDetails?.profilePicture,
         };
         state.jwt = action.payload.token ?? null;
-        localStorage.setItem('vendorDetails', JSON.stringify(state.vendorDetails));
+        localStorage.setItem(
+          "vendorDetails",
+          JSON.stringify(state.vendorDetails)
+        );
         if (state.jwt) {
-          localStorage.setItem('jwt', state.jwt);
+          localStorage.setItem("jwt", state.jwt);
         }
       })
       .addCase(vendorLogin.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status = "failed";
         state.error = action.payload as string;
-      }).addCase(GoogleAuth.pending, (state) => {
-        state.status = 'loading';
+      })
+      .addCase(GoogleAuth.pending, (state) => {
+        state.status = "loading";
         state.error = null;
       })
       .addCase(GoogleAuth.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status = "succeeded";
         state.vendorDetails = {
           _id: action.payload.response.vendorDetails.id,
-          name: action.payload.response.vendorDetails.name,
+          name: action.payload.response.vendorDetails.vendorName,
           email: action.payload.response.vendorDetails.email,
           phoneNum: action.payload.response.vendorDetails.phoneNum,
         };
         state.jwt = action.payload.response.token;
-        localStorage.setItem('vendorDetails', JSON.stringify(state.vendorDetails));
+        localStorage.setItem(
+          "vendorDetails",
+          JSON.stringify(state.vendorDetails)
+        );
         if (state.jwt) {
-          localStorage.setItem('jwt', state.jwt);
+          localStorage.setItem("jwt", state.jwt);
         }
       })
       .addCase(GoogleAuth.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status = "failed";
+        state.error = action.payload as string;
+      })
+      .addCase(GoogleLogin.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(GoogleLogin.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.vendorDetails = {
+          _id: action.payload.vendorDetails?.id,
+          name: action.payload.vendorDetails?.vendorName,
+          email: action.payload.vendorDetails?.email,
+          phoneNum: action.payload.vendorDetails?.phoneNum,
+          profilePicture: action.payload.vendorDetails?.profilePicture,
+        };
+        state.jwt = action.payload.token ?? null;
+        localStorage.setItem(
+          "vendorDetails",
+          JSON.stringify(state.vendorDetails)
+        );
+        if (state.jwt) {
+          localStorage.setItem("jwt", state.jwt);
+        }
+      })
+      .addCase(GoogleLogin.rejected, (state, action) => {
+        state.status = "failed";
         state.error = action.payload as string;
       });
   },

@@ -5,6 +5,7 @@ import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { emailForgot, passwordForgot } from '../../../utils/validations/validateSchema';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import React from 'react';
 
 const ForgotPass: React.FC = () => {
     const navigate = useNavigate();
@@ -145,11 +146,11 @@ const ForgotPass: React.FC = () => {
         localStorage.setItem('step', '1');
     }, []);
     return (
-        <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-12" style={{ backgroundColor: '#958A8A' }}>
+        <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-[#0593AB] py-12" >
             <Toaster position="top-center" reverseOrder={false} />
 
             {step === 1 ? (
-                <div className="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl"style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)', backgroundColor: '#958A8A' }}>
+                <div className="relative bg-[#FEDC54] px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl" style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)' }}>
                     <div className="mx-auto flex w-full max-w-md flex-col space-y-16">
                         <div className="flex flex-col items-center justify-center text-center space-y-2">
                             <div className="font-semibold text-3xl">
@@ -192,7 +193,7 @@ const ForgotPass: React.FC = () => {
                     </div>
                 </div>
             ) : step === 2 ? (
-                <div className="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl"style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)', backgroundColor: '#958A8A' }}>
+                <div className="relative bg-[#FEDC54] px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl" style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)' }}>
                     <div className="mx-auto flex w-full max-w-md flex-col space-y-16">
                         <div className="flex flex-col items-center justify-center text-center space-y-2">
                             <div className="font-semibold text-3xl">
@@ -255,7 +256,7 @@ const ForgotPass: React.FC = () => {
                     </div>
                 </div>
             ) : (
-                <div className="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl"style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)', backgroundColor: '#958A8A' }}>
+                <div className="relative bg-[#FEDC54] px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl" style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)' }}>
                     <div className="mx-auto flex w-full max-w-md flex-col space-y-16">
                         <div className="flex flex-col items-center justify-center text-center space-y-2">
                             <div className="font-semibold text-3xl">
@@ -300,4 +301,4 @@ const ForgotPass: React.FC = () => {
     );
 };
 
-export default ForgotPass;
+export default React.memo(ForgotPass)

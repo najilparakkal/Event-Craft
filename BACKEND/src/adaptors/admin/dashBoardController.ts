@@ -81,25 +81,7 @@ export default {
         .json({ success: false, message: "Internal Server Error" });
     }
   },
-  request: async (req: Request, res: Response) => {
-    try {
-      const { files, fields } = await multipartFormSubmission(req);      
-      const response = await dashboard.request(fields, files);
-      if (response?.success) {
-        res.status(200).json({
-          status: 200,
-          message: "Request submitted successfully",
-        });
-      } else {
-        res.status(400).json({
-          status: 400,
-          message: "Invalid request",
-        });
-      }
-    } catch (error) {
-      console.log(error); 
-    }
-  },
+
   listRequest: async (req: Request, res: Response) => {
     try {
       const response = await dashboard.listRequest();

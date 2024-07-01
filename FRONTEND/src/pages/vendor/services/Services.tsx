@@ -40,29 +40,29 @@ const Services: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-9">
                     {[
-                        { name: 'Photographer', icon: '📸' },
-                        { name: 'Decorator', icon: '🎉' },
-                        { name: 'mehandi', icon: '📷' },
-                        { name: 'outfits', icon: '👗' },
-                        { name: 'caters', icon: '🍽️' },
+                        { name: 'PHOTOGRAPHERS', icon: '📸' },
+                        { name: 'DECORATERS', icon: '🎉' },
+                        { name: 'MEHANDHI', icon: '🫴' },
+                        { name: 'DJ', icon: '🎶' },
+                        { name: 'CATERING ', icon: '🍽️' },
                         { name: 'vanue', icon: '🏫' },
-                        { name: 'jwellrs', icon: '📿' },
+                        { name: 'PLANNING', icon: '🧠' },
                         { name: 'other', icon: '🕵️‍♀️' }
                     ].map((service, index) => (
                         <div
-                            key={index}
-                            onClick={() => handleServiceClick(service.name)}
-                            className={`bg-pink-100 bg-opacity-50 p-8 flex flex-col items-center rounded shadow-lg w-full h-40 cursor-pointer ${selectedServices.includes(service.name) ? 'border-4 border-blue-500' : ''}`}
-                        >
+                        key={index}
+                        onClick={() => handleServiceClick(service.name)}
+                        className={` bg-opacity-40 backdrop-blur-sm p-8 flex flex-col items-center rounded shadow-lg w-full h-40 cursor-pointer ${selectedServices.includes(service.name) ? 'border-4 border-[#ECD75D]' : ''}`}
+                      >
                             <div className="text-4xl">{service.icon}</div>
-                            <p className="mt-4 text-center text-lg">{service.name}</p>
+                            <p className="mt-4 text-center  font-bold text-lg">{service.name}</p>
                         </div>
                     ))}
                 </div>
                 <div className="flex justify-center w-full">
                     <button
                         onClick={handleNextClick}
-                        className="py-3 w-1/4 bg-blue-500 hover:bg-gray-100 hover:text-black text-white font-bold rounded-full transition duration-200"
+                        className="py-3 w-1/4 bg-[#ECD75D] hover:bg-gray-100 hover:text-black text-white font-bold rounded-full transition duration-200"
                     >
                         NEXT
                     </button>
@@ -72,4 +72,4 @@ const Services: React.FC = () => {
     );
 };
 
-export default Services;
+export default React.memo(Services);

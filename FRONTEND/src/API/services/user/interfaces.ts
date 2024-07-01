@@ -7,6 +7,7 @@ interface UserDatas {
 }
 
 interface AuthResponse {
+  isVendor: any;
   userDatas?: any;
   userDetails?: any;
   token?: string | null;

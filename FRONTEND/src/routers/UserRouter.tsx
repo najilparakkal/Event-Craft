@@ -5,6 +5,7 @@ import Login from "../pages/user/authentications/Login";
 import ForgotPass from "../pages/user/authentications/ForgotPass";
 import User from "../routeAuth/User";
 import Home from "../pages/user/homePage/Home";
+import Vendors from "../pages/user/vendorsPage/Vendors";
 
 
 
@@ -18,6 +19,7 @@ const UserRouter: React.FC = () => {
             <Route path="/forgot" element={<ForgotPass />} />
             <Route path="" element={<User />}>
                 <Route path="/home" element={<Home />} />
+                <Route path="/vendors/:service" element={<Vendors />} />
             </Route>
         </Routes>
     )

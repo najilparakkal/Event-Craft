@@ -111,5 +111,23 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    listVendors: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield (0, repositories_1.listVendors)(data);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    listServices: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield (0, repositories_1.listServices)();
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

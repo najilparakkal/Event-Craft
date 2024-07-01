@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'react-hot-toast';
 import { Formik, Form, ErrorMessage } from 'formik';
@@ -7,6 +7,7 @@ import { GoogleLogin, vendorLogin } from '../../../API/services/vendor/aurhSlice
 import { useDispatch } from 'react-redux';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../../../firebase/firebase';
+import { useAppSelector } from '../../../costumeHooks/costum';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -16,12 +17,18 @@ const Login: React.FC = () => {
     email: '',
     password: '',
   };
-
+  const vendorDetails = useAppSelector((state) => state.vendor.jwt);
+  useEffect(() => {
+    if (vendorDetails) return navigate("/vendor/home")
+  }, [])
   const handleSubmit = async (values: { email: string; password: string }) => {
     try {
       const resultAction = await dispatch(vendorLogin(values) as any);
 
-      if (vendorLogin.fulfilled.match(resultAction)) {
+      if (vendorLogin.fulfilled.match(resultAction) && resultAction.payload.isVendor) {
+        toast.success('Login successful');
+        navigate('/vendor/home');
+      } else if (vendorLogin.fulfilled.match(resultAction)) {
         toast.success('Login successful');
         navigate('/vendor/services');
       } else {
@@ -53,9 +60,13 @@ const Login: React.FC = () => {
       console.log('Google vendor', vendor);
 
       await dispatch(GoogleLogin({ email: vendor.email, name: vendor.displayName, uid: vendor.uid }) as any).then((response: any) => {
-        if (response.meta.requestStatus === 'fulfilled') {
-          toast.success('vendor signed up with Google');
+        if (response.meta.requestStatus === 'fulfilled' && response.payload.isVendor) {
+
+          toast.success('vendor signed  with Google');
           navigate('/vendor/home');
+        } else if (response.meta.requestStatus === 'fulfilled') {
+          toast.success('vendor signed  with Google');
+          navigate('/vendor/services');
         } else {
           toast.error('vendor Not Found');
         }
@@ -67,13 +78,13 @@ const Login: React.FC = () => {
 
   }
   return (
-    <section className="flex items-center justify-center min-h-screen" style={{ background: '#958A8A' }}>
+    <section className="flex items-center justify-center min-h-screen bg-[#0593AB]" >
       <Toaster position="top-center" reverseOrder={false} />
 
       <div className="container mx-auto px-10">
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center lg:space-x-8">
           <div className="mt-8 lg:mt-0 lg:w-1/2">
-            <div className=" p-10 rounded-lg" style={{ background: "#6A6A6A" }}>
+            <div className=" p-10 rounded-lg bg-[#FEDC54]">
               <h2 className="text-xl font-bold mb-6 text-white">Login Account</h2>
 
               <Formik
@@ -171,4 +182,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default React.memo(Login);

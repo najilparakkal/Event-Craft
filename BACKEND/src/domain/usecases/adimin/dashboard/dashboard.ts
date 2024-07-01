@@ -64,14 +64,6 @@ export default {
       throw error;
     }
   },
-  request: async (datas, images) => {
-    try {
-      const response = await dashRepositories.addRequest(datas, images);
-      return response;
-    } catch (error) {
-      console.log(error);
-    }
-  },
   listRequest: async () => {
     try {
       const response = await dashRepositories.listRequest();

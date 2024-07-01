@@ -9,7 +9,9 @@ import {
   varifyEmail,
   forgotValidOtp,
   updatePassword,
-  RegisterWithGoogle
+  RegisterWithGoogle,
+  listVendors,
+  listServices
 } from "../../../repositories/user/repositories";
 import { otpVeri } from "../../../entities/user/user";
 import { sendOTP } from "../../../helpers/nodmailer";
@@ -116,6 +118,23 @@ export default {
       const password = data.uid;
       const response = await logingUser(email, password);
        return response
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  listVendors:async(data:string)=>{
+    try {
+      const response = await listVendors(data);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  listServices:async()=>{
+    try {
+      const response = await listServices();
+      return response;
     } catch (error) {
       console.log(error);
       

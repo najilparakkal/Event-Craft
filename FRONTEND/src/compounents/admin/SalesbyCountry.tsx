@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SalesByCountry = () => {
+const SalesByCountry :React.FC = () => {
   return (
     <div className="bg-white p-4 rounded shadow-custom">
       <h4 className="text-xl font-semibold">Sales by Country</h4>

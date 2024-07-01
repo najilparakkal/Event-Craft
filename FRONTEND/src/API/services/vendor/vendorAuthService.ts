@@ -1,5 +1,7 @@
-import axios, { AxiosInstance, AxiosResponse } from "axios";
-import { authAxiosInstance } from "../AxiosInstance";
+import  {  AxiosResponse } from "axios";
+import { authAxiosInstance } from "./axios/AxiosInstance";
+import { useDispatch } from "react-redux";
+import { logout } from "./aurhSlice";
 
 
 
@@ -67,9 +69,10 @@ export const login = async (
     const response: AxiosResponse<AuthResponse> = await authAxiosInstance.post(
       endpoint,
       vendorDetails
-    );
-
+    ); 
     if (response.status === 200) {
+      console.log(response.data.response,"🍽️🍽️🍽️");
+      
       return response.data.response;
     } else if (response.status === 201) {
       throw new Error(" vendor Not Found");
@@ -132,3 +135,14 @@ export const changePassword = async(password:string,email:string)=>{
     return false;
   }
 }
+
+export const vendorLogout = () => {
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    localStorage.removeItem('vendorDetails');
+    localStorage.removeItem('jwt');
+    dispatch(logout());
+  };
+  return handleLogout;
+};
