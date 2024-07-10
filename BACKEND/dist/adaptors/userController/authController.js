@@ -100,8 +100,6 @@ exports.default = {
     }),
     login: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const { email, password } = req.body;
-            console.log(email, password);
             const response = yield authentication_1.default.login(req.body);
             if (response && response.token && response.userDetails) {
                 res
@@ -186,24 +184,6 @@ exports.default = {
             else {
                 res.status(201).json({ status: 201, message: "User is not valid" });
             }
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }),
-    listVendors: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const response = yield authentication_1.default.listVendors(req.body.data);
-            res.status(200).json(response);
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }),
-    listServices: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const response = yield authentication_1.default.listServices();
-            res.status(200).json(response);
         }
         catch (error) {
             console.log(error);

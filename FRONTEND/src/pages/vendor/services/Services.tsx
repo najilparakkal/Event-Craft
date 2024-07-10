@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
+import { getCategories } from '../../../API/services/vendor/services';
 
 const Services: React.FC = () => {
     const navigate = useNavigate();
     const [selectedServices, setSelectedServices] = useState<string[]>([]);
+    const [services, setServices] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const handleServiceClick = (serviceName: string) => {
         setSelectedServices((prevSelected) =>
@@ -14,14 +17,25 @@ const Services: React.FC = () => {
         );
     };
 
+    useEffect(() => {
+        const fetchServices = async () => {
+            const datas = await getCategories();
+            setServices(datas.response);
+        };
+        fetchServices();
+    }, []);
     const handleNextClick = () => {
         const query = queryString.stringify({ services: selectedServices });
         navigate(`/vendor/license?${query}`);
     };
 
+    const filteredServices = services.filter((service: { name: string }) =>
+        service.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div className="min-h-screen bg-gray-200 flex flex-col items-center" style={{
-            background: 'url(/vendor/servicePage/pexels-ywanphoto-57980.jpg) no-repeat center center/cover',
+            background: 'url(/vendor/servicePage/pexels-photo-9334967.webp) no-repeat center center/cover',
         }}>
             <header className="w-full">
                 <div className="container mx-auto py-4 px-6 flex justify-between items-center">
@@ -34,28 +48,23 @@ const Services: React.FC = () => {
                     <input
                         type="text"
                         placeholder="Search services"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                         className="px-20 py-2 rounded-md bg-gray-300 text-black placeholder-gray-700 w-full sm:w-auto"
                         style={{ textAlign: 'center', paddingBottom: '0.5rem' }}
                     />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-9">
-                    {[
-                        { name: 'PHOTOGRAPHERS', icon: '📸' },
-                        { name: 'DECORATERS', icon: '🎉' },
-                        { name: 'MEHANDHI', icon: '🫴' },
-                        { name: 'DJ', icon: '🎶' },
-                        { name: 'CATERING ', icon: '🍽️' },
-                        { name: 'vanue', icon: '🏫' },
-                        { name: 'PLANNING', icon: '🧠' },
-                        { name: 'other', icon: '🕵️‍♀️' }
-                    ].map((service, index) => (
+                <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mb-9">
+                    {filteredServices.map((service: { id: number, name: string, image: string }) => (
                         <div
-                        key={index}
-                        onClick={() => handleServiceClick(service.name)}
-                        className={` bg-opacity-40 backdrop-blur-sm p-8 flex flex-col items-center rounded shadow-lg w-full h-40 cursor-pointer ${selectedServices.includes(service.name) ? 'border-4 border-[#ECD75D]' : ''}`}
-                      >
-                            <div className="text-4xl">{service.icon}</div>
-                            <p className="mt-4 text-center  font-bold text-lg">{service.name}</p>
+                            key={service.id}
+                            onClick={() => handleServiceClick(service.name)}
+                            className={`relative bg-gray-300 p-1 shadow-md text-center cursor-pointer w-40 h-40 ${selectedServices.includes(service.name) ? 'border-4 border-[#0092AB]' : ''}`}
+                        >
+                            <img src={service.image} alt={service.name} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+                                <h4 className="text-lg font-bold text-white">{service.name}</h4>
+                            </div>
                         </div>
                     ))}
                 </div>

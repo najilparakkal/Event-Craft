@@ -1,11 +1,11 @@
 import { uploadImage } from "../../../config/awsConfig";
-import { Categories } from "../../../framworks/database/models/categorie";
+import { Services } from "../../../framworks/database/models/services";
 import { Posts } from "../../../framworks/database/models/post";
 import { IPostDetails } from "../../entities/vendor/vendor";
 
 export const listCategory = async () => {
   try {
-    const category = await Categories.find();
+    const category = await Services.find();
     return category;
   } catch (error) {
     console.log(error);

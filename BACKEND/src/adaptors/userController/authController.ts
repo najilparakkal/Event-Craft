@@ -90,11 +90,7 @@ export default {
 
   login: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, password } = req.body;
-      console.log(email, password);
-
       const response = await userIterator.login(req.body);
-
       if (response && response.token && response.userDetails) {
         res
           .status(200)
@@ -181,24 +177,6 @@ export default {
       }
     } catch (error) {
       console.log(error);
-    }
-  },
-  listVendors: async (req: Request, res: Response) => {
-    try {
-      
-      const response = await userIterator.listVendors(req.body.data);
-      res.status(200).json(response);
-    } catch (error) {
-      console.log(error);
-    }
-  },
-  listServices:async(req:Request, res: Response) => {
-    try {
-      const response = await userIterator.listServices();
-      res.status(200).json(response);
-    } catch (error) {
-      console.log(error);
-      
     }
   }
 };

@@ -17,7 +17,7 @@ const Login: React.FC = () => {
     email: '',
     password: '',
   };
-  const vendorDetails = useAppSelector((state) => state.vendor.jwt);
+  const vendorDetails = useAppSelector((state) => state.vendor.vendorDetails._id);
   useEffect(() => {
     if (vendorDetails) return navigate("/vendor/home")
   }, [])

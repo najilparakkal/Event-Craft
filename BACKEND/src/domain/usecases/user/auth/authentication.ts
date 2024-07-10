@@ -10,9 +10,7 @@ import {
   forgotValidOtp,
   updatePassword,
   RegisterWithGoogle,
-  listVendors,
-  listServices
-} from "../../../repositories/user/repositories";
+} from "../../../repositories/user/authRepositories";
 import { otpVeri } from "../../../entities/user/user";
 import { sendOTP } from "../../../helpers/nodmailer";
 import { ResendData } from "../../../entities/user/user";
@@ -123,21 +121,5 @@ export default {
       
     }
   },
-  listVendors:async(data:string)=>{
-    try {
-      const response = await listVendors(data);
-      return response;
-    } catch (error) {
-      console.log(error);
-    }
-  },
-  listServices:async()=>{
-    try {
-      const response = await listServices();
-      return response;
-    } catch (error) {
-      console.log(error);
-      
-    }
-  }
+ 
 };

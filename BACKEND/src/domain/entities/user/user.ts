@@ -1,4 +1,7 @@
 export interface IUser {
+  _id?: any;
+  profilePicture?: any;
+  userName?: any;
   userId?: string;
   name?: string;
   email?: string;
@@ -26,6 +29,7 @@ export interface userDatas {
   email: string;
   phoneNum: string;
   name: string;
+  profilePicture?: string;
 }
 
 
@@ -54,4 +58,13 @@ export interface CreateUserResponse {
 export interface OtpResponse {
   success: boolean;
   message?: string;
+}
+export interface IMessageRequest {
+  userId?:string;
+  message?:string;
+  vendorId?:string;
+}
+export interface cancelReq{
+  userId?:string;
+  vendorId?:string;
 }

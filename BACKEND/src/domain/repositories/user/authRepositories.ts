@@ -1,4 +1,3 @@
-import { response } from "express";
 import { Users } from "../../../framworks/database/models/user";
 import {
   CreateUserResponse,
@@ -12,8 +11,6 @@ import { sendOTP } from "../../helpers/nodmailer";
 import { otpVeri } from "../../entities/user/user";
 import bcrypt from "bcrypt";
 import { CreateToken } from "../../helpers/jwtGenarate";
-import { Vendors } from "../../../framworks/database/models/vendor";
-import { Categories } from "../../../framworks/database/models/categorie";
 
 export const createUser = async (
   userData: IUser,
@@ -54,6 +51,7 @@ export const createUser = async (
         email: newUser.email,
         phoneNum: newUser.phoneNum,
         name: newUser.userName,
+        profilePicture: newUser.profilePicture
       };
 
       return { checkResponse, userDatas, token };
@@ -153,6 +151,7 @@ export const logingUser = async (email: string, password: string) => {
         phoneNum: user.phoneNum,
         userName: user.userName,
         id: user._id,
+        profilePicture: user.profilePicture
       };
 
       const token = await CreateToken(
@@ -248,6 +247,7 @@ export const RegisterWithGoogle = async (
         email: newUser.email,
         phoneNum: newUser.phoneNum,
         name: newUser.userName,
+        profilePicture: newUser.profilePicture,
       };
 
       const token = await CreateToken(
@@ -268,20 +268,3 @@ export const RegisterWithGoogle = async (
 };
 
 export { CreateUserResponse };
-export const listVendors = async (data:string) => {
-  try {
-    const vendors = await Vendors.find({ vendor: true, services: { $regex: new RegExp(data, 'i') } });    
-    return vendors;
-  } catch (error) {
-    console.log(error);
-    return [];
-  }
-};
-export const listServices = async () => {
-  try {
-    const services = await Categories.find();
-    return services;
-  } catch (error) {
-    console.log(error);
-  }
-};

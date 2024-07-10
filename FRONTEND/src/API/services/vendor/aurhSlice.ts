@@ -68,16 +68,6 @@ export const GoogleLogin = createAsyncThunk(
   }
 );
 
-// export const fetchDatas = createAsyncThunk(
-//   "vendor/details",
-//   async (id: string) => {
-//     try {
-//        await fetchVendorDatas("/vendor/details", id);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   }
-// );
 const vendorSlice = createSlice({
   name: "vendor",
   initialState,
@@ -88,6 +78,7 @@ const vendorSlice = createSlice({
         name: null,
         email: null,
         phoneNum: null,
+        profilePicture: null,
       };
       state.jwt = null;
       state.status = "idle";

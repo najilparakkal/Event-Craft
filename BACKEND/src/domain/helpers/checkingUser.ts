@@ -1,6 +1,6 @@
 import { Users } from "../../framworks/database/models/user";
 import { IUser } from "../entities/user/user";
-import { CreateUserResponse } from "../repositories/user/repositories";
+import { CreateUserResponse } from "../repositories/user/authRepositories";
 
 
 

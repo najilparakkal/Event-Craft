@@ -16,6 +16,11 @@ vendorRouter.post("/api/vendor/googleLogin",authController.googleLogin)
 vendorRouter.put("/api/vendor/addRequest",Controller.request)
 vendorRouter.get("/api/vendor/getCategories",Controller.getCategories)
 vendorRouter.post("/api/vendor/uploadPost/:id",Controller.uploadPost)
-   
+vendorRouter.get("/api/vendor/requsts/:vendorId",Controller.listRequests)   
+vendorRouter.post("/api/vendor/acceptRequest",Controller.acceptRequest)   
+vendorRouter.delete("/api/vendor/removeRequest",Controller.rejectRequest)   
+vendorRouter.get("/api/vendor/fetchUsers/:vendorId",Controller.fetchUsers)   
+vendorRouter.get("/api/vendor/getMessages/:chatId",Controller.messages)   
+vendorRouter.get("/api/vendor/chatId/:userId/:vendorId",Controller.chatId)   
 
 export default vendorRouter

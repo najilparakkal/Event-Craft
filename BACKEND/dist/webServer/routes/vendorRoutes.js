@@ -19,4 +19,10 @@ vendorRouter.post("/api/vendor/googleLogin", authController_1.default.googleLogi
 vendorRouter.put("/api/vendor/addRequest", Controller_1.default.request);
 vendorRouter.get("/api/vendor/getCategories", Controller_1.default.getCategories);
 vendorRouter.post("/api/vendor/uploadPost/:id", Controller_1.default.uploadPost);
+vendorRouter.get("/api/vendor/requsts/:vendorId", Controller_1.default.listRequests);
+vendorRouter.post("/api/vendor/acceptRequest", Controller_1.default.acceptRequest);
+vendorRouter.delete("/api/vendor/removeRequest", Controller_1.default.rejectRequest);
+vendorRouter.get("/api/vendor/fetchUsers/:vendorId", Controller_1.default.fetchUsers);
+vendorRouter.get("/api/vendor/getMessages/:chatId", Controller_1.default.messages);
+vendorRouter.get("/api/vendor/chatId/:userId/:vendorId", Controller_1.default.chatId);
 exports.default = vendorRouter;

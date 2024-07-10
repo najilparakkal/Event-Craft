@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const authController_1 = __importDefault(require("../../adaptors/userController/authController"));
+const Controller_1 = __importDefault(require("../../adaptors/userController/Controller"));
 const userRouter = express_1.default.Router();
 userRouter.post("/api/user/signup", authController_1.default.userRegistration);
 userRouter.post("/api/user/otp", authController_1.default.otpVerification);
@@ -16,6 +17,12 @@ userRouter.post("/api/user/Fotp", authController_1.default.checkEmail);
 userRouter.post("/api/user/changePassword", authController_1.default.change);
 userRouter.post("/api/user/googleUser", authController_1.default.googleRegistration);
 userRouter.post("/api/user/googleLogin", authController_1.default.googleLogin);
-userRouter.post("/api/user/vendors", authController_1.default.listVendors); // after review need to change this to another controller
-userRouter.get("/api/user/services", authController_1.default.listServices); // after review need to change this to another controller
+userRouter.post("/api/user/vendors", Controller_1.default.listVendors);
+userRouter.get("/api/user/services", Controller_1.default.listServices);
+userRouter.get("/api/user/vendorProfile/:vendorId", Controller_1.default.getVendorProfile);
+userRouter.post("/api/user/addRequest", Controller_1.default.addRequest);
+userRouter.get("/api/user/request/:userId", Controller_1.default.listRequest);
+userRouter.post("/api/user/cancelRequest", Controller_1.default.cancelRequest);
+userRouter.get("/api/user/fetchVendors/:userId", Controller_1.default.fetchVendors);
+userRouter.get("/api/user/chatId/:userId/:vendorId", Controller_1.default.getChatId);
 exports.default = userRouter;

@@ -1,6 +1,21 @@
 import { uploadImage } from "../../../config/awsConfig";
+import ChatModel from "../../../framworks/database/models/chatModal";
 import { Licence } from "../../../framworks/database/models/licence";
+import Message from "../../../framworks/database/models/message";
+import { Request } from "../../../framworks/database/models/requests";
+import { Users } from "../../../framworks/database/models/user";
 import { Vendors } from "../../../framworks/database/models/vendor";
+import { IUser } from "../../entities/user/user";
+import io from 'socket.io-client';
+
+import {
+  IAcceptRequest,
+  IReq,
+  IReqVendor,
+  IRequestWithUser,
+  IUserReq,
+  MessageData,
+} from "../../entities/vendor/vendor";
 
 export default {
   addRequest: async (datas: any, images: any) => {
@@ -21,7 +36,7 @@ export default {
           datas["values[certificateExpirationDate]"][0],
         emailAddress: datas["values[emailAddress]"][0],
         phoneNumber: datas["values[phoneNumber]"][0],
-        secondPhoneNumber: datas["values[phoneNumber2]"][0],
+        location: datas["values[location]"][0],
         upiIdOrPhoneNumber: datas["values[upiIdOrPhoneNumber]"][0],
         accountNumber: datas["values[accountNumber]"][0],
         services: datas["values[servicesYouChose]"][0],
@@ -30,16 +45,6 @@ export default {
         vendorId: datas.id[0],
         profilePicture: profilePicture,
       });
-      await Vendors.findByIdAndUpdate(
-        { _id: datas.id[0] },
-        {
-          $set: {
-            vendor: true,
-            profilePicture: profilePicture,
-            services: datas["values[servicesYouChose]"][0],
-          },
-        }
-      );
       if (createDb) {
         return { success: true, message: "Request created successfully" };
       } else {
@@ -49,4 +54,157 @@ export default {
       console.log(error);
     }
   },
-};
+
+  listRequestsForVendor: async (
+    vendorId: string
+  ) => {
+    try {
+      const requests = await Request.find({ vendorId });
+
+      const userIds: string[] = requests.map((request) =>
+        request.userId.toString()
+      );
+      const users: IUserReq[] = await Users.find({
+        _id: { $in: userIds },
+      });
+
+      const userMap: { [key: string]: IUser } = users.reduce(
+        (acc: { [key: string]: IUser }, user) => {
+          acc[user._id] = user;
+          return acc;
+        },
+        {}
+      );
+
+      const combinedData = requests.map((request) => {
+        const user = userMap[request.userId.toString()];
+        return {
+          userName: user.userName,
+          userProfilePicture: user.profilePicture,
+          userId: request.userId,
+          requested: request.requested,
+        };
+      });
+
+      return combinedData;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+
+  acceptRequest: async (userId:string, vendorId:string) => {
+    try {
+      let chat = await ChatModel.findOne({
+        users: { $all: [userId, vendorId] },
+      });
+
+      if (!chat) {
+        chat = new ChatModel({
+          chatName: `${userId}-${vendorId}`,
+          users: [userId, vendorId],
+        });
+        await chat.save();
+      }
+
+      await Users.findByIdAndUpdate(userId, {
+        $addToSet: { chats: chat._id },
+      });
+
+      await Vendors.findByIdAndUpdate(vendorId, {
+        $addToSet: { chats: chat._id },
+      });
+
+      await Request.deleteOne({userId,vendorId});
+      console.log("Chat successfully created and users updated");
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  rejectRequest: async (userId: string, vendorId: string) => {
+    try {
+      await Request.deleteOne({ userId, vendorId });
+      return { success: true };
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  fetchUsers: async (vendorId: string) => {
+    try {
+      const chats = await ChatModel.find({ users: vendorId });
+
+      const userIds = chats.map((chat) =>
+        chat.users.find((user) => user.toString() !== vendorId)
+      );
+
+      const users = await Users.find({ _id: { $in: userIds } });
+      return users;
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      throw error;
+    }
+  },
+  fetchMessages: async (chatId: string) => {
+    try {
+      const messages = await Message.find({ chat: chatId }).sort({ createdAt: 1 });
+      return messages;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  storeMessage : async (data: MessageData): Promise<void> => {
+    // const { vendorId, userId, content } = data;
+  
+    // try {
+    //   let chat = await ChatModel.findOne({
+    //     users: { $all: [vendorId, userId] },
+    //   });
+  
+    //   if (!chat) {
+    //     chat = new ChatModel({
+    //       users: [vendorId, userId],
+    //     });
+    //     await chat.save();
+    //   }
+  
+    //   const newMessage = new Message({
+    //     sender: vendorId,
+    //     senderModel: 'Vendor',
+    //     content,
+    //     chat: chat._id,
+    //   });
+  
+    //   const savedMessage = await newMessage.save();
+  
+    //   chat.latestMessage = savedMessage._id;
+    //   await chat.save();
+  
+    //   console.log(savedMessage, "Message stored successfully");
+  
+    //   io.to(`user:${userId}`).emit('receive message', { sender: 'Vendor', content });
+    //   io.to(`vendor:${vendorId}`).emit('receive message', { sender: 'You', content });
+    // } catch (error) {
+    //   console.error('Error storing message:', error);
+    //   throw new Error('Internal server error');
+    // }
+  },
+  fetchChatId:async(vendorId:string,userId:string)=>{
+    try {
+      const chat = await ChatModel.findOne({
+        $and: [  
+          { users: userId },
+          { users: vendorId }
+        ]
+      }); 
+  
+      if (chat !== null) {
+        return chat._id.toString();
+      } else {
+        throw new Error('Chat not found');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import { uploadImage } from "../../../config/awsConfig";
-import { Categories } from "../../../framworks/database/models/categorie";
+import { Services } from "../../../framworks/database/models/services";
 import { Licence } from "../../../framworks/database/models/licence";
 import { Users } from "../../../framworks/database/models/user";
 import { Vendors } from "../../../framworks/database/models/vendor";
@@ -8,9 +8,8 @@ import {
   listVendors,
   vendorBlock,
 } from "../../entities/admin/admin";
-
 export default {
-  listUsers: async (data: listUsers) => {
+  listUsers: async (data: listUsers) => { 
     try {
       let users;
       switch (data.list) {
@@ -100,15 +99,14 @@ export default {
     }
   },
 
-  categoryAdding: async (data:any) => {
+  categoryAdding: async (data: any) => {
     try {
-      const checkCategory = await Categories.findOne({ name: data.name });
+      const checkCategory = await Services.findOne({ name: data.name });
       if (checkCategory) {
         return { success: false, message: "Category not found" };
       } else {
-        
         const url = await uploadImage(data.image.filepath);
-        const newCategory = await Categories.create({
+        const newCategory = await Services.create({
           name: data.name,
           image: url,
         });
@@ -124,7 +122,7 @@ export default {
   },
   listCategory: async () => {
     try {
-      const categories = await Categories.find(); 
+      const categories = await Services.find();
 
       return { success: true, data: categories };
     } catch (error) {
@@ -134,7 +132,7 @@ export default {
   },
   updateCategory: async (_id: string) => {
     try {
-      const update = await Categories.findByIdAndDelete(_id);
+      const update = await Services.findByIdAndDelete(_id);
       if (update) {
         return { success: true };
       } else {
@@ -145,13 +143,10 @@ export default {
       throw error;
     }
   },
-  
 
   listRequest: async () => {
     try {
       const getAll = await Licence.find({ verified: false });
-      console.log(getAll);
-
       return getAll;
     } catch (error) {
       console.log(error);
@@ -170,19 +165,43 @@ export default {
       console.log(error);
     }
   },
-  acceptVendor: async (_id: string) => {
+  acceptVendor : async (_id: string) => {
     try {
       const acceptRequest = await Licence.findByIdAndUpdate(
         { _id },
-        { $set: { verified: true } }
-      );
-      if (acceptRequest) {
-        return { success: true };
-      } else {
-        return { success: false };
+        { $set: { verified: true } },
+        { new: true }
+      );      
+      if (!acceptRequest) {
+        return {
+          success: false,
+          error: "Licence document not found or update failed",
+        };
       }
+      const updatedVendor = await Vendors.findByIdAndUpdate(
+        { _id: acceptRequest.vendorId },
+        {
+          $set: { vendor: true },
+          $push: { licence: acceptRequest._id },
+        },
+        { new: true, upsert: true } 
+      );
+      ;
+      
+      if (!updatedVendor) {
+        return {
+          success: false,
+          error: "Failed to update vendor with licence information",
+        };
+      }
+  
+      return { success: true };
     } catch (error) {
-      console.log(error);
+      console.error("An error occurred while accepting the vendor request:", error);
+      return {
+        success: false,
+        error: "An error occurred while accepting the vendor request",
+      };
     }
-  },
+  }
 };

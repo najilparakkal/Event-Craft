@@ -6,7 +6,7 @@ export interface ILicence extends Document {
   certificateExpirationDate: string;
   emailAddress: string;
   phoneNumber: string;
-  secondPhoneNumber: string;
+  location: string;
   upiIdOrPhoneNumber: string;
   accountNumber: string;
   services: string;
@@ -32,7 +32,7 @@ const licenceSchema = new Schema<ILicence>({
     type: String
   },
 
-  secondPhoneNumber: {
+  location: {
     type: String
   },
   upiIdOrPhoneNumber: {

@@ -6,9 +6,8 @@ import { connectDb } from "./database";
 
 const corsOptions = {
   origin: "http://localhost:5173",
-  methods: ["GET", "PUT", "POST", "DELETE", "PATCH", "HEAD"],
-  credentials: true,
-  // exposeHeaders: ["x-auth-token"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  credentials: true, // Add this line to allow credentials
 };
 
 declare module "express-session" {
@@ -21,11 +20,7 @@ declare module "express-session" {
 export function configureExpress(app: Application): void {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
-  app.use(cors(corsOptions));
-  app.use(cors({
-     origin: "http://localhost:5173",
-      methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
-     }));
+  app.use(cors(corsOptions)); // Apply CORS middleware with the updated options
   app.use(
     session({
       secret: "secret",

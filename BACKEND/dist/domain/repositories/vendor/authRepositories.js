@@ -93,11 +93,12 @@ const updateOtp = (email, otp) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.updateOtp = updateOtp;
 const logingVendor = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const vendor = yield vendor_1.Vendors.findOne({ email: email, verified: true });
+        const vendor = yield vendor_1.Vendors.findOne({ email, verified: true });
         if (!vendor) {
-            console.log("vendor not found");
-            return { success: false, message: "vendor not found" };
+            console.log("Vendor not found");
+            return { success: false, message: "Vendor not found" };
         }
         if (!password) {
             console.log("No password provided");
@@ -109,18 +110,21 @@ const logingVendor = (email, password) => __awaiter(void 0, void 0, void 0, func
         }
         const isMatch = yield bcrypt_1.default.compare(password, vendor.password);
         if (isMatch) {
+            const vendorWithLicence = yield vendor_1.Vendors.findById(vendor._id).populate("licence");
+            const profilePicture = (_a = vendorWithLicence === null || vendorWithLicence === void 0 ? void 0 : vendorWithLicence.licence[0]) === null || _a === void 0 ? void 0 : _a.profilePicture;
             const vendorDetails = {
-                email: vendor.email,
-                phoneNum: vendor.phoneNum,
-                vendorName: vendor.vendorName,
-                id: vendor._id,
-                profilePicture: vendor.profilePicture,
+                email: vendor.email + "",
+                phoneNum: vendor.phoneNum + "",
+                vendorName: vendor.vendorName + "",
+                id: vendor._id.toString(),
+                profilePicture,
             };
-            const token = yield (0, jwtGenarate_1.CreateToken)({ id: vendor._id, email: vendor.email }, true);
+            const token = yield (0, jwtGenarate_1.CreateToken)({ id: vendor._id.toString(), email: vendor.email }, true);
             return { success: true, token, vendorDetails, isVendor: vendor.vendor };
         }
         else {
-            return { success: false, message: "password not match" };
+            console.log("Password does not match");
+            return { success: false, message: "Password does not match" };
         }
     }
     catch (error) {

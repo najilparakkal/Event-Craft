@@ -92,6 +92,7 @@ const userSlice = createSlice({
           name: action.payload.user.userDatas.name,
           email: action.payload.user.userDatas.email,
           phoneNum: action.payload.user.userDatas.phoneNum,
+          profilePicture:action.payload.user.userDatas.profilePicture
         };
         state.jwt = action.payload.user.token;
         localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
@@ -111,6 +112,7 @@ const userSlice = createSlice({
           name: action.payload.userDetails?.name,
           email: action.payload.userDetails?.email,
           phoneNum: action.payload.userDetails?.phoneNum,
+          profilePicture:action.payload.userDetails?.profilePicture
         };
         state.jwt = action.payload.token ?? null;
         localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
@@ -133,6 +135,7 @@ const userSlice = createSlice({
           name: action.payload.response.userDatas.name,
           email: action.payload.response.userDatas.email,
           phoneNum: action.payload.response.userDatas.phoneNum,
+          profilePicture:action.payload.response.userDatas.profilePicture
         };
         state.jwt = action.payload.response.token;
         localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
@@ -154,7 +157,8 @@ const userSlice = createSlice({
           name: action.payload.userDetails?.name,
           email: action.payload.userDetails?.email,
           phoneNum: action.payload.userDetails?.phoneNum,
-        };
+          profilePicture:action.payload.userDetails?.profilePicture
+        };      
         state.jwt = action.payload.token ?? null;
         localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
         if (state.jwt) {

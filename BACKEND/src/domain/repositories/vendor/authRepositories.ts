@@ -1,5 +1,4 @@
-import { Categories } from "../../../framworks/database/models/categorie";
-import { Licence } from "../../../framworks/database/models/licence";
+import { ILicence } from "../../../framworks/database/models/licence";
 import { Vendors } from "../../../framworks/database/models/vendor";
 import {
   ICreateVendorResponse,
@@ -8,6 +7,8 @@ import {
   IgoogleRegistration,
   IotpVeri,
   IvendorDetails,
+  IVendorDetails,
+  ILoginResponse,
 } from "../../entities/vendor/vendor";
 import { checkingVendor } from "../../helpers/chekingVendors";
 import { CreateToken } from "../../helpers/jwtGenarate";
@@ -32,6 +33,7 @@ export const RegisterVendor = async (
         { id: newVendor._id, email: newVendor.email },
         true
       );
+
       const vendorDetails: IvendorDetails = {
         id: newVendor._id + "",
         name: newVendor.vendorName + "",
@@ -99,14 +101,18 @@ export const updateOtp = async (
   }
 };
 
-export const logingVendor = async (email: string, password: string) => {
+export const logingVendor = async (
+  email: string,
+  password: string
+): Promise<ILoginResponse> => {
   try {
-    const vendor = await Vendors.findOne({ email: email, verified: true });
+    const vendor = await Vendors.findOne({ email, verified: true });
 
     if (!vendor) {
-      console.log("vendor not found");
-      return { success: false, message: "vendor not found" };
+      console.log("Vendor not found");
+      return { success: false, message: "Vendor not found" };
     }
+
     if (!password) {
       console.log("No password provided");
       return { success: false, message: "No password provided" };
@@ -120,20 +126,27 @@ export const logingVendor = async (email: string, password: string) => {
     const isMatch = await bcrypt.compare(password, vendor.password);
 
     if (isMatch) {
-      const vendorDetails = {
-        email: vendor.email,
-        phoneNum: vendor.phoneNum,
-        vendorName: vendor.vendorName,
-        id: vendor._id,
-        profilePicture: vendor.profilePicture,
+      const vendorWithLicence = await Vendors.findById(vendor._id).populate<{
+        licence: ILicence[];
+      }>("licence");
+      const profilePicture = vendorWithLicence?.licence[0]?.profilePicture;
+
+      const vendorDetails: IVendorDetails = {
+        email: vendor.email + "",
+        phoneNum: vendor.phoneNum + "",
+        vendorName: vendor.vendorName + "",
+        id: vendor._id.toString(),
+        profilePicture,
       };
       const token = await CreateToken(
-        { id: vendor._id, email: vendor.email },
+        { id: vendor._id.toString(), email: vendor.email },
         true
       );
+
       return { success: true, token, vendorDetails, isVendor: vendor.vendor };
     } else {
-      return { success: false, message: "password not match" };
+      console.log("Password does not match");
+      return { success: false, message: "Password does not match" };
     }
   } catch (error) {
     console.error("Error logging in vendor:", error);
@@ -227,4 +240,3 @@ export const RegisterWithGoogle = async (
     return { success: false, message: "An error occurred during registration" };
   }
 };
-

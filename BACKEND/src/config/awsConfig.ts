@@ -2,7 +2,6 @@ import { generateName } from "user_random_name_generator";
 import {
   S3Client,
   PutObjectCommand,
-  ObjectCannedACL,
 } from "@aws-sdk/client-s3";
 import fs from "fs";
 

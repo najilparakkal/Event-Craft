@@ -75,8 +75,8 @@ export const LisenseValidation = Yup.object().shape({
     phoneNumber: Yup.string()
         .matches(/^\d{10}$/, 'Phone number must be exactly 10 digits')
         .required('Phone number is required'),
-    phoneNumber2: Yup.string()
-        .matches(/^\d{10}$/, 'Phone number must be exactly 10 digits'),
+        location: Yup.string()
+        .required(' required'),
     upiIdOrPhoneNumber: Yup.string()
         .required('UPI ID or Verified Phone number is required'),
     accountNumber: Yup.string()

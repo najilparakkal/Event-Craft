@@ -32,7 +32,7 @@ const License: React.FC = () => {
         certificateExpirationDate: '',
         emailAddress: email || '',
         phoneNumber: phoneNum || '',
-        phoneNumber2: '',
+        location: '',
         upiIdOrPhoneNumber: '',
         accountNumber: '',
         servicesYouChose: servicess.join(', '),
@@ -65,14 +65,14 @@ const License: React.FC = () => {
 
     return (
         <div
-            className="min-h-screen flex flex-col items-center"
-            style={{
-                backgroundColor: '#0092AB',
-                backgroundImage: 'url(/vendor/requestPage/pexels-alxs-919734.jpg)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat'
-            }}
+            className="min-h-screen flex flex-col items-center bg-[#0092AB]"
+            // style={{
+            //     backgroundColor: '#0092AB',
+            //     backgroundImage: 'url(/vendor/requestPage/pexels-alxs-919734.jpg)',
+            //     backgroundSize: 'cover',
+            //     backgroundPosition: 'center',
+            //     backgroundRepeat: 'no-repeat'
+            // }}
         >
             <Toaster position="top-center" reverseOrder={false} />
 
@@ -188,13 +188,13 @@ const License: React.FC = () => {
                                     </div>
                                     <div>
                                         <label className="block mb-1 text-white font-bold">
-                                            Phone number 2:
+                                            Location:
                                         </label>
                                         <Field
                                          autoComplete="off"
                                             type="tel"
-                                            name="phoneNumber2"
-                                            className={`w-full p-2 text-white bg-transparent border-b-2 ${errors.phoneNumber2 && touched.phoneNumber2 ? 'border-red-500' : 'border-white'} focus:outline-none`}
+                                            name="location"
+                                            className={`w-full p-2 text-white bg-transparent border-b-2 ${errors.location && touched.location ? 'border-red-500' : 'border-white'} focus:outline-none`}
                                             placeholder="### ### ####"
                                         />
                                     </div>

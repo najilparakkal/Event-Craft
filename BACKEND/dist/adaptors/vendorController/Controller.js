@@ -57,4 +57,67 @@ exports.default = {
             console.log(error);
         }
     }),
+    listRequests: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.listRequests(req.params.vendorId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    acceptRequest: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.acceptRequest(req.body);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    rejectRequest: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.rejectRequest(req.body);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    fetchUsers: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.fetchUsers(req.params.vendorId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    messages: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.fetchMessages(req.params.chatId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    storeMessage: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.storeMessage(req.body);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    chatId: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.fetchChatId(req.params.vendorId, req.params.userId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    })
 };

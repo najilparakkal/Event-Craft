@@ -15,7 +15,7 @@ const licenceSchema = new mongoose_1.Schema({
     phoneNumber: {
         type: String
     },
-    secondPhoneNumber: {
+    location: {
         type: String
     },
     upiIdOrPhoneNumber: {

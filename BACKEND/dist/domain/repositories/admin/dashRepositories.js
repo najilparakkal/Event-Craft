@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const awsConfig_1 = require("../../../config/awsConfig");
-const categorie_1 = require("../../../framworks/database/models/categorie");
+const services_1 = require("../../../framworks/database/models/services");
 const licence_1 = require("../../../framworks/database/models/licence");
 const user_1 = require("../../../framworks/database/models/user");
 const vendor_1 = require("../../../framworks/database/models/vendor");
@@ -103,13 +103,13 @@ exports.default = {
     }),
     categoryAdding: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const checkCategory = yield categorie_1.Categories.findOne({ name: data.name });
+            const checkCategory = yield services_1.Services.findOne({ name: data.name });
             if (checkCategory) {
                 return { success: false, message: "Category not found" };
             }
             else {
                 const url = yield (0, awsConfig_1.uploadImage)(data.image.filepath);
-                const newCategory = yield categorie_1.Categories.create({
+                const newCategory = yield services_1.Services.create({
                     name: data.name,
                     image: url,
                 });
@@ -126,7 +126,7 @@ exports.default = {
     }),
     listCategory: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const categories = yield categorie_1.Categories.find();
+            const categories = yield services_1.Services.find();
             return { success: true, data: categories };
         }
         catch (error) {
@@ -136,7 +136,7 @@ exports.default = {
     }),
     updateCategory: (_id) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const update = yield categorie_1.Categories.findByIdAndDelete(_id);
+            const update = yield services_1.Services.findByIdAndDelete(_id);
             if (update) {
                 return { success: true };
             }
@@ -152,7 +152,6 @@ exports.default = {
     listRequest: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const getAll = yield licence_1.Licence.find({ verified: false });
-            console.log(getAll);
             return getAll;
         }
         catch (error) {
@@ -175,16 +174,32 @@ exports.default = {
     }),
     acceptVendor: (_id) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const acceptRequest = yield licence_1.Licence.findByIdAndUpdate({ _id }, { $set: { verified: true } });
-            if (acceptRequest) {
-                return { success: true };
+            const acceptRequest = yield licence_1.Licence.findByIdAndUpdate({ _id }, { $set: { verified: true } }, { new: true });
+            if (!acceptRequest) {
+                return {
+                    success: false,
+                    error: "Licence document not found or update failed",
+                };
             }
-            else {
-                return { success: false };
+            const updatedVendor = yield vendor_1.Vendors.findByIdAndUpdate({ _id: acceptRequest.vendorId }, {
+                $set: { vendor: true },
+                $push: { licence: acceptRequest._id },
+            }, { new: true, upsert: true });
+            ;
+            if (!updatedVendor) {
+                return {
+                    success: false,
+                    error: "Failed to update vendor with licence information",
+                };
             }
+            return { success: true };
         }
         catch (error) {
-            console.log(error);
+            console.error("An error occurred while accepting the vendor request:", error);
+            return {
+                success: false,
+                error: "An error occurred while accepting the vendor request",
+            };
         }
-    }),
+    })
 };

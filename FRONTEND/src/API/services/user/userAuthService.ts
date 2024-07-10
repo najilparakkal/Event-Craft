@@ -15,6 +15,7 @@ interface authResponse {
   response: any;
   user: {
     userDatas: {
+      [x: string]: any;
       id: string;
       email: string;
       name: string;

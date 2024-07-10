@@ -1,6 +1,6 @@
 import { Vendors } from "../../framworks/database/models/vendor";
 import { IVendors } from "../entities/vendor/vendor";
-import { CreateUserResponse } from "../repositories/user/repositories";
+import { CreateUserResponse } from "../repositories/user/authRepositories";
 
 
 

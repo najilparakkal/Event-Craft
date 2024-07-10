@@ -19,4 +19,4 @@ const categoriSchema = new Schema<ICatogorie>({
   },
 });
 
-export const Categories = model<ICatogorie>("Categories", categoriSchema);
+export const Services = model<ICatogorie>("Services", categoriSchema);

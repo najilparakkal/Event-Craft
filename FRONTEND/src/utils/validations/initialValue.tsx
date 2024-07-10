@@ -26,7 +26,7 @@ export interface LicenseFormValues {
   certificateExpirationDate: string;
   emailAddress: string | null;
   phoneNumber: string | null;
-  phoneNumber2?: string;
+  location: string;
   upiIdOrPhoneNumber: string;
   accountNumber: string;
   servicesYouChose: string;

@@ -9,6 +9,8 @@ import Services from "../pages/vendor/services/Services";
 import License from "../pages/vendor/services/License";
 import Post from "../pages/vendor/home/Post";
 import Vendor from "../routeAuth/Vendor";
+import Requests from "../pages/vendor/home/Requests";
+import MessageSection from "../pages/vendor/home/messages/MessageSection";
 
 const VendorRouter: React.FC = () => {
   return (
@@ -26,6 +28,8 @@ const VendorRouter: React.FC = () => {
             <Route path="/services" element={<Services />} />
             <Route path="/license" element={<License />} />
             <Route path="/addPost/:id" element={<Post />} />
+            <Route path="/requests" element={<Requests />} />
+            <Route path="/messages" element={<MessageSection />} />
         </Route>
       </Routes>
     </div>

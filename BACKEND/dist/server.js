@@ -10,7 +10,17 @@ const express_session_1 = __importDefault(require("express-session"));
 const morgan_1 = __importDefault(require("morgan"));
 const vendorRoutes_1 = __importDefault(require("./webServer/routes/vendorRoutes"));
 const adminRoutes_1 = __importDefault(require("./webServer/routes/adminRoutes"));
+const socket_io_1 = require("socket.io");
+const http_1 = __importDefault(require("http"));
+const socket_1 = __importDefault(require("./webServer/socket"));
 const app = (0, express_1.default)();
+const server = http_1.default.createServer(app);
+const io = new socket_io_1.Server(server, {
+    cors: {
+        origin: "http://localhost:5173",
+        methods: ["GET", "POST"],
+    }
+});
 const port = 3000;
 app.use(express_1.default.json());
 app.use((0, express_session_1.default)({
@@ -23,6 +33,7 @@ app.use((0, morgan_1.default)("dev"));
 app.use(userRoutes_1.default);
 app.use(vendorRoutes_1.default);
 app.use(adminRoutes_1.default);
-app.listen(port, () => {
+(0, socket_1.default)(io);
+server.listen(port, () => {
     console.log(`Backend app listening at http://localhost:${port}`);
 });

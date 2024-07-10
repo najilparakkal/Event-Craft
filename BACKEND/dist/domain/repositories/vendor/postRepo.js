@@ -11,11 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadPost = exports.listCategory = void 0;
 const awsConfig_1 = require("../../../config/awsConfig");
-const categorie_1 = require("../../../framworks/database/models/categorie");
+const services_1 = require("../../../framworks/database/models/services");
 const post_1 = require("../../../framworks/database/models/post");
 const listCategory = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const category = yield categorie_1.Categories.find();
+        const category = yield services_1.Services.find();
         return category;
     }
     catch (error) {
