@@ -57,11 +57,13 @@ export const fetchRequest = async (vendorId: string) => {
     console.log(error);
   }
 };
-export const cancelRequest = async (userId: string, vendorId: string) => {
+export const cancelRequest = async (roomId:string) => {
   try {
-    await authAxiosInstance.delete("vendor/removeRequest", {
-      data: { userId, vendorId },
+
+    const response = await authAxiosInstance.delete("vendor/removeRequest", {
+      data: { roomId},
     });
+    return response.status === 200;
   } catch (error) {
     console.log(error);
   }
@@ -116,6 +118,7 @@ export const storeMessages = async (vendorId: string, userId: string, content: s
 
 export const fetchChatId = async(userId:string,vendorId:string)=>{
   try {
+    
     const response = await authAxiosInstance.get(`vendor/chatId/${userId}/${vendorId}`);
     return response.data;
   } catch (error) {

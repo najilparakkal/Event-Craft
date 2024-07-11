@@ -27,7 +27,8 @@ const socketHandler = (io) => {
             }
             try {
                 const messages = yield message_1.default.find({ chat: room }).sort({ createdAt: 1 });
-                socket.emit('room messages', messages);
+                const chat = yield chatModal_1.default.findById({ _id: room });
+                socket.emit('room messages', { messages, chat });
             }
             catch (error) {
                 console.error('Error fetching messages:', error);

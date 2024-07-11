@@ -7,33 +7,33 @@ export interface IPost extends Document {
   vendorId: string;
   is_blocked: boolean;
   category: string;
-  desription: string;
+  description: string;
 }
+const postSchema = new Schema<IPost>(
+  {
+    title: {
+      type: String,
+    },
+    images: {
+      type: [String],
+    },
+    vendorId: {
+      type: String,
+    },
+    is_blocked: {
+      type: Boolean,
+      default: false,
+    },
+    category: {
+      type: String,
+    },
+    description: {
+      type: String,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-const postShema = new Schema<IPost>({
-  title: {
-    type: String,
-  },
-  images: {
-    type: [String],
-  },
-  vendorId: {
-    type: String,
-  },
-  is_blocked: {
-    type: Boolean,
-    default: false,
-  },
-  category: {
-    type: String,
-  },
-  desription: {
-    type: String,
-  },
-  registered: {
-    type: Date,
-    default: Date.now,
-  },
-});   
-
-export const Posts = model<IPost>("Posts", postShema);
+export const Posts = model<IPost>("Posts", postSchema);

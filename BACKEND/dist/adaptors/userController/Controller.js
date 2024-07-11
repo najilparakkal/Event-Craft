@@ -43,8 +43,13 @@ exports.default = {
     }),
     addRequest: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            yield home_1.default.addRequest(req.body);
-            res.status(200).json({ message: "Request sent successfully" });
+            const response = yield home_1.default.addRequest(req.body);
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                res.status(200).json({ message: "Request sent successfully" });
+            }
+            else {
+                res.status(201).json({ message: "already connected" });
+            }
         }
         catch (error) {
             console.log(error);
@@ -85,5 +90,5 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
-    })
+    }),
 };

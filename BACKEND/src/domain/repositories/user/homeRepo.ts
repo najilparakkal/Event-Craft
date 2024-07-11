@@ -51,30 +51,40 @@ export const listServices = async () => {
   }
 };
 
+
 export const getVendorProfile = async (
   vendorId: string
 ): Promise<VendorProfile | undefined> => {
   try {
     const vendor = (await Vendors.findById(vendorId)
       .populate("licence")
+      .populate("posts")
       .exec()) as (Vendor & Document) | null;
-
     if (!vendor) {
       throw new Error("Vendor not found");
     }
-    
-    const { vendorName, phoneNum, licence,coverPicture } = vendor;
+
+    const { vendorName, phoneNum, licence, coverPicture, posts } = vendor;
     const profilePicture = licence[0]?.profilePicture || "";
     const businessName = licence[0]?.businessName || "";
     const location = licence[0]?.location || "";
+    const postsDetails = posts.map((post: any) => ({
+      title: post.title,
+      images: post.images,
+      description: post.description,
+      category: post.category,
+    }));
+
     const response: VendorProfile = {
-      vendorName,
+      vendorName,   
       phoneNum,
       profilePicture,
       businessName,
       location,
-      coverPicture
+      coverPicture,
+      posts: postsDetails,
     };
+    
     return response;
   } catch (error) {
     console.log(error);
@@ -88,16 +98,19 @@ export const addRequest = async (
   vendorId: string
 ) => {
   try {
-    const getUser = await Users.findById(userId);
-    console.log(userId,vendorId,"iuffhiuw");
-    
-    const addRequest = await Request.create({
-      name: getUser?.userName,
-      message: message,
-      userId: getUser?._id,
-      vendorId: vendorId,
+    let chat = await ChatModel.findOne({
+      users: { $all: [userId, vendorId] },
     });
-    return { success: true };
+    if (!chat) {
+      chat = new ChatModel({
+        users: [userId, vendorId],
+        request: message,
+      });
+      await chat.save();
+      return { success: true };
+    } else {
+      return { success: false };
+    }
   } catch (error) {
     console.log(error);
   }
@@ -142,12 +155,10 @@ export const listRequest = async (
   }
 };
 
-export const cancelRequest = async (userId: string, vendorId: string) => {
+export const cancelRequest = async (_id: string) => {
   try {
-    const request = await Request.findOneAndDelete({ userId, vendorId });
-    if (!request) {
-      throw new Error("Request not found");
-    }
+    await ChatModel.findByIdAndDelete(_id);
+
     return { success: true };
   } catch (error) {
     console.log(error);
@@ -168,14 +179,11 @@ export const listVendorsInUserChat = async (userId: string) => {
   }
 };
 
-export const chatId = async(userId:string,vendorId:string) => {
+export const chatId = async (userId: string, vendorId: string) => {
   try {
     const chat = await ChatModel.findOne({
-      $and: [  
-        { users: userId },
-        { users: vendorId }
-      ]
-    }); 
+      $and: [{ users: userId }, { users: vendorId }],
+    });
 
     if (chat) {
       return chat._id.toString();
@@ -185,4 +193,4 @@ export const chatId = async(userId:string,vendorId:string) => {
   } catch (error) {
     console.log(error);
   }
-}
+};

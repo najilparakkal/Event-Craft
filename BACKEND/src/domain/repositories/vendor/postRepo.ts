@@ -2,6 +2,7 @@ import { uploadImage } from "../../../config/awsConfig";
 import { Services } from "../../../framworks/database/models/services";
 import { Posts } from "../../../framworks/database/models/post";
 import { IPostDetails } from "../../entities/vendor/vendor";
+import { Vendors } from "../../../framworks/database/models/vendor";
 
 export const listCategory = async () => {
   try {
@@ -25,6 +26,11 @@ export const uploadPost = async (data: IPostDetails, images: any) => {
       category: data["postDetails[category]"][0],
       images: uploadResults,
       vendorId: data.id[0],
+    });
+    console.log(newPost,"🎶🎶");
+    
+    await Vendors.findByIdAndUpdate(data.id[0], {
+      $addToSet: { posts: newPost._id },
     });
     return { success: true };
   } catch (error) {

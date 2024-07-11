@@ -1,21 +1,17 @@
 import mongoose, { Schema } from "mongoose";
 
-
 export interface IChatModel extends Document {
-  chatName: string;
   users: mongoose.Types.ObjectId[];
   latestMessage: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
   _id?: mongoose.Types.ObjectId;
-
+  is_blocked: boolean;
+  is_accepted: boolean;
+  request: string;
 }
 const ChatSchema: Schema = new Schema<IChatModel>(
   {
-    chatName: {
-      type: String,
-      trim: true,
-    },
     users: [
       {
         type: Schema.Types.ObjectId,
@@ -30,12 +26,23 @@ const ChatSchema: Schema = new Schema<IChatModel>(
       type: Schema.Types.ObjectId,
       ref: "Message",
     },
+    request: {
+      type: String,
+    },
+    is_blocked: {
+      type: Boolean,
+      default: false, 
+    },
+    is_accepted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const ChatModel = mongoose.model<IChatModel>('ChatModel', ChatSchema);
+const ChatModel = mongoose.model<IChatModel>("ChatModel", ChatSchema);
 
 export default ChatModel;

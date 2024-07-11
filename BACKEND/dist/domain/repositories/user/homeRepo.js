@@ -16,7 +16,6 @@ exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports
 const chatModal_1 = __importDefault(require("../../../framworks/database/models/chatModal"));
 const requests_1 = require("../../../framworks/database/models/requests");
 const services_1 = require("../../../framworks/database/models/services");
-const user_1 = require("../../../framworks/database/models/user");
 const vendor_1 = require("../../../framworks/database/models/vendor");
 const listVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -62,21 +61,29 @@ const getVendorProfile = (vendorId) => __awaiter(void 0, void 0, void 0, functio
     try {
         const vendor = (yield vendor_1.Vendors.findById(vendorId)
             .populate("licence")
+            .populate("posts")
             .exec());
         if (!vendor) {
             throw new Error("Vendor not found");
         }
-        const { vendorName, phoneNum, licence, coverPicture } = vendor;
+        const { vendorName, phoneNum, licence, coverPicture, posts } = vendor;
         const profilePicture = ((_a = licence[0]) === null || _a === void 0 ? void 0 : _a.profilePicture) || "";
         const businessName = ((_b = licence[0]) === null || _b === void 0 ? void 0 : _b.businessName) || "";
         const location = ((_c = licence[0]) === null || _c === void 0 ? void 0 : _c.location) || "";
+        const postsDetails = posts.map((post) => ({
+            title: post.title,
+            images: post.images,
+            description: post.description,
+            category: post.category,
+        }));
         const response = {
             vendorName,
             phoneNum,
             profilePicture,
             businessName,
             location,
-            coverPicture
+            coverPicture,
+            posts: postsDetails,
         };
         return response;
     }
@@ -88,15 +95,20 @@ const getVendorProfile = (vendorId) => __awaiter(void 0, void 0, void 0, functio
 exports.getVendorProfile = getVendorProfile;
 const addRequest = (userId, message, vendorId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const getUser = yield user_1.Users.findById(userId);
-        console.log(userId, vendorId, "iuffhiuw");
-        const addRequest = yield requests_1.Request.create({
-            name: getUser === null || getUser === void 0 ? void 0 : getUser.userName,
-            message: message,
-            userId: getUser === null || getUser === void 0 ? void 0 : getUser._id,
-            vendorId: vendorId,
+        let chat = yield chatModal_1.default.findOne({
+            users: { $all: [userId, vendorId] },
         });
-        return { success: true };
+        if (!chat) {
+            chat = new chatModal_1.default({
+                users: [userId, vendorId],
+                request: message,
+            });
+            yield chat.save();
+            return { success: true };
+        }
+        else {
+            return { success: false };
+        }
     }
     catch (error) {
         console.log(error);
@@ -126,12 +138,9 @@ const listRequest = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.listRequest = listRequest;
-const cancelRequest = (userId, vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+const cancelRequest = (_id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const request = yield requests_1.Request.findOneAndDelete({ userId, vendorId });
-        if (!request) {
-            throw new Error("Request not found");
-        }
+        yield chatModal_1.default.findByIdAndDelete(_id);
         return { success: true };
     }
     catch (error) {
@@ -155,10 +164,7 @@ exports.listVendorsInUserChat = listVendorsInUserChat;
 const chatId = (userId, vendorId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const chat = yield chatModal_1.default.findOne({
-            $and: [
-                { users: userId },
-                { users: vendorId }
-            ]
+            $and: [{ users: userId }, { users: vendorId }],
         });
         if (chat) {
             return chat._id.toString();

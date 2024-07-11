@@ -49,7 +49,7 @@ export default{
       },
       cancelRequest:async(data:cancelReq)=>{
         try {
-          const response  = await cancelRequest(data.userId+"",data.vendorId+"")
+          const response  = await cancelRequest(data.chatId+"")
           return response
         } catch (error) {
           console.log(error);

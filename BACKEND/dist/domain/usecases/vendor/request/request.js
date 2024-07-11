@@ -43,7 +43,7 @@ exports.default = {
     }),
     rejectRequest: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const response = yield requestRepo_1.default.rejectRequest(data.userId, data.vendroId);
+            const response = yield requestRepo_1.default.rejectRequest(data.roomId);
             return response;
         }
         catch (error) {

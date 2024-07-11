@@ -58,7 +58,7 @@ exports.default = {
     }),
     cancelRequest: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const response = yield (0, homeRepo_1.cancelRequest)(data.userId + "", data.vendorId + "");
+            const response = yield (0, homeRepo_1.cancelRequest)(data.chatId + "");
             return response;
         }
         catch (error) {

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Vendors = void 0;
 const mongoose_1 = require("mongoose");
-const userSchema = new mongoose_1.Schema({
+const vendorSchema = new mongoose_1.Schema({
     vendorName: {
         type: String,
     },
@@ -46,7 +46,7 @@ const userSchema = new mongoose_1.Schema({
             ref: "Licence",
         },
     ],
-    post: [
+    posts: [
         {
             type: mongoose_1.Schema.Types.ObjectId,
             ref: "Posts",
@@ -55,7 +55,7 @@ const userSchema = new mongoose_1.Schema({
     chats: [
         {
             type: mongoose_1.Schema.Types.ObjectId,
-            ref: 'ChatModel',
+            ref: "ChatModel",
         },
     ],
     coverPicture: {
@@ -63,4 +63,4 @@ const userSchema = new mongoose_1.Schema({
         default: "https://thingscareerrelated.com/wp-content/uploads/2021/10/default-background-image.png",
     },
 });
-exports.Vendors = (0, mongoose_1.model)("Vendors", userSchema);
+exports.Vendors = (0, mongoose_1.model)("Vendors", vendorSchema);

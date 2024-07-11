@@ -18,7 +18,6 @@ const licence_1 = require("../../../framworks/database/models/licence");
 const message_1 = __importDefault(require("../../../framworks/database/models/message"));
 const requests_1 = require("../../../framworks/database/models/requests");
 const user_1 = require("../../../framworks/database/models/user");
-const vendor_1 = require("../../../framworks/database/models/vendor");
 exports.default = {
     addRequest: (datas, images) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -80,32 +79,18 @@ exports.default = {
     }),
     acceptRequest: (userId, vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            let chat = yield chatModal_1.default.findOne({
+            let chat = yield chatModal_1.default.findOneAndUpdate({
                 users: { $all: [userId, vendorId] },
-            });
-            if (!chat) {
-                chat = new chatModal_1.default({
-                    chatName: `${userId}-${vendorId}`,
-                    users: [userId, vendorId],
-                });
-                yield chat.save();
-            }
-            yield user_1.Users.findByIdAndUpdate(userId, {
-                $addToSet: { chats: chat._id },
-            });
-            yield vendor_1.Vendors.findByIdAndUpdate(vendorId, {
-                $addToSet: { chats: chat._id },
-            });
-            yield requests_1.Request.deleteOne({ userId, vendorId });
-            console.log("Chat successfully created and users updated");
+            }, { $set: { is_accepted: true } });
+            return { success: true };
         }
         catch (error) {
             console.error(error);
         }
     }),
-    rejectRequest: (userId, vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+    rejectRequest: (_id) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            yield requests_1.Request.deleteOne({ userId, vendorId });
+            const data = yield chatModal_1.default.findByIdAndDelete(_id);
             return { success: true };
         }
         catch (error) {

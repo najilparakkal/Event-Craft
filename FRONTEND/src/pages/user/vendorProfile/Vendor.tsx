@@ -11,7 +11,8 @@ interface VendorDetails {
     profilePicture: string;
     businessName: string;
     location: string;
-    coverPicture: string;  // Add coverPicture to the interface
+    coverPicture: string;
+    posts: { title: string; images: string[]; description: string; category: string }[];
 }
 
 const Vendor: React.FC = () => {
@@ -21,7 +22,8 @@ const Vendor: React.FC = () => {
     const [message, setMessage] = useState('');
     const { id } = useParams<{ id: string }>();
     const [validationError, setValidationError] = useState('');
-    const { _id } = useAppSelector((state) => state.user.userDetails);    
+    const { _id } = useAppSelector((state) => state.user.userDetails);
+
     useEffect(() => {
         const fetch = async () => {
             const details = await fetchVendorDetails(id + "");
@@ -29,6 +31,7 @@ const Vendor: React.FC = () => {
         };
         fetch();
     }, [id]);
+    console.log(vendorDetails, "🍽️🍽️");
 
     const handleFavoriteClick = () => {
         setIsFavorite(!isFavorite);
@@ -39,8 +42,16 @@ const Vendor: React.FC = () => {
     };
 
     const handleSend = async () => {
-        toast.success('Message sent successfully');
-        await addRequest(message,_id+"",id+"")
+        if (!message.trim()) {
+            setValidationError('Message cannot be empty');
+            return;
+        }
+        const response = await addRequest(message, _id + "", id + "");
+        if (response) {
+            toast.success('Message sent successfully');
+        } else {
+            toast.error('You Have already Connected');
+        }
         setIsModalOpen(false);
     };
 
@@ -59,15 +70,11 @@ const Vendor: React.FC = () => {
         return <div>Loading...</div>;
     }
 
-    const handleRequest = (value: string) => {
-        if (!message.trim()) {
-            setValidationError('Message cannot be empty');
-            return;
-        }
+    const handleInputChange = (value: string) => {
+        setMessage(value);
         setValidationError('');
-        toast.success('Message sent successfully');
-        setIsModalOpen(false);
     };
+
     return (
         <div className="bg-black min-h-screen flex flex-col items-center">
             <Header />
@@ -106,9 +113,29 @@ const Vendor: React.FC = () => {
                 </div>
             </main>
 
+            {/* Post Details Section */}
+            <div className="w-full max-w-6xl p-6">
+                <h2 className="text-white text-2xl mb-4">Posts</h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {vendorDetails.posts.map((post, index) => (
+                        <div key={index} className="grid gap-4">
+                            {post.images.map((image, imgIndex) => (
+                                <div key={imgIndex}>
+                                    <img className="h-auto max-w-full rounded-lg" src={image} alt={post.title} />
+                                </div>
+                            ))}
+                            <div className="text-white mt-2">
+                                <h3 className="font-semibold">{post.title}</h3>
+                                <p>{post.description}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             {isModalOpen && (
                 <div id="default-modal" tabIndex={-1} aria-hidden="true" className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
-                    <div className="relative p-4 w-full max-w-2xl max-h-full bg-white rounded-lg shadow bg-[#FD8FAA]">
+                    <div className="relative p-4 w-full max-w-2xl max-h-full  rounded-lg shadow bg-[#FD8FAA]">
                         <div className="flex items-center justify-between p-4 rounded-t dark:border-gray-600">
                             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Send Message to {vendorDetails.vendorName}</h3>
                         </div>
@@ -117,11 +144,8 @@ const Vendor: React.FC = () => {
                                 required
                                 type="text"
                                 value={message}
-                                onChange={(e) => {
-                                    setMessage(e.target.value);
-                                    handleRequest(e.target.value);
-                                }}
-                                className="w-full p-2  rounded bg-[#FEE5EB] dark:text-black dark:border-gray-600"
+                                onChange={(e) => handleInputChange(e.target.value)}
+                                className="w-full p-2 rounded bg-[#FEE5EB] dark:text-black dark:border-gray-600"
                             />
                             {validationError && <p className="text-red-500">{validationError}</p>}
                         </div>

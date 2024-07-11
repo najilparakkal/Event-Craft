@@ -13,6 +13,7 @@ exports.uploadPost = exports.listCategory = void 0;
 const awsConfig_1 = require("../../../config/awsConfig");
 const services_1 = require("../../../framworks/database/models/services");
 const post_1 = require("../../../framworks/database/models/post");
+const vendor_1 = require("../../../framworks/database/models/vendor");
 const listCategory = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const category = yield services_1.Services.find();
@@ -33,6 +34,10 @@ const uploadPost = (data, images) => __awaiter(void 0, void 0, void 0, function*
             category: data["postDetails[category]"][0],
             images: uploadResults,
             vendorId: data.id[0],
+        });
+        console.log(newPost, "🎶🎶");
+        yield vendor_1.Vendors.findByIdAndUpdate(data.id[0], {
+            $addToSet: { posts: newPost._id },
         });
         return { success: true };
     }

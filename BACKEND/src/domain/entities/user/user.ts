@@ -65,6 +65,5 @@ export interface IMessageRequest {
   vendorId?:string;
 }
 export interface cancelReq{
-  userId?:string;
-  vendorId?:string;
+  chatId?:string;
 }

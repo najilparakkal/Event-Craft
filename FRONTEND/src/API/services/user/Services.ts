@@ -38,8 +38,8 @@ export const addRequest = async (message: string, userId: string,vendorId:string
       vendorId
     };
 
-    await authAxiosInstance.post("user/addRequest", data);
-    return true;
+   const response =  await authAxiosInstance.post("user/addRequest", data);
+    return response.status === 200
   } catch (error) {
     console.log(error);
   }
@@ -54,14 +54,14 @@ export const fetchRequest = async(userId:string)=>{
   }
 }
 
-export const cancelRequest = async (vendorId:string,userId:string)=>{
+export const cancelRequest = async (roomId:string)=>{
   try {
   
-    const response = await authAxiosInstance.post("user/cancelRequest",{vendorId,userId});
+    const response = await authAxiosInstance.post("user/cancelRequest",{roomId});
     return response
   } catch (error) {
     console.log(error);
-    
+     
   }
 }
 

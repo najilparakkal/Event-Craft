@@ -10,6 +10,7 @@ export interface IUser extends Document {
   registered: Date;
   blocked: boolean;
   profilePicture: string;
+  chats: string
 }
 
 const userSchema = new Schema<IUser>({

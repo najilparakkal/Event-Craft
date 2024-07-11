@@ -95,35 +95,19 @@ export default {
 
   acceptRequest: async (userId:string, vendorId:string) => {
     try {
-      let chat = await ChatModel.findOne({
+      let chat = await ChatModel.findOneAndUpdate({
         users: { $all: [userId, vendorId] },
-      });
+      },{$set:{is_accepted:true}});
 
-      if (!chat) {
-        chat = new ChatModel({
-          chatName: `${userId}-${vendorId}`,
-          users: [userId, vendorId],
-        });
-        await chat.save();
-      }
-
-      await Users.findByIdAndUpdate(userId, {
-        $addToSet: { chats: chat._id },
-      });
-
-      await Vendors.findByIdAndUpdate(vendorId, {
-        $addToSet: { chats: chat._id },
-      });
-
-      await Request.deleteOne({userId,vendorId});
-      console.log("Chat successfully created and users updated");
+    return {success:true}      
     } catch (error) {
       console.error(error);
     }
   },
-  rejectRequest: async (userId: string, vendorId: string) => {
+  rejectRequest: async (_id:string) => {
     try {
-      await Request.deleteOne({ userId, vendorId });
+      
+      const data = await ChatModel.findByIdAndDelete(_id);
       return { success: true };
     } catch (error) {
       console.log(error);

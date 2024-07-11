@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Posts = void 0;
 const mongoose_1 = require("mongoose");
-const postShema = new mongoose_1.Schema({
+const postSchema = new mongoose_1.Schema({
     title: {
         type: String,
     },
@@ -19,12 +19,10 @@ const postShema = new mongoose_1.Schema({
     category: {
         type: String,
     },
-    desription: {
+    description: {
         type: String,
     },
-    registered: {
-        type: Date,
-        default: Date.now,
-    },
+}, {
+    timestamps: true,
 });
-exports.Posts = (0, mongoose_1.model)("Posts", postShema);
+exports.Posts = (0, mongoose_1.model)("Posts", postSchema);

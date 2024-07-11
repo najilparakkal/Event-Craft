@@ -33,7 +33,7 @@ export default{
   },
   rejectRequest:async(data:reject)=>{
     try {
-      const response = await requestRepo.rejectRequest(data.userId,data.vendroId);
+      const response = await requestRepo.rejectRequest(data.roomId);
       return response;
     } catch (error) {
       console.log(error);
