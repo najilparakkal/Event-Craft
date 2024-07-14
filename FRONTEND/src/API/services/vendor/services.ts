@@ -57,12 +57,9 @@ export const fetchRequest = async (vendorId: string) => {
     console.log(error);
   }
 };
-export const cancelRequest = async (roomId:string) => {
+export const cancelRequest = async (roomId: string) => {
   try {
-
-    const response = await authAxiosInstance.delete("vendor/removeRequest", {
-      data: { roomId},
-    });
+    const response = await authAxiosInstance.delete(`vendor/removeRequest/${roomId}`);
     return response.status === 200;
   } catch (error) {
     console.log(error);
@@ -103,7 +100,11 @@ export const fetchMessages = async (chatId: string) => {
   }
 };
 
-export const storeMessages = async (vendorId: string, userId: string, content: string) => {
+export const storeMessages = async (
+  vendorId: string,
+  userId: string,
+  content: string
+) => {
   try {
     const response = await authAxiosInstance.post("/vendor/chats", {
       vendorId,
@@ -116,13 +117,45 @@ export const storeMessages = async (vendorId: string, userId: string, content: s
   }
 };
 
-export const fetchChatId = async(userId:string,vendorId:string)=>{
+export const fetchChatId = async (userId: string, vendorId: string) => {
   try {
-    
-    const response = await authAxiosInstance.get(`vendor/chatId/${userId}/${vendorId}`);
+    const response = await authAxiosInstance.get(
+      `vendor/chatId/${userId}/${vendorId}`
+    );
     return response.data;
   } catch (error) {
     console.log(error);
-    
   }
-}
+};
+
+export const userBookings = async (vendorId: string) => {
+  try {
+    const response = await authAxiosInstance.get(`vendor/bookings/${vendorId}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const cancelBooking = async (bookingId: string) => {
+  try {
+    const response = await authAxiosInstance.delete(
+      `vendor/cancelBooking/${bookingId}`
+    );
+    return response.status === 200;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const acceptBooking = async (bookingId: string) => {
+  try {
+    const resoponse = await authAxiosInstance.patch(
+      `vendor/acceptBooking/${bookingId}`
+    );
+    
+    return resoponse.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

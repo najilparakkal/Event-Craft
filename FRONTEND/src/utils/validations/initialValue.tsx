@@ -1,15 +1,15 @@
 interface FormValues {
-    name?: string;
-    email?: string;
-    password?: string;
-    phoneNum?: string;
-  }
+  name?: string;
+  email?: string;
+  password?: string;
+  phoneNum?: string;
+}
 
-export const initialValue:FormValues = {
-    email:"",
-    phoneNum:"",
-    name:"",
-    password:""
+export const initialValue: FormValues = {
+  email: "",
+  phoneNum: "",
+  name: "",
+  password: ""
 }
 
 
@@ -49,3 +49,17 @@ export interface LicenseFormValues {
 //   licenseOrCertificates: [],
 //   profileImage:""
 // }
+
+export const bookingInitialValue = {
+
+  clientName: '',
+  email: '',
+  phoneNumber: '',
+  eventDate: null as Date | null,
+  arrivalTime: '',
+  guests: '',
+  location: '',
+  pincode: '',
+  endingTime: '',
+  event:""
+}

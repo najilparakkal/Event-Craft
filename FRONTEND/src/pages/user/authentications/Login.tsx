@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { loginValidation } from '../../../utils/validations/validateSchema';
@@ -6,15 +6,11 @@ import { useDispatch } from 'react-redux';
 import {  useNavigate } from 'react-router-dom';
 import { loginUser, GoogleLogin } from '../../../API/services/user/authSlice';
 import { auth, signInWithPopup, provider } from '../../../firebase/firebase';
-import { useAppSelector } from '../../../costumeHooks/costum';
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const vendorDetails = useAppSelector((state) => state.user.jwt);
-  useEffect(() => {
-    if (vendorDetails) navigate("/home")
-  }, [])
+
   const handleSubmit = async (values: { email: string; password: string }) => {
     try {
       const resultAction = await dispatch(loginUser(values) as any);

@@ -32,7 +32,6 @@ export default {
 
   otpVerification: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log(req.body);
 
       const checkOtp = await userIterator.otpVerification(req.body);
 

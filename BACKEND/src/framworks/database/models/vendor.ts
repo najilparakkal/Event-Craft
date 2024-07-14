@@ -2,6 +2,7 @@ import mongoose, { Schema, model, Document } from "mongoose";
 import { ILicence } from "./licence";
 import { IPost } from "./post";
 import { IChatModel } from "./chatModal";
+import { IBooking } from "./booking"; 
 
 const vendorSchema = new Schema<IVendors>({
   vendorName: {
@@ -60,11 +61,20 @@ const vendorSchema = new Schema<IVendors>({
       ref: "ChatModel",
     },
   ],
+  refreshToken:{
+    type:String
+  },
+  availableDate: [
+    {
+      type: Date,
+    }
+  ],
   coverPicture: {
     type: String,
     default:
       "https://thingscareerrelated.com/wp-content/uploads/2021/10/default-background-image.png",
   },
+
 });
 
 export const Vendors = model<IVendors>("Vendors", vendorSchema);
@@ -83,5 +93,7 @@ export interface IVendors extends Document {
   licence?: ILicence["_id"][];
   posts?: IPost["_id"][];
   chats?: IChatModel["_id"][];
+  availableDate?: Date[]; 
   coverPicture?: string;
+  refreshToken?:string
 }

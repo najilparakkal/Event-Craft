@@ -1,4 +1,4 @@
-import {   Routes, Route } from "react-router-dom";
+import {   Routes, Route, Navigate } from "react-router-dom";
 import Signup from "../pages/user/authentications/Signup";
 import Otp from "../pages/user/authentications/Otp";
 import Login from "../pages/user/authentications/Login";
@@ -11,16 +11,19 @@ import ProfileHome from "../pages/user/profileSection/wishlist/WishlistSection";
 import MessageSection from "../pages/user/profileSection/messages/MessageSection";
 import RequestSection from "../pages/user/profileSection/requests/RequestSection";
 import BookingSection from "../pages/user/profileSection/bookings/BookingSection";
+import { useAppSelector } from "../costumeHooks/costum";
 
 
 
 
 const UserRouter: React.FC = () => {
+    const userDetails = useAppSelector((state) => state.user.userDetails._id);
+
     return (
         <Routes>
             <Route path="/signup" element={<Signup />} />
             <Route path="/otp" element={<Otp />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={userDetails ? <Navigate to="/home" /> : <Login />} />
             <Route path="/forgot" element={<ForgotPass />} />
             <Route path="" element={<User />}>
                 <Route path="/home" element={<Home />} />

@@ -41,9 +41,9 @@ exports.default = {
             console.log(error);
         }
     }),
-    rejectRequest: (data) => __awaiter(void 0, void 0, void 0, function* () {
+    rejectRequest: (roomId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const response = yield requestRepo_1.default.rejectRequest(data.roomId);
+            const response = yield requestRepo_1.default.rejectRequest(roomId);
             return response;
         }
         catch (error) {
@@ -79,6 +79,33 @@ exports.default = {
     fetchChatId: (vendorId, userId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield requestRepo_1.default.fetchChatId(vendorId, userId);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    getBookings: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield requestRepo_1.default.getBookings(vendorId);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    cancelBooking: (bookingId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield requestRepo_1.default.cancelBooking(bookingId);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    acceptBooking: (bookingId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield requestRepo_1.default.acceptBooking(bookingId);
             return response;
         }
         catch (error) {

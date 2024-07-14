@@ -2,6 +2,7 @@ import  {  AxiosResponse } from "axios";
 import { authAxiosInstance } from "./axios/AxiosInstance";
 import { useDispatch } from "react-redux";
 import { logout } from "./aurhSlice";
+import Cookies from 'js-cookie';
 
 
 
@@ -22,7 +23,7 @@ export const vendorRegister = async (
     console.error(
       "vendorRegister error:",
       error.response?.data || error.message
-    ); // Improved logging
+    );
     throw error;
   }
 };
@@ -71,7 +72,6 @@ export const login = async (
       vendorDetails
     ); 
     if (response.status === 200) {
-      console.log(response.data.response,"🍽️🍽️🍽️");
       
       return response.data.response;
     } else if (response.status === 201) {
@@ -141,7 +141,7 @@ export const vendorLogout = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('vendorDetails');
-    localStorage.removeItem('jwt');
+    Cookies.remove('jwt');
     dispatch(logout());
   };
   return handleLogout;

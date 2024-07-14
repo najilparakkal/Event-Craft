@@ -1,4 +1,4 @@
-import { generateOtp, } from "util-functions-nodejs";
+import { generateOtp,xKeyGenerator } from "util-functions-nodejs";
 
-export const generateOTP = () => generateOtp(4).toString()
+export const generateOTP = () => generateOtp(4).toString();
  

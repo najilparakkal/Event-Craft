@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { addRequest, fetchVendorDetails } from '../../../API/services/user/Services';
-import Header from '../../../compounents/user/Header';
+
+import Booking from './Booking';
+
 import { useAppSelector } from '../../../costumeHooks/costum';
+import Header from '../../../compounents/user/Header';
 
 interface VendorDetails {
     vendorName: string;
@@ -23,6 +26,8 @@ const Vendor: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [validationError, setValidationError] = useState('');
     const { _id } = useAppSelector((state) => state.user.userDetails);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredPosts, setFilteredPosts] = useState<VendorDetails['posts']>([]);
 
     useEffect(() => {
         const fetch = async () => {
@@ -31,7 +36,21 @@ const Vendor: React.FC = () => {
         };
         fetch();
     }, [id]);
-    console.log(vendorDetails, "🍽️🍽️");
+
+    useEffect(() => {
+        if (vendorDetails) {
+            setMessage(`Hi ${vendorDetails.vendorName}, I would like to connect with you regarding your services.`);
+        }
+    }, [vendorDetails]);
+
+    useEffect(() => {
+        if (vendorDetails && searchTerm) {
+            const filtered = vendorDetails.posts.filter(post => post.category.toLowerCase().includes(searchTerm.toLowerCase()));
+            setFilteredPosts(filtered);
+        } else if (vendorDetails) {
+            setFilteredPosts(vendorDetails.posts);
+        }
+    }, [searchTerm, vendorDetails]);
 
     const handleFavoriteClick = () => {
         setIsFavorite(!isFavorite);
@@ -60,20 +79,15 @@ const Vendor: React.FC = () => {
         setIsModalOpen(false);
     };
 
-    useEffect(() => {
-        if (vendorDetails) {
-            setMessage(`Hi ${vendorDetails.vendorName}, I would like to connect with you regarding your services.`);
-        }
-    }, [vendorDetails]);
+    const handleInputChange = (value: string) => {
+        setMessage(value);
+        setValidationError('');
+    };
 
     if (!vendorDetails) {
         return <div>Loading...</div>;
     }
 
-    const handleInputChange = (value: string) => {
-        setMessage(value);
-        setValidationError('');
-    };
 
     return (
         <div className="bg-black min-h-screen flex flex-col items-center">
@@ -99,7 +113,7 @@ const Vendor: React.FC = () => {
                     <div className="flex justify-between space-x-2 mt-2">
                         <button className="bg-[#FEE5EB] text-white py-1 px-2 rounded-md">CONTACT US</button>
                         <button className="bg-[#FEE5EB] text-white py-1 px-2 rounded-md" onClick={toggleModal}>CHAT WITH ME</button>
-                        <button className="bg-[#FEE5EB] text-white py-1 px-2 rounded-md">BOOKING</button>
+                        <button className="bg-[#FEE5EB] text-white py-1 px-2 rounded-md" onClick={() => window.scrollTo(0, window.screen.height)}>BOOKING</button>
                     </div>
                     <div className="flex justify-between ">
                         <a className="text-white px-2 rounded-md flex items-center" onClick={handleFavoriteClick}>
@@ -113,53 +127,65 @@ const Vendor: React.FC = () => {
                 </div>
             </main>
 
-            {/* Post Details Section */}
-            <div className="w-full max-w-6xl p-6">
+            {/* Search Input */}
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 justify-between sm:space-x-2 mb-4 sm:mb-8 w-full max-w-6xl p-6">
                 <h2 className="text-white text-2xl mb-4">Posts</h2>
+
+                <input
+                    type="text"
+                    placeholder="Search services"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="px-20 py-2 rounded-md bg-gray-300 text-black placeholder-gray-700 w-full sm:w-auto"
+                    style={{ textAlign: 'center', paddingBottom: '0.5rem' }}
+                />
+            </div>
+
+            <div className="w-full max-w-6xl p-6 mb-10">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {vendorDetails.posts.map((post, index) => (
+                    {filteredPosts.map((post, index) => (
                         <div key={index} className="grid gap-4">
                             {post.images.map((image, imgIndex) => (
                                 <div key={imgIndex}>
-                                    <img className="h-auto max-w-full rounded-lg" src={image} alt={post.title} />
+                                    <img className="h-auto max-w-full rounded-lg" src={image} alt="" />
+                                    <h4 className="text-white font-semibold text-xl mt-2">{post.title}</h4>
+                                    <p className="text-white mt-1">{post.description}</p>
                                 </div>
                             ))}
-                            <div className="text-white mt-2">
-                                <h3 className="font-semibold">{post.title}</h3>
-                                <p>{post.description}</p>
-                            </div>
                         </div>
                     ))}
                 </div>
             </div>
 
+            {/* Modal Component */}
             {isModalOpen && (
-                <div id="default-modal" tabIndex={-1} aria-hidden="true" className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
-                    <div className="relative p-4 w-full max-w-2xl max-h-full  rounded-lg shadow bg-[#FD8FAA]">
-                        <div className="flex items-center justify-between p-4 rounded-t dark:border-gray-600">
-                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Send Message to {vendorDetails.vendorName}</h3>
-                        </div>
-                        <div className="p-4 space-y-4">
-                            <input
-                                required
-                                type="text"
-                                value={message}
-                                onChange={(e) => handleInputChange(e.target.value)}
-                                className="w-full p-2 rounded bg-[#FEE5EB] dark:text-black dark:border-gray-600"
-                            />
-                            {validationError && <p className="text-red-500">{validationError}</p>}
-                        </div>
-                        <div className="flex items-center  rounded-b dark:border-gray-600">
-                            <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={handleSend}>Send</button>
-                            <button type="button" className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg  border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-red-500 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" onClick={handleCancel}>Cancel</button>
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                        <h2 className="text-xl font-semibold mb-4">Send a Message</h2>
+                        <textarea
+                            className="w-full border border-gray-300 rounded-md p-2 mb-2"
+                            rows={4}
+                            value={message}
+                            onChange={(e) => handleInputChange(e.target.value)}
+                        />
+                        {validationError && <p className="text-red-500 text-sm mb-2">{validationError}</p>}
+                        <div className="flex justify-end space-x-2">
+                            <button className="bg-gray-300 text-black py-2 px-4 rounded-md" onClick={handleCancel}>Cancel</button>
+                            <button className="bg-[#FD8FAA] text-white py-2 px-4 rounded-md" onClick={handleSend}>Send</button>
                         </div>
                     </div>
                 </div>
             )}
+            <div className='flex w-5/6 '>
+                <div className='w-full bg-red-500'>
+                    <Booking vendorId={id + ""} />
 
-            <Toaster position="top-center" reverseOrder={false} />
+                </div>
+
+            </div>
+            <Toaster />
         </div>
     );
 };
 
-export default React.memo(Vendor);
+export default Vendor;

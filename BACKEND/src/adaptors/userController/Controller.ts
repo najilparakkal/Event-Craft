@@ -13,7 +13,7 @@ export default {
   listServices: async (req: Request, res: Response) => {
     try {
       const response = await userIterator.listServices();
-      res.status(200).json(response);
+      return res.status(200).json(response);
     } catch (error) {
       console.log(error);
     }
@@ -68,6 +68,40 @@ export default {
       res.status(200).json(response);
     } catch (error) {
       console.log(error);
+    }
+  },
+  addBooking: async (req: Request, res: Response) => {
+    try {
+      const response = await userIterator.addBookind(req.body);
+      if (response?.success) {
+        res.status(200).json({ message: "Booking added successfully" });
+      } else {
+        res.status(400).json({
+          response,
+          message: "Somthing could not be added successfully",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  getBooking: async (req: Request, res: Response) => {
+    try {
+      const response = await userIterator.getBookings(req.params.userId);
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  cancelBooking: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { percentage, bookingId } = req.query;
+
+      const response = await userIterator.cancelBooking(percentage, bookingId);
+      res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Internal Server Error");
     }
   },
 };

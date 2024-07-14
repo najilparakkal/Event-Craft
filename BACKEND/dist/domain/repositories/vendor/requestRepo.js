@@ -18,6 +18,7 @@ const licence_1 = require("../../../framworks/database/models/licence");
 const message_1 = __importDefault(require("../../../framworks/database/models/message"));
 const requests_1 = require("../../../framworks/database/models/requests");
 const user_1 = require("../../../framworks/database/models/user");
+const booking_1 = require("../../../framworks/database/models/booking");
 exports.default = {
     addRequest: (datas, images) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -111,7 +112,9 @@ exports.default = {
     }),
     fetchMessages: (chatId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const messages = yield message_1.default.find({ chat: chatId }).sort({ createdAt: 1 });
+            const messages = yield message_1.default.find({ chat: chatId }).sort({
+                createdAt: 1,
+            });
             return messages;
         }
         catch (error) {
@@ -150,20 +153,57 @@ exports.default = {
     fetchChatId: (vendorId, userId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const chat = yield chatModal_1.default.findOne({
-                $and: [
-                    { users: userId },
-                    { users: vendorId }
-                ]
+                $and: [{ users: userId }, { users: vendorId }],
             });
             if (chat !== null) {
                 return chat._id.toString();
             }
             else {
-                throw new Error('Chat not found');
+                throw new Error("Chat not found");
             }
         }
         catch (error) {
             console.log(error);
+        }
+    }),
+    getBookings: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const bookings = yield booking_1.Bookings.find({ vendorId }).lean();
+            return bookings;
+        }
+        catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }),
+    cancelBooking: (bookingId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const booking = yield booking_1.Bookings.findById(bookingId);
+            if (!booking) {
+                throw new Error("Booking not found");
+            }
+            const user = yield user_1.Users.findByIdAndUpdate(booking.userId, { $inc: { wallet: booking.advance } }, { new: true });
+            if (!user) {
+                throw new Error("User not found");
+            }
+            yield booking_1.Bookings.findByIdAndDelete(bookingId);
+            return { success: true };
+        }
+        catch (error) {
+            console.error("Error canceling booking:", error);
+        }
+    }),
+    acceptBooking: (bookingId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const updatedBooking = yield booking_1.Bookings.findByIdAndUpdate(bookingId, { $set: { accepted: true } }, { new: true });
+            if (!updatedBooking) {
+                throw new Error('Booking not found');
+            }
+            return updatedBooking;
+        }
+        catch (error) {
+            console.error("Error accepting booking:", error);
+            throw error;
         }
     })
 };

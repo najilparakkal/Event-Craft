@@ -6,7 +6,7 @@ import { Request } from "../../../framworks/database/models/requests";
 import { Users } from "../../../framworks/database/models/user";
 import { Vendors } from "../../../framworks/database/models/vendor";
 import { IUser } from "../../entities/user/user";
-import io from 'socket.io-client';
+import io from "socket.io-client";
 
 import {
   IAcceptRequest,
@@ -16,6 +16,7 @@ import {
   IUserReq,
   MessageData,
 } from "../../entities/vendor/vendor";
+import { Bookings } from "../../../framworks/database/models/booking";
 
 export default {
   addRequest: async (datas: any, images: any) => {
@@ -55,9 +56,7 @@ export default {
     }
   },
 
-  listRequestsForVendor: async (
-    vendorId: string
-  ) => {
+  listRequestsForVendor: async (vendorId: string) => {
     try {
       const requests = await Request.find({ vendorId });
 
@@ -93,20 +92,22 @@ export default {
     }
   },
 
-  acceptRequest: async (userId:string, vendorId:string) => {
+  acceptRequest: async (userId: string, vendorId: string) => {
     try {
-      let chat = await ChatModel.findOneAndUpdate({
-        users: { $all: [userId, vendorId] },
-      },{$set:{is_accepted:true}});
+      let chat = await ChatModel.findOneAndUpdate(
+        {
+          users: { $all: [userId, vendorId] },
+        },
+        { $set: { is_accepted: true } }
+      );
 
-    return {success:true}      
+      return { success: true };
     } catch (error) {
       console.error(error);
     }
   },
-  rejectRequest: async (_id:string) => {
+  rejectRequest: async (_id: string) => {
     try {
-      
       const data = await ChatModel.findByIdAndDelete(_id);
       return { success: true };
     } catch (error) {
@@ -131,41 +132,36 @@ export default {
   },
   fetchMessages: async (chatId: string) => {
     try {
-      const messages = await Message.find({ chat: chatId }).sort({ createdAt: 1 });
+      const messages = await Message.find({ chat: chatId }).sort({
+        createdAt: 1,
+      });
       return messages;
     } catch (error) {
       console.log(error);
     }
   },
-  storeMessage : async (data: MessageData): Promise<void> => {
+  storeMessage: async (data: MessageData): Promise<void> => {
     // const { vendorId, userId, content } = data;
-  
     // try {
     //   let chat = await ChatModel.findOne({
     //     users: { $all: [vendorId, userId] },
     //   });
-  
     //   if (!chat) {
     //     chat = new ChatModel({
     //       users: [vendorId, userId],
     //     });
     //     await chat.save();
     //   }
-  
     //   const newMessage = new Message({
     //     sender: vendorId,
     //     senderModel: 'Vendor',
     //     content,
     //     chat: chat._id,
     //   });
-  
     //   const savedMessage = await newMessage.save();
-  
     //   chat.latestMessage = savedMessage._id;
     //   await chat.save();
-  
     //   console.log(savedMessage, "Message stored successfully");
-  
     //   io.to(`user:${userId}`).emit('receive message', { sender: 'Vendor', content });
     //   io.to(`vendor:${vendorId}`).emit('receive message', { sender: 'You', content });
     // } catch (error) {
@@ -173,22 +169,74 @@ export default {
     //   throw new Error('Internal server error');
     // }
   },
-  fetchChatId:async(vendorId:string,userId:string)=>{
+  fetchChatId: async (vendorId: string, userId: string) => {
     try {
       const chat = await ChatModel.findOne({
-        $and: [  
-          { users: userId },
-          { users: vendorId }
-        ]
-      }); 
-  
+        $and: [{ users: userId }, { users: vendorId }],
+      });
+
       if (chat !== null) {
         return chat._id.toString();
       } else {
-        throw new Error('Chat not found');
+        throw new Error("Chat not found");
       }
     } catch (error) {
       console.log(error);
     }
+  },
+  getBookings: async (vendorId: string) => {
+    try {
+      const bookings = await Bookings.find({ vendorId }).lean();
+     
+
+      return bookings;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  },
+  cancelBooking: async (bookingId: string) => {
+    try {
+      const booking = await Bookings.findById(bookingId);
+
+      if (!booking) {
+        throw new Error("Booking not found");
+      }
+
+      const user = await Users.findByIdAndUpdate(
+        booking.userId,
+        { $inc: { wallet: booking.advance } },
+        { new: true }
+      );
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      await Bookings.findByIdAndDelete(bookingId);
+
+      return { success: true };
+    } catch (error) {
+      console.error("Error canceling booking:", error);
+    }
+  },
+  acceptBooking: async (bookingId: string) => {
+    try {
+      const updatedBooking = await Bookings.findByIdAndUpdate(
+        bookingId,
+        { $set: { accepted: true } },
+        { new: true }
+      );
+  
+      if (!updatedBooking) {
+        throw new Error('Booking not found');
+      }
+  
+      
+      return updatedBooking;
+    } catch (error) {
+      console.error("Error accepting booking:", error);
+      throw error;
+    }
   }
-}
+};

@@ -18,9 +18,13 @@ vendorRouter.get("/api/vendor/getCategories",Controller.getCategories)
 vendorRouter.post("/api/vendor/uploadPost/:id",Controller.uploadPost)
 vendorRouter.get("/api/vendor/requsts/:vendorId",Controller.listRequests)   
 vendorRouter.post("/api/vendor/acceptRequest",Controller.acceptRequest)   
-vendorRouter.delete("/api/vendor/removeRequest",Controller.rejectRequest)   
+vendorRouter.delete("/api/vendor/removeRequest/:roomId",Controller.rejectRequest)   
 vendorRouter.get("/api/vendor/fetchUsers/:vendorId",Controller.fetchUsers)   
 vendorRouter.get("/api/vendor/getMessages/:chatId",Controller.messages)   
 vendorRouter.get("/api/vendor/chatId/:userId/:vendorId",Controller.chatId)   
+vendorRouter.get("/api/vendor/bookings/:vendorId",Controller.getBookings)
+vendorRouter.delete("/api/vendor/cancelBooking/:bookingId",Controller.cancelBooking)
+vendorRouter.patch("/api/vendor/acceptBooking/:bookingId",Controller.acceptBooking)
+
 
 export default vendorRouter

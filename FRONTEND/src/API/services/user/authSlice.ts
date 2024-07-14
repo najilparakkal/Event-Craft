@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { userRegister, login } from './userAuthService';
+import Cookies from 'js-cookie';
+
 
 const storedUserDetails: UserDetails | null = JSON.parse(localStorage.getItem('userDetails') || 'null');
 const storedJWT: string | null = localStorage.getItem('jwt');
@@ -96,7 +98,7 @@ const userSlice = createSlice({
         };
         state.jwt = action.payload.user.token;
         localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
-        localStorage.setItem('jwt', state.jwt);
+        Cookies.set('jwt', state.jwt); 
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.status = 'failed';
@@ -117,7 +119,7 @@ const userSlice = createSlice({
         state.jwt = action.payload.token ?? null;
         localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
         if (state.jwt) {
-          localStorage.setItem('jwt', state.jwt);
+          Cookies.set('jwt', state.jwt); 
         }
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -140,7 +142,7 @@ const userSlice = createSlice({
         state.jwt = action.payload.response.token;
         localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
         if (state.jwt) {
-          localStorage.setItem('jwt', state.jwt);
+          Cookies.set('jwt', state.jwt); 
         }
       })
       .addCase(GoogleAuth.rejected, (state, action) => {
@@ -162,7 +164,7 @@ const userSlice = createSlice({
         state.jwt = action.payload.token ?? null;
         localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
         if (state.jwt) {
-          localStorage.setItem('jwt', state.jwt);
+          Cookies.set('jwt', state.jwt); 
         }
       })
       .addCase(GoogleLogin.rejected, (state, action) => {

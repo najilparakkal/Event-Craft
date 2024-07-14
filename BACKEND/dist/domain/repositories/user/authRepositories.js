@@ -39,15 +39,17 @@ const createUser = (userData, hashedPassword) => __awaiter(void 0, void 0, void 
                 phoneNum: userData.phoneNum,
                 otp: otp,
             });
-            const token = yield (0, jwtGenarate_1.CreateToken)({ id: newUser._id, email: newUser.email }, true);
+            const { accessToken, refreshToken } = yield (0, jwtGenarate_1.CreateToken)({ id: newUser._id + "", email: newUser.email });
+            newUser.refreshToken = refreshToken;
+            yield newUser.save();
             const userDatas = {
                 id: newUser._id,
                 email: newUser.email,
                 phoneNum: newUser.phoneNum,
                 name: newUser.userName,
-                profilePicture: newUser.profilePicture
+                profilePicture: newUser.profilePicture,
             };
-            return { checkResponse, userDatas, token };
+            return { checkResponse, userDatas, token: accessToken };
         }
     }
     catch (err) {
@@ -129,10 +131,12 @@ const logingUser = (email, password) => __awaiter(void 0, void 0, void 0, functi
                 phoneNum: user.phoneNum,
                 userName: user.userName,
                 id: user._id,
-                profilePicture: user.profilePicture
+                profilePicture: user.profilePicture,
             };
-            const token = yield (0, jwtGenarate_1.CreateToken)({ id: user._id, email: user.email }, true);
-            return { token, userDetails };
+            const { accessToken, refreshToken } = yield (0, jwtGenarate_1.CreateToken)({ id: user._id + "", email: user.email });
+            user.refreshToken = refreshToken;
+            yield user.save();
+            return { token: accessToken, userDetails };
         }
         else {
             return false;
@@ -215,11 +219,16 @@ const RegisterWithGoogle = (userData, hashedPassword) => __awaiter(void 0, void 
                 name: newUser.userName,
                 profilePicture: newUser.profilePicture,
             };
-            const token = yield (0, jwtGenarate_1.CreateToken)({ id: newUser._id, email: newUser.email }, true);
+            const { accessToken, refreshToken } = yield (0, jwtGenarate_1.CreateToken)({
+                id: newUser._id + "",
+                email: newUser.email,
+            });
+            newUser.refreshToken = refreshToken;
+            yield newUser.save();
             return {
                 success: true,
                 message: "User registered successfully",
-                token,
+                token: accessToken,
                 userDatas,
             };
         }

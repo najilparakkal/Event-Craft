@@ -77,7 +77,7 @@ exports.default = {
     }),
     rejectRequest: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const response = yield request_1.default.rejectRequest(req.body);
+            const response = yield request_1.default.rejectRequest(req.params.roomId);
             res.status(200).json(response);
         }
         catch (error) {
@@ -119,5 +119,32 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
-    })
+    }),
+    getBookings: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.getBookings(req.params.vendorId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    cancelBooking: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.cancelBooking(req.params.bookingId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    acceptBooking: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.acceptBooking(req.params.bookingId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
 };

@@ -2,7 +2,6 @@ import { ILicence } from "../../../framworks/database/models/licence";
 import { Vendors } from "../../../framworks/database/models/vendor";
 import {
   ICreateVendorResponse,
-  IVendors,
   ILogin,
   IgoogleRegistration,
   IotpVeri,
@@ -14,10 +13,7 @@ import { checkingVendor } from "../../helpers/chekingVendors";
 import { CreateToken } from "../../helpers/jwtGenarate";
 import { sendOTP } from "../../helpers/nodmailer";
 import bcrypt from "bcrypt";
-export const RegisterVendor = async (
-  data: IVendors,
-  hashedPassword: string
-) => {
+export const RegisterVendor = async (data: any, hashedPassword: string) => {
   try {
     const checkVendor = await checkingVendor(data);
     if (checkVendor.success) {
@@ -29,11 +25,12 @@ export const RegisterVendor = async (
         phoneNum: data.phoneNum,
         otp: otp,
       });
-      const token = await CreateToken(
-        { id: newVendor._id, email: newVendor.email },
-        true
-      );
-
+      const { refreshToken, accessToken } = await CreateToken({
+        id: newVendor._id + "",
+        email: newVendor.email + "",
+      });
+      newVendor.refreshToken = refreshToken;
+      newVendor.save();
       const vendorDetails: IvendorDetails = {
         id: newVendor._id + "",
         name: newVendor.vendorName + "",
@@ -42,7 +39,7 @@ export const RegisterVendor = async (
       };
       return {
         success: true,
-        token: token,
+        token: accessToken,
         vendorDetails,
         isVendor: newVendor.vendor,
       };
@@ -135,15 +132,17 @@ export const logingVendor = async (
         email: vendor.email + "",
         phoneNum: vendor.phoneNum + "",
         vendorName: vendor.vendorName + "",
-        id: vendor._id.toString(),
+        id: vendor._id+'',
         profilePicture,
       };
-      const token = await CreateToken(
-        { id: vendor._id.toString(), email: vendor.email },
-        true
-      );
+      const { refreshToken, accessToken } = await CreateToken({
+        id: vendor._id + "",
+        email: vendor.email + "",
+      });
+      vendor.refreshToken = refreshToken;
+      vendor.save();
 
-      return { success: true, token, vendorDetails, isVendor: vendor.vendor };
+      return { success: true, token:accessToken, vendorDetails, isVendor: vendor.vendor };
     } else {
       console.log("Password does not match");
       return { success: false, message: "Password does not match" };
@@ -223,14 +222,17 @@ export const RegisterWithGoogle = async (
         name: newvendor.vendorName + "",
       };
 
-      const token = await CreateToken(
-        { id: newvendor._id, email: newvendor.email },
-        true
-      );
+      const { refreshToken, accessToken } = await CreateToken({
+        id: newvendor._id + "",
+        email: newvendor.email + "",
+      });
+      newvendor.refreshToken = refreshToken;
+      newvendor.save();
+
       return {
         success: true,
         message: "vendor registered successfully",
-        token,
+        token:accessToken,
         vendorDetails,
         isVendor: newvendor.vendor,
       };

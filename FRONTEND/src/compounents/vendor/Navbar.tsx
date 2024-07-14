@@ -16,9 +16,7 @@ const Navbar: React.FC = () => {
       case '/vendor/addPost':
         setSelectedMenuItem('ADD POST');
         break;
-      case '/vendor/requests':
-        setSelectedMenuItem('REQUESTS');
-        break;
+   
       case '/vendor/messages':
         setSelectedMenuItem('MESSAGES');
         break;
@@ -59,7 +57,7 @@ const logout =vendorLogout();
         <nav className="">
           <a onClick={() => navigate("/vendor/home")} className="text-gray-800 font-semibold px-3 py-2 rounded-md hover:text-blue-600 hover:underline cursor-pointer">Dashboard</a>
           <a onClick={() => navigate("/vendor/services")} className="text-gray-600 font-semibold px-3 py-2 rounded-md hover:text-blue-600 hover:underline cursor-pointer">ADD Services</a>
-          <a href="#" className="text-gray-600 font-semibold px-3 py-2 rounded-md hover:text-blue-600 hover:underline cursor-pointer">Bookings</a>
+          <a onClick={()=>navigate("/vendor/bookings")} className="text-gray-600 font-semibold px-3 py-2 rounded-md hover:text-blue-600 hover:underline cursor-pointer">Bookings</a>
           <a href="#" className="text-gray-600 font-semibold px-3 py-2 rounded-md hover:text-blue-600 hover:underline cursor-pointer">About Us</a>
         </nav>
       </div>
@@ -96,12 +94,7 @@ const logout =vendorLogout();
           >
             ADD POST
           </li>
-          <li
-            onClick={() => handleMenuItemClick('REQUESTS', '/vendor/requests')}
-            className={`py-2 px-4 text-black hover:bg-[#0092AB] hover:text-white font-bold rounded-lg cursor-pointer transition-colors duration-500 ${selectedMenuItem === 'REQUESTS' ? 'bg-[#0092AB] text-white' : ''}`}
-          >
-            REQUESTS
-          </li>
+         
           <li
             onClick={() => handleMenuItemClick('MESSAGES', '/vendor/messages')}
             className={`py-2 px-4 text-black hover:bg-[#0092AB] hover:text-white font-bold rounded-lg cursor-pointer transition-colors duration-500 ${selectedMenuItem === 'MESSAGES' ? 'bg-[#0092AB] text-white' : ''}`}

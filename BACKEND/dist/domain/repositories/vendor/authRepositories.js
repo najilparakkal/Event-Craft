@@ -30,7 +30,12 @@ const RegisterVendor = (data, hashedPassword) => __awaiter(void 0, void 0, void 
                 phoneNum: data.phoneNum,
                 otp: otp,
             });
-            const token = yield (0, jwtGenarate_1.CreateToken)({ id: newVendor._id, email: newVendor.email }, true);
+            const { refreshToken, accessToken } = yield (0, jwtGenarate_1.CreateToken)({
+                id: newVendor._id + "",
+                email: newVendor.email + "",
+            });
+            newVendor.refreshToken = refreshToken;
+            newVendor.save();
             const vendorDetails = {
                 id: newVendor._id + "",
                 name: newVendor.vendorName + "",
@@ -39,7 +44,7 @@ const RegisterVendor = (data, hashedPassword) => __awaiter(void 0, void 0, void 
             };
             return {
                 success: true,
-                token: token,
+                token: accessToken,
                 vendorDetails,
                 isVendor: newVendor.vendor,
             };
@@ -116,11 +121,16 @@ const logingVendor = (email, password) => __awaiter(void 0, void 0, void 0, func
                 email: vendor.email + "",
                 phoneNum: vendor.phoneNum + "",
                 vendorName: vendor.vendorName + "",
-                id: vendor._id.toString(),
+                id: vendor._id + '',
                 profilePicture,
             };
-            const token = yield (0, jwtGenarate_1.CreateToken)({ id: vendor._id.toString(), email: vendor.email }, true);
-            return { success: true, token, vendorDetails, isVendor: vendor.vendor };
+            const { refreshToken, accessToken } = yield (0, jwtGenarate_1.CreateToken)({
+                id: vendor._id + "",
+                email: vendor.email + "",
+            });
+            vendor.refreshToken = refreshToken;
+            vendor.save();
+            return { success: true, token: accessToken, vendorDetails, isVendor: vendor.vendor };
         }
         else {
             console.log("Password does not match");
@@ -200,11 +210,16 @@ const RegisterWithGoogle = (data, hashedPassword) => __awaiter(void 0, void 0, v
                 phoneNum: newvendor.phoneNum + "",
                 name: newvendor.vendorName + "",
             };
-            const token = yield (0, jwtGenarate_1.CreateToken)({ id: newvendor._id, email: newvendor.email }, true);
+            const { refreshToken, accessToken } = yield (0, jwtGenarate_1.CreateToken)({
+                id: newvendor._id + "",
+                email: newvendor.email + "",
+            });
+            newvendor.refreshToken = refreshToken;
+            newvendor.save();
             return {
                 success: true,
                 message: "vendor registered successfully",
-                token,
+                token: accessToken,
                 vendorDetails,
                 isVendor: newvendor.vendor,
             };

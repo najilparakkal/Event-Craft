@@ -103,3 +103,21 @@ export const postValidation = Yup.object().shape({
     category: Yup.string().required('Category is required'),
     image: Yup.mixed().required('Image is required'),
 });
+
+
+
+export const  bookingValidation= Yup.object({
+    clientName: Yup.string().required('Required'),
+    email: Yup.string().email('Invalid email address').required('Required'),
+    phoneNumber: Yup.string().required('Required'),
+    eventDate: Yup.date().nullable().required('Required').test('is-future-date', 'Wedding date cannot be in the past', (value) => {
+      if (!value) return false;
+      return value >= new Date();
+    }),
+    arrivalTime: Yup.string().required('Required'),
+    guests: Yup.string().required('Required'),
+    location: Yup.string().required('Required'),
+    pincode: Yup.string().required('Required'),
+    endingTime: Yup.string().required('Required'),
+    event: Yup.string().required('Required'),
+  })

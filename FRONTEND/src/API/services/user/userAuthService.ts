@@ -2,6 +2,7 @@ import   {   AxiosResponse } from "axios";
 import { useDispatch } from 'react-redux';
 import { logout } from "./authSlice";
 import { authAxiosInstance } from "../vendor/axios/AxiosInstance";
+import Cookies from 'js-cookie';
 
 interface userData {
   name?: string;
@@ -123,23 +124,14 @@ export const validEmail = async (email: string) => {
     console.log(error);
   }
 };
-
-
-
-
-
-
-
 export const forgotOtp = async (otp:string) => {
   const user = localStorage.getItem("email");
   const data = user !== null ? JSON.parse(user) : null;
   const userEmail = data.email;
-
   if (!userEmail) {
     console.error("User email not found in localStorage");
     return false;
   }
-
   try {
     const response = await authAxiosInstance.post("/user/verifyOtp", {
       otp,
@@ -158,14 +150,10 @@ export const forgotOtp = async (otp:string) => {
 
 export const forgotVerifyOtp = async (otp: string): Promise<boolean> => {
   const email = localStorage.getItem("email");
-  
-  console.log(email);
-  
   if (!email) {
     console.error("User email not found in localStorage");
     return false;
   }
-
   try {
     const response = await authAxiosInstance.post("/user/Fotp", {
       otp,
@@ -181,9 +169,7 @@ export const forgotVerifyOtp = async (otp: string): Promise<boolean> => {
 
 export const changePassword = async(password:string)=>{
   const email = localStorage.getItem("email");
-  try {
-    // console.log(password,email);
-    
+  try {    
     const response = await authAxiosInstance.post("/user/changePassword", {
       password,
       email,
@@ -201,7 +187,7 @@ export const useLogout = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('userDetails');
-    localStorage.removeItem('jwt');
+    Cookies.remove('jwt');
     dispatch(logout());
   };
 

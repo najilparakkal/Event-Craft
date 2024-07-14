@@ -99,13 +99,21 @@ export interface Vendor {
   licence: Licence[];
 }
 
+interface PostDetails {
+  title: string;
+  images: string[];
+  description: string;
+  category: string;
+}
 export interface VendorProfile {
   vendorName: string;
   phoneNum: string;
   profilePicture: string;
   businessName: string;
   location: string;
-  coverPicture:string
+  coverPicture: string;
+  posts: PostDetails[];
+  availableDate?: string;
 }
 
 export interface IAcceptRequest {

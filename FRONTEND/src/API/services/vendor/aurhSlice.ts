@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { login, vendorRegister } from "./vendorAuthService";
-
+import Cookies from 'js-cookie';
 const storedVendorDetails: vendorDetails | null = JSON.parse(
   localStorage.getItem("vendorDetails") || "null"
 );
@@ -105,7 +105,8 @@ const vendorSlice = createSlice({
           "vendorDetails",
           JSON.stringify(state.vendorDetails)
         );
-        if (state.jwt) localStorage.setItem("jwt", state.jwt);
+        if (state.jwt)Cookies.set('jwt', state.jwt); 
+        ;
       })
       .addCase(signupVendor.rejected, (state, action) => {
         state.status = "failed";
@@ -129,8 +130,7 @@ const vendorSlice = createSlice({
           JSON.stringify(state.vendorDetails)
         );
         if (state.jwt) {
-          localStorage.setItem("jwt", state.jwt);
-        }
+          Cookies.set('jwt', state.jwt);         }
       })
       .addCase(vendorLogin.rejected, (state, action) => {
         state.status = "failed";
@@ -154,8 +154,7 @@ const vendorSlice = createSlice({
           JSON.stringify(state.vendorDetails)
         );
         if (state.jwt) {
-          localStorage.setItem("jwt", state.jwt);
-        }
+          Cookies.set('jwt', state.jwt);         }
       })
       .addCase(GoogleAuth.rejected, (state, action) => {
         state.status = "failed";
@@ -179,8 +178,7 @@ const vendorSlice = createSlice({
           JSON.stringify(state.vendorDetails)
         );
         if (state.jwt) {
-          localStorage.setItem("jwt", state.jwt);
-        }
+          Cookies.set('jwt', state.jwt);         }
       })
       .addCase(GoogleLogin.rejected, (state, action) => {
         state.status = "failed";

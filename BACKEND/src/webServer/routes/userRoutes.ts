@@ -1,7 +1,8 @@
 import express from "express";
 import authController from "../../adaptors/userController/authController";
 import Controller from "../../adaptors/userController/Controller";
-const   userRouter = express.Router();
+import userAuth from "../middlewares/UserMiddleware";
+const userRouter = express.Router();
 
 userRouter.post("/api/user/signup",authController.userRegistration)
 userRouter.post("/api/user/otp",authController.otpVerification) 
@@ -13,7 +14,7 @@ userRouter.post("/api/user/Fotp",authController.checkEmail)
 userRouter.post("/api/user/changePassword",authController.change)
 userRouter.post("/api/user/googleUser",authController.googleRegistration)
 userRouter.post("/api/user/googleLogin",authController.googleLogin)
-userRouter.post("/api/user/vendors",Controller.listVendors) 
+userRouter.post("/api/user/vendors",userAuth,Controller.listVendors) 
 userRouter.get("/api/user/services",Controller.listServices) 
 userRouter.get("/api/user/vendorProfile/:vendorId", Controller.getVendorProfile);
 userRouter.post("/api/user/addRequest", Controller.addRequest);
@@ -21,6 +22,10 @@ userRouter.get("/api/user/request/:userId", Controller.listRequest);
 userRouter.post("/api/user/cancelRequest", Controller.cancelRequest);
 userRouter.get("/api/user/fetchVendors/:userId", Controller.fetchVendors);
 userRouter.get("/api/user/chatId/:userId/:vendorId",Controller.getChatId);
+userRouter.post("/api/user/addBooking", Controller.addBooking); 
+userRouter.get("/api/user/bookings/:userId", Controller.getBooking);
+userRouter.delete("/api/user/cancelBooking",Controller.cancelBooking)
+
 
 
 export default userRouter            

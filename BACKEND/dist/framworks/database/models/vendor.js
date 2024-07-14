@@ -58,6 +58,14 @@ const vendorSchema = new mongoose_1.Schema({
             ref: "ChatModel",
         },
     ],
+    refreshToken: {
+        type: String
+    },
+    availableDate: [
+        {
+            type: Date,
+        }
+    ],
     coverPicture: {
         type: String,
         default: "https://thingscareerrelated.com/wp-content/uploads/2021/10/default-background-image.png",

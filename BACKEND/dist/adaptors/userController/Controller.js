@@ -26,7 +26,7 @@ exports.default = {
     listServices: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield home_1.default.listServices();
-            res.status(200).json(response);
+            return res.status(200).json(response);
         }
         catch (error) {
             console.log(error);
@@ -89,6 +89,43 @@ exports.default = {
         }
         catch (error) {
             console.log(error);
+        }
+    }),
+    addBooking: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.addBookind(req.body);
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                res.status(200).json({ message: "Booking added successfully" });
+            }
+            else {
+                res.status(400).json({
+                    response,
+                    message: "Somthing could not be added successfully",
+                });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    getBooking: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.getBookings(req.params.userId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    cancelBooking: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { percentage, bookingId } = req.query;
+            const response = yield home_1.default.cancelBooking(percentage, bookingId);
+            res.status(200).send(response);
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).send("Internal Server Error");
         }
     }),
 };

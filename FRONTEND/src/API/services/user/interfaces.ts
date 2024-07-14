@@ -41,7 +41,17 @@ interface UserDetails {
 }   
 
 
-
+interface BookingData {
+  arrivalTime: string;
+  email: string;
+  endingTime: string;
+  firstName: string;
+  guests: number;
+  location: string;
+  phoneNumber: string;
+  pincode: string;
+  weddingDate: Date | null;
+}
 interface GoogleAuth {
   name?: string;
   email?: string;

@@ -70,47 +70,69 @@ export default {
   },
   rejectRequest: async (req: Request, res: Response) => {
     try {
-      const response = await requesIterator.rejectRequest(req.body);
+      const response = await requesIterator.rejectRequest(req.params.roomId);
       res.status(200).json(response);
     } catch (error) {
       console.log(error);
     }
   },
-  fetchUsers:async (req: Request, res: Response) => {
+  fetchUsers: async (req: Request, res: Response) => {
     try {
-      
       const response = await requesIterator.fetchUsers(req.params.vendorId);
       res.status(200).json(response);
     } catch (error) {
       console.log(error);
-      
     }
   },
-  messages:async(req: Request, res: Response) => {
+  messages: async (req: Request, res: Response) => {
     try {
       const response = await requesIterator.fetchMessages(req.params.chatId);
       res.status(200).json(response);
     } catch (error) {
       console.log(error);
-      
     }
   },
-  storeMessage:async(req: Request, res: Response) => {
+  storeMessage: async (req: Request, res: Response) => {
     try {
-      const response = await requesIterator.storeMessage(req.body)
+      const response = await requesIterator.storeMessage(req.body);
       res.status(200).json(response);
     } catch (error) {
       console.log(error);
-      
     }
   },
-  chatId:async(req:Request, res: Response) =>{
+  chatId: async (req: Request, res: Response) => {
     try {
-      const response = await requesIterator.fetchChatId(req.params.vendorId, req.params.userId);
+      const response = await requesIterator.fetchChatId(
+        req.params.vendorId,
+        req.params.userId
+      );
       res.status(200).json(response);
     } catch (error) {
       console.log(error);
-      
     }
-  }
+  },
+  getBookings: async (req: Request, res: Response) => {
+    try {
+      const response = await requesIterator.getBookings(req.params.vendorId);
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  cancelBooking: async (req: Request, res: Response) => {
+    try {
+      const response = await requesIterator.cancelBooking(req.params.bookingId);
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  acceptBooking: async (req: Request, res: Response) => {
+    try {
+      const response = await requesIterator.acceptBooking(req.params.bookingId);
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };

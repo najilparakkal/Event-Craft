@@ -41,20 +41,20 @@ export const createUser = async (
         otp: otp,
       });
 
-      const token = await CreateToken(
-        { id: newUser._id, email: newUser.email },
-        true
-      );
+      const { accessToken, refreshToken } = await CreateToken(
+        { id: newUser._id + "", email: newUser.email });
+      newUser.refreshToken = refreshToken;
+      await newUser.save();
 
       const userDatas: userDatas = {
         id: newUser._id as string,
         email: newUser.email,
         phoneNum: newUser.phoneNum,
         name: newUser.userName,
-        profilePicture: newUser.profilePicture
+        profilePicture: newUser.profilePicture,
       };
 
-      return { checkResponse, userDatas, token };
+      return { checkResponse, userDatas, token: accessToken };
     }
   } catch (err) {
     console.error("An error occurred while creating the user:", err);
@@ -151,14 +151,14 @@ export const logingUser = async (email: string, password: string) => {
         phoneNum: user.phoneNum,
         userName: user.userName,
         id: user._id,
-        profilePicture: user.profilePicture
+        profilePicture: user.profilePicture,
       };
 
-      const token = await CreateToken(
-        { id: user._id, email: user.email },
-        true
-      );
-      return { token, userDetails };
+      const { accessToken, refreshToken } = await CreateToken(
+        { id: user._id + "", email: user.email });
+      user.refreshToken = refreshToken;
+      await user.save();
+      return { token: accessToken, userDetails };
     } else {
       return false;
     }
@@ -250,14 +250,17 @@ export const RegisterWithGoogle = async (
         profilePicture: newUser.profilePicture,
       };
 
-      const token = await CreateToken(
-        { id: newUser._id, email: newUser.email },
-        true
-      );
+      const { accessToken, refreshToken } = await CreateToken({
+        id: newUser._id + "",
+        email: newUser.email,
+      });
+      newUser.refreshToken = refreshToken;
+      await newUser.save();
+
       return {
         success: true,
         message: "User registered successfully",
-        token,
+        token: accessToken,
         userDatas,
       };
     }

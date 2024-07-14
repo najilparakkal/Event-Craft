@@ -1,9 +1,13 @@
 import axios, { AxiosInstance } from "axios";
+import Cookies from "js-cookie";
+const getToken = () => Cookies.get('jwt');
 
 export const authAxiosInstance: AxiosInstance = axios.create({
   baseURL: "http://localhost:3000/api",
   headers: {
     "Content-Type": "application/json",
+    Authorization: "Bearer " + getToken()
+
   },
   withCredentials: true,
 });
@@ -26,7 +30,7 @@ authAxiosInstance.interceptors.response.use(
   },
   (error) => {
     if(error.response ){
-      localStorage.removeItem('token');
+      Cookies.remove('jwt')
       console.log("Un Authorization Error ❌❌");
       
       window.location.href = "/vendor/login";

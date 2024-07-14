@@ -31,9 +31,9 @@ export default{
       
     }
   },
-  rejectRequest:async(data:reject)=>{
+  rejectRequest:async(roomId:string)=>{
     try {
-      const response = await requestRepo.rejectRequest(data.roomId);
+      const response = await requestRepo.rejectRequest(roomId);
       return response;
     } catch (error) {
       console.log(error);
@@ -71,6 +71,33 @@ export default{
     try {
       const response = await requestRepo.fetchChatId(vendorId, userId);
       return response;
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  getBookings:async(vendorId:string)=>{
+    try {
+      const response = await requestRepo.getBookings(vendorId)
+      return response
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  cancelBooking:async(bookingId:string)=>{
+    try {
+      const response = await requestRepo.cancelBooking(bookingId)
+      return response
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  acceptBooking:async(bookingId:string) => {
+    try {
+      const response = await requestRepo.acceptBooking(bookingId)
+      return response
     } catch (error) {
       console.log(error);
       

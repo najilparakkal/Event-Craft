@@ -82,5 +82,33 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
-    })
+    }),
+    addBookind: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield (0, homeRepo_1.addBooking)(data);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    getBookings: (id) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield (0, homeRepo_1.getBookings)(id);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    cancelBooking: (pers, bookingId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const persentage = Number(pers);
+            const response = yield (0, homeRepo_1.cancelBooking)(persentage, bookingId);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
 };
