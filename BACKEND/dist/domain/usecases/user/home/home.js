@@ -20,6 +20,15 @@ exports.default = {
             console.log(error);
         }
     }),
+    listAll: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield (0, homeRepo_1.listAll)();
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
     listServices: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield (0, homeRepo_1.listServices)();

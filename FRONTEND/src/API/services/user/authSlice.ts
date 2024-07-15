@@ -35,6 +35,8 @@ export const loginUser = createAsyncThunk(
   async (userData: any, { rejectWithValue }) => {
     try {
       const response = await login('/user/login', userData);
+      console.log(response,"💕💕");
+      
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -117,10 +119,14 @@ const userSlice = createSlice({
           profilePicture:action.payload.userDetails?.profilePicture
         };
         state.jwt = action.payload.token ?? null;
+        alert(state.jwt);
         localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
         if (state.jwt) {
+
           Cookies.set('jwt', state.jwt); 
+          
         }
+        
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = 'failed';

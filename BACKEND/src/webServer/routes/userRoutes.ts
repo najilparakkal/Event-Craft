@@ -4,6 +4,7 @@ import Controller from "../../adaptors/userController/Controller";
 import userAuth from "../middlewares/UserMiddleware";
 const userRouter = express.Router();
 
+userRouter.get("/api/user/OterServices",Controller.listAll) 
 userRouter.post("/api/user/signup",authController.userRegistration)
 userRouter.post("/api/user/otp",authController.otpVerification) 
 userRouter.post("/api/user/Fotp",authController.forgotOtpVerification) 
@@ -15,16 +16,16 @@ userRouter.post("/api/user/changePassword",authController.change)
 userRouter.post("/api/user/googleUser",authController.googleRegistration)
 userRouter.post("/api/user/googleLogin",authController.googleLogin)
 userRouter.post("/api/user/vendors",userAuth,Controller.listVendors) 
-userRouter.get("/api/user/services",Controller.listServices) 
-userRouter.get("/api/user/vendorProfile/:vendorId", Controller.getVendorProfile);
-userRouter.post("/api/user/addRequest", Controller.addRequest);
-userRouter.get("/api/user/request/:userId", Controller.listRequest);
-userRouter.post("/api/user/cancelRequest", Controller.cancelRequest);
-userRouter.get("/api/user/fetchVendors/:userId", Controller.fetchVendors);
-userRouter.get("/api/user/chatId/:userId/:vendorId",Controller.getChatId);
-userRouter.post("/api/user/addBooking", Controller.addBooking); 
-userRouter.get("/api/user/bookings/:userId", Controller.getBooking);
-userRouter.delete("/api/user/cancelBooking",Controller.cancelBooking)
+userRouter.get("/api/user/services",userAuth,Controller.listServices) 
+userRouter.get("/api/user/vendorProfile/:vendorId",userAuth, Controller.getVendorProfile);
+userRouter.post("/api/user/addRequest", userAuth,Controller.addRequest);
+userRouter.get("/api/user/request/:userId", userAuth,Controller.listRequest);
+userRouter.post("/api/user/cancelRequest",userAuth, Controller.cancelRequest);
+userRouter.get("/api/user/fetchVendors/:userId",userAuth, Controller.fetchVendors);
+userRouter.get("/api/user/chatId/:userId/:vendorId",userAuth,Controller.getChatId);
+userRouter.post("/api/user/addBooking",userAuth, Controller.addBooking); 
+userRouter.get("/api/user/bookings/:userId",userAuth, Controller.getBooking);
+userRouter.delete("/api/user/cancelBooking",userAuth,Controller.cancelBooking)
 
 
 

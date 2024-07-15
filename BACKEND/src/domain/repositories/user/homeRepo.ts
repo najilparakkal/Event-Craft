@@ -44,6 +44,18 @@ export const listVendors = async (data: string) => {
   }
 };
 
+export const listAll = async () => {
+  try {
+    const services = await Services.find();
+    const vendors = await Vendors.find()
+      .populate("posts")
+      .populate("licence")
+      .exec();
+    return { services, vendors };
+  } catch (error) {
+    console.log(error);
+  }
+};
 export const listServices = async () => {
   try {
     const services = await Services.find();
@@ -268,10 +280,10 @@ export const cancelBooking = async (percentage: number, bookingId: string) => {
       throw new Error("User not found");
     }
     console.log("🎶🎶🎶");
-    
+
     const deletee = await Bookings.deleteOne({ _id: bookingId }).exec();
-    console.log(deletee,"🍽️🍽️🍽️");
-    
+    console.log(deletee, "🍽️🍽️🍽️");
+
     return {
       success: true,
       message: "bookings deleted successfully user Updated",

@@ -10,6 +10,14 @@ export default {
       console.log(error);
     }
   },
+  listAll: async (req: Request, res: Response) => {
+    try {
+      const response = await userIterator.listAll();
+      return res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
   listServices: async (req: Request, res: Response) => {
     try {
       const response = await userIterator.listServices();

@@ -13,20 +13,19 @@ interface Payload {
 
 interface RefreshTokenPayload {
   id: string;
+  exp?:any;
 }
 
 export const CreateToken = async (
   payload: Payload
 ): Promise<{ accessToken: string; refreshToken: string }> => {
-  const accessToken = jwt.sign(payload, JWT.secret, { expiresIn: "1m" });
+  const accessToken = jwt.sign(payload, JWT.secret, { expiresIn: "7d" });
   const refreshTokenPayload: RefreshTokenPayload = { id: payload.id };
   const refreshToken = jwt.sign(refreshTokenPayload, JWT.refreshSecret, {
     expiresIn: "7d",
   });
   return { accessToken, refreshToken };
 };
-
-// console.log(CreateToken({email:"najil@gmail.com",id:"66823aad3181360801bb882f"}));
 
 export const VerifyToken = (token: string): Promise<JwtPayload> => {
   return new Promise((resolve, reject) => {
@@ -36,7 +35,7 @@ export const VerifyToken = (token: string): Promise<JwtPayload> => {
         return reject({ err, payload: jwtPayload?.payload });
       }
       resolve(decoded as JwtPayload);
-    });
+    }); 
   });
 };
 

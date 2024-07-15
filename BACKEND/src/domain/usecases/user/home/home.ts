@@ -15,12 +15,21 @@ import {
   addBooking,
   getBookings,
   cancelBooking,
+  listAll,
 } from "../../../repositories/user/homeRepo";
 
 export default {
   listVendors: async (data: string) => {
     try {
       const response = await listVendors(data);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  listAll: async () => {
+    try {
+      const response = await listAll();
       return response;
     } catch (error) {
       console.log(error);

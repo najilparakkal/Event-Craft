@@ -1,4 +1,10 @@
+import axios from "axios";
 import { authAxiosInstance } from "./axios/AxiosInstance";
+import { outerAxios } from "../outer/axios";
+
+import Cookies from "js-cookie";
+
+const token =()=> Cookies.get('jwt');
 
 export const fetchVendors = async (data: string) => {
   try {
@@ -10,8 +16,19 @@ export const fetchVendors = async (data: string) => {
   }
 };
 
+export const fetchOuterServices = async () => {
+  try {
+    const response = await outerAxios.get("user/OterServices");
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
 export const fetchServices = async () => {
   try {
+    
     const response = await authAxiosInstance.get("user/services");
     return response.data;
   } catch (error) {

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listVendors = void 0;
+exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
 const booking_1 = require("../../../framworks/database/models/booking");
 const chatModal_1 = __importDefault(require("../../../framworks/database/models/chatModal"));
 const requests_1 = require("../../../framworks/database/models/requests");
@@ -48,6 +48,20 @@ const listVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.listVendors = listVendors;
+const listAll = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const services = yield services_1.Services.find();
+        const vendors = yield vendor_1.Vendors.find()
+            .populate("posts")
+            .populate("licence")
+            .exec();
+        return { services, vendors };
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.listAll = listAll;
 const listServices = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const services = yield services_1.Services.find();

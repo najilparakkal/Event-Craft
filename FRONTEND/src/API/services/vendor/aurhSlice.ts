@@ -1,10 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { login, vendorRegister } from "./vendorAuthService";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 const storedVendorDetails: vendorDetails | null = JSON.parse(
   localStorage.getItem("vendorDetails") || "null"
 );
-const storedJWT: string | null = localStorage.getItem("jwt");
 
 const initialState: vendorState = {
   vendorDetails: storedVendorDetails ?? {
@@ -13,7 +12,7 @@ const initialState: vendorState = {
     email: null,
     phoneNum: null,
   },
-  jwt: storedJWT,
+  jwt: null,
   status: "idle",
   error: null,
 };
@@ -98,15 +97,13 @@ const vendorSlice = createSlice({
           email: action.payload.response.vendorDetails.email,
           phoneNum: action.payload.response.vendorDetails.phoneNum,
           profilePicture: action.payload.response.vendorDetails?.profilePicture,
-
         };
         state.jwt = action.payload.response.token;
         localStorage.setItem(
           "vendorDetails",
           JSON.stringify(state.vendorDetails)
         );
-        if (state.jwt)Cookies.set('jwt', state.jwt); 
-        ;
+        if (state.jwt) Cookies.set("jwt", state.jwt);
       })
       .addCase(signupVendor.rejected, (state, action) => {
         state.status = "failed";
@@ -130,7 +127,8 @@ const vendorSlice = createSlice({
           JSON.stringify(state.vendorDetails)
         );
         if (state.jwt) {
-          Cookies.set('jwt', state.jwt);         }
+          Cookies.set("jwt", state.jwt);
+        }
       })
       .addCase(vendorLogin.rejected, (state, action) => {
         state.status = "failed";
@@ -154,7 +152,8 @@ const vendorSlice = createSlice({
           JSON.stringify(state.vendorDetails)
         );
         if (state.jwt) {
-          Cookies.set('jwt', state.jwt);         }
+          Cookies.set("jwt", state.jwt);
+        }
       })
       .addCase(GoogleAuth.rejected, (state, action) => {
         state.status = "failed";
@@ -178,7 +177,8 @@ const vendorSlice = createSlice({
           JSON.stringify(state.vendorDetails)
         );
         if (state.jwt) {
-          Cookies.set('jwt', state.jwt);         }
+          Cookies.set("jwt", state.jwt);
+        }
       })
       .addCase(GoogleLogin.rejected, (state, action) => {
         state.status = "failed";

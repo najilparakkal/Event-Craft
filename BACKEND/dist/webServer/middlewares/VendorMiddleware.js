@@ -10,24 +10,54 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const jwtGenarate_1 = require("../../domain/helpers/jwtGenarate");
+const vendor_1 = require("../../framworks/database/models/vendor");
 const vendorAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split("Bearer ")[1];
-        const verifyToken = yield (0, jwtGenarate_1.VerifyToken)(token + "");
-        console.log(verifyToken);
-        if (verifyToken) {
-            if (verifyToken.exp) {
+        const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split("Bearer")[1].trim();
+        if (!token) {
+            return res.status(401).json({ error: "Token not provided" });
+        }
+        (0, jwtGenarate_1.VerifyToken)(token)
+            .then((payload) => {
+            return next();
+        })
+            .catch((_b) => __awaiter(void 0, [_b], void 0, function* ({ err, payload }) {
+            console.log(payload, err);
+            if (err.name === "TokenExpiredError") {
+                const data = yield vendor_1.Vendors.findById(payload.id);
+                if (!data) {
+                    return res.status(401).json({ error: "User not found" });
+                }
+                (0, jwtGenarate_1.VerifyRefreshToken)(data.refreshToken + "")
+                    .then((refreshTokenPayload) => __awaiter(void 0, void 0, void 0, function* () {
+                    const sevenDaysAgo = Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60);
+                    if (refreshTokenPayload.exp < sevenDaysAgo) {
+                        console.log("Refresh token expired");
+                        return res.status(401).json({ error: "Refresh token expired" });
+                    }
+                    else {
+                        console.log("Refresh token not expired");
+                        const { accessToken } = yield (0, jwtGenarate_1.CreateToken)({
+                            email: payload.email,
+                            id: payload.id,
+                        });
+                        return res.status(203).json({ accessToken });
+                    }
+                }))
+                    .catch((refreshTokenErr) => {
+                    console.log("Invalid refresh token", refreshTokenErr);
+                    return res.status(401).json({ error: "Invalid refresh token" });
+                });
             }
             else {
+                return res.status(401).json({ error: "Invalid token" });
             }
-        }
-        else {
-        }
-        next();
+        }));
     }
     catch (error) {
         console.log(error);
+        return res.status(500).json({ error: "Internal server error" });
     }
 });
 exports.default = vendorAuth;

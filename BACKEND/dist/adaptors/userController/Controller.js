@@ -23,6 +23,15 @@ exports.default = {
             console.log(error);
         }
     }),
+    listAll: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.listAll();
+            return res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
     listServices: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield home_1.default.listServices();

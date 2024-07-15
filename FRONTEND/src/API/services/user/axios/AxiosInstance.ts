@@ -1,13 +1,13 @@
 import axios, { AxiosInstance } from "axios";
 import Cookies from "js-cookie";
 
-const getToken = () => Cookies.get('jwt');
+const token =()=> Cookies.get('jwt');
 
 export const authAxiosInstance: AxiosInstance = axios.create({
   baseURL: "http://localhost:3000/api",
   headers: {
     "Content-Type": "application/json",
-    Authorization: "Bearer " + getToken()
+    Authorization: "Bearer" + token()
   },
   withCredentials: true,
 });

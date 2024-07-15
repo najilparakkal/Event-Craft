@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../API/services/user/userAuthService';
 import { Toaster } from 'react-hot-toast';
-import { useAppSelector } from '../../costumeHooks/costum';
 
 const Header: React.FC = () => {
     const navigate = useNavigate();

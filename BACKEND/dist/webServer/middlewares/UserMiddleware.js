@@ -14,7 +14,8 @@ const user_1 = require("../../framworks/database/models/user");
 const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split("Bearer ")[1];
+        const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split("Bearer")[1].trim();
+        console.log(token, "🏫🏫");
         if (!token) {
             return res.status(401).json({ error: "Token not provided" });
         }
@@ -31,7 +32,8 @@ const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
                 }
                 (0, jwtGenarate_1.VerifyRefreshToken)(data.refreshToken)
                     .then((refreshTokenPayload) => __awaiter(void 0, void 0, void 0, function* () {
-                    if (refreshTokenPayload.exp < Math.floor(Date.now() / 1000)) {
+                    const sevenDaysAgo = Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60);
+                    if (refreshTokenPayload.exp < sevenDaysAgo) {
                         console.log("Refresh token expired");
                         return res.status(401).json({ error: "Refresh token expired" });
                     }
@@ -42,7 +44,6 @@ const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
                             id: payload.id,
                         });
                         return res.status(203).json({ accessToken });
-                        //   return next();
                     }
                 }))
                     .catch((refreshTokenErr) => {

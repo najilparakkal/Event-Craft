@@ -8,17 +8,21 @@ import { Users } from "../../framworks/database/models/user";
 
 const userAuth: RequestHandler = async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split("Bearer ")[1];
+    const token = req.headers.authorization?.split("Bearer")[1].trim();
+    console.log(token,"🏫🏫");
+    
     if (!token) {
       return res.status(401).json({ error: "Token not provided" });
     }
-
+    
     VerifyToken(token)
       .then((payload) => {
         return next();
       })
       .catch(async ({ err, payload }) => {
+        
         console.log(payload, err);
+        
         if (err.name === "TokenExpiredError") {
           const data = await Users.findById(payload.id);
           if (!data) {
@@ -27,7 +31,8 @@ const userAuth: RequestHandler = async (req, res, next) => {
 
           VerifyRefreshToken(data.refreshToken)
             .then(async (refreshTokenPayload) => {
-              if (refreshTokenPayload.exp < Math.floor(Date.now() / 1000)) {
+                const sevenDaysAgo = Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60)
+              if (refreshTokenPayload.exp < sevenDaysAgo) {
                 console.log("Refresh token expired");
                 return res.status(401).json({ error: "Refresh token expired" });
               } else {
@@ -38,7 +43,6 @@ const userAuth: RequestHandler = async (req, res, next) => {
                 });
 
                 return res.status(203).json({ accessToken });
-                //   return next();
               }
             })
             .catch((refreshTokenErr) => {
