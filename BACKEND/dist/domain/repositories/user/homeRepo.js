@@ -23,6 +23,7 @@ const listVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const vendors = yield vendor_1.Vendors.find({ vendor: true })
             .populate("licence")
+            .populate("posts")
             .exec();
         const filteredVendors = vendors.filter((vendor) => vendor.licence.some((licence) => {
             const services = licence.services
@@ -30,16 +31,15 @@ const listVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {
                 .map((service) => service.trim().toLowerCase());
             return services.includes(data.toLowerCase());
         }));
-        const vendorsWithDetails = filteredVendors.map((vendor) => {
-            var _a;
-            return ({
-                _id: vendor._id,
-                vendorName: vendor.vendorName,
-                email: vendor.email,
-                phoneNum: vendor.phoneNum,
-                profilePicture: (_a = vendor.licence[0]) === null || _a === void 0 ? void 0 : _a.profilePicture,
-            });
-        });
+        const vendorsWithDetails = filteredVendors.map((vendor) => ({
+            _id: vendor._id,
+            vendorName: vendor.vendorName,
+            email: vendor.email,
+            phoneNum: vendor.phoneNum,
+            profilePicture: vendor.profilePicture,
+            posts: vendor.posts,
+            coverPicture: vendor.coverPicture,
+        }));
         return vendorsWithDetails;
     }
     catch (error) {
@@ -65,14 +65,18 @@ exports.listAll = listAll;
 const listServices = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const services = yield services_1.Services.find();
-        return services;
+        const vendors = yield vendor_1.Vendors.find()
+            .populate("posts")
+            .populate("licence")
+            .exec();
+        return { services, vendors };
     }
     catch (error) {
         console.log(error);
     }
 });
 exports.listServices = listServices;
-const getVendorProfile = (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+const getVendorProfile = (vendorId, userId) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     try {
         const vendor = (yield vendor_1.Vendors.findById(vendorId)
@@ -92,6 +96,11 @@ const getVendorProfile = (vendorId) => __awaiter(void 0, void 0, void 0, functio
             description: post.description,
             category: post.category,
         }));
+        const chat = yield chatModal_1.default.findOne({
+            users: { $in: [userId, vendorId] },
+            is_accepted: true,
+        });
+        const bookings = yield booking_1.Bookings.find({ userId, vendorId });
         const response = {
             vendorName,
             phoneNum,
@@ -102,7 +111,7 @@ const getVendorProfile = (vendorId) => __awaiter(void 0, void 0, void 0, functio
             posts: postsDetails,
             availableDate,
         };
-        return response;
+        return { response, bookings, chat: chat ? true : false };
     }
     catch (error) {
         console.log(error);

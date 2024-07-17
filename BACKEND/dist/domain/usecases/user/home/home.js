@@ -38,9 +38,9 @@ exports.default = {
             console.log(error);
         }
     }),
-    getVendorProfile: (data) => __awaiter(void 0, void 0, void 0, function* () {
+    getVendorProfile: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const response = yield (0, homeRepo_1.getVendorProfile)(data);
+            const response = yield (0, homeRepo_1.getVendorProfile)(data, userId);
             return response;
         }
         catch (error) {

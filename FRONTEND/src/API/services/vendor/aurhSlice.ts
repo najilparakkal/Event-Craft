@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { login, vendorRegister } from "./vendorAuthService";
 import Cookies from "js-cookie";
 const storedVendorDetails: vendorDetails | null = JSON.parse(
@@ -79,7 +79,6 @@ const vendorSlice = createSlice({
         phoneNum: null,
         profilePicture: null,
       };
-      state.jwt = null;
       state.status = "idle";
       state.error = null;
     },
@@ -98,12 +97,11 @@ const vendorSlice = createSlice({
           phoneNum: action.payload.response.vendorDetails.phoneNum,
           profilePicture: action.payload.response.vendorDetails?.profilePicture,
         };
-        state.jwt = action.payload.response.token;
         localStorage.setItem(
           "vendorDetails",
           JSON.stringify(state.vendorDetails)
         );
-        if (state.jwt) Cookies.set("jwt", state.jwt);
+        if (action.payload.token) Cookies.set("jwt", action.payload.token);
       })
       .addCase(signupVendor.rejected, (state, action) => {
         state.status = "failed";
@@ -112,24 +110,24 @@ const vendorSlice = createSlice({
       .addCase(vendorLogin.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(vendorLogin.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.vendorDetails = {
-          _id: action.payload.vendorDetails?.id,
-          name: action.payload.vendorDetails?.vendorName,
-          email: action.payload.vendorDetails?.email,
-          phoneNum: action.payload.vendorDetails?.phoneNum,
-          profilePicture: action.payload.vendorDetails?.profilePicture,
-        };
-        state.jwt = action.payload.token ?? null;
-        localStorage.setItem(
-          "vendorDetails",
-          JSON.stringify(state.vendorDetails)
-        );
-        if (state.jwt) {
-          Cookies.set("jwt", state.jwt);
+      .addCase(
+        vendorLogin.fulfilled,
+        (state, action: PayloadAction<AuthResponse>) => {
+          state.status = "succeeded";
+          state.vendorDetails = {
+            _id: action.payload.vendorDetails?.id,
+            name: action.payload.vendorDetails?.vendorName,
+            email: action.payload.vendorDetails?.email,
+            phoneNum: action.payload.vendorDetails?.phoneNum,
+            profilePicture: action.payload.vendorDetails?.profilePicture,
+          };
+          localStorage.setItem(
+            "vendorDetails",
+            JSON.stringify(state.vendorDetails)
+          );
+          if (action.payload.token) Cookies.set("jwt", action.payload.token);
         }
-      })
+      )
       .addCase(vendorLogin.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
@@ -146,14 +144,11 @@ const vendorSlice = createSlice({
           email: action.payload.response.vendorDetails.email,
           phoneNum: action.payload.response.vendorDetails.phoneNum,
         };
-        state.jwt = action.payload.response.token;
         localStorage.setItem(
           "vendorDetails",
           JSON.stringify(state.vendorDetails)
         );
-        if (state.jwt) {
-          Cookies.set("jwt", state.jwt);
-        }
+        if (action.payload.token) Cookies.set("jwt", action.payload.token);
       })
       .addCase(GoogleAuth.rejected, (state, action) => {
         state.status = "failed";
@@ -162,24 +157,24 @@ const vendorSlice = createSlice({
       .addCase(GoogleLogin.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(GoogleLogin.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.vendorDetails = {
-          _id: action.payload.vendorDetails?.id,
-          name: action.payload.vendorDetails?.vendorName,
-          email: action.payload.vendorDetails?.email,
-          phoneNum: action.payload.vendorDetails?.phoneNum,
-          profilePicture: action.payload.vendorDetails?.profilePicture,
-        };
-        state.jwt = action.payload.token ?? null;
-        localStorage.setItem(
-          "vendorDetails",
-          JSON.stringify(state.vendorDetails)
-        );
-        if (state.jwt) {
-          Cookies.set("jwt", state.jwt);
+      .addCase(
+        GoogleLogin.fulfilled,
+        (state, action: PayloadAction<AuthResponse>) => {
+          state.status = "succeeded";
+          state.vendorDetails = {
+            _id: action.payload.vendorDetails?.id,
+            name: action.payload.vendorDetails?.vendorName,
+            email: action.payload.vendorDetails?.email,
+            phoneNum: action.payload.vendorDetails?.phoneNum,
+            profilePicture: action.payload.vendorDetails?.profilePicture,
+          };
+          localStorage.setItem(
+            "vendorDetails",
+            JSON.stringify(state.vendorDetails)
+          );
+          if (action.payload.token) Cookies.set("jwt", action.payload.token);
         }
-      })
+      )
       .addCase(GoogleLogin.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;

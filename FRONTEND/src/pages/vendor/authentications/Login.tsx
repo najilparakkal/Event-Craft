@@ -7,7 +7,6 @@ import { GoogleLogin, vendorLogin } from '../../../API/services/vendor/aurhSlice
 import { useDispatch } from 'react-redux';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../../../firebase/firebase';
-import { useAppSelector } from '../../../costumeHooks/costum';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -17,10 +16,7 @@ const Login: React.FC = () => {
     email: '',
     password: '',
   };
-  const vendorDetails = useAppSelector((state) => state.vendor.vendorDetails._id);
-  useEffect(() => {
-    if (vendorDetails) return navigate("/vendor/home")
-  }, [])
+
   const handleSubmit = async (values: { email: string; password: string }) => {
     try {
       const resultAction = await dispatch(vendorLogin(values) as any);

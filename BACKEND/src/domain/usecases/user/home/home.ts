@@ -43,9 +43,10 @@ export default {
       console.log(error);
     }
   },
-  getVendorProfile: async (data: string) => {
+  getVendorProfile: async (data:string,userId:string) => {
     try {
-      const response = await getVendorProfile(data);
+      
+      const response = await getVendorProfile(data,userId);
       return response;
     } catch (error) {
       console.log(error);

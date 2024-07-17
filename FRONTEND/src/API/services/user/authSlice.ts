@@ -1,10 +1,11 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { userRegister, login } from './userAuthService';
-import Cookies from 'js-cookie';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { userRegister, login } from "./userAuthService";
+import Cookies from "js-cookie";
 
-
-const storedUserDetails: UserDetails | null = JSON.parse(localStorage.getItem('userDetails') || 'null');
-const storedJWT: string | null = localStorage.getItem('jwt');
+const storedUserDetails: UserDetails | null = JSON.parse(
+  localStorage.getItem("userDetails") || "null"
+);
+const storedJWT: string | null = localStorage.getItem("jwt");
 
 const initialState: UserState = {
   userDetails: storedUserDetails ?? {
@@ -14,15 +15,15 @@ const initialState: UserState = {
     phoneNum: null,
   },
   jwt: storedJWT,
-  status: 'idle',
+  status: "idle",
   error: null,
 };
 
 export const signupUser = createAsyncThunk(
-  'user/signupUser',
+  "user/signupUser",
   async (userData: any, { rejectWithValue }) => {
     try {
-      const response = await userRegister('/user/signup', userData);
+      const response = await userRegister("/user/signup", userData);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -31,12 +32,11 @@ export const signupUser = createAsyncThunk(
 );
 
 export const loginUser = createAsyncThunk(
-  'user/loginUser',
+  "user/loginUser",
   async (userData: any, { rejectWithValue }) => {
     try {
-      const response = await login('/user/login', userData);
-      console.log(response,"💕💕");
-      
+      const response = await login("/user/login", userData);
+
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -45,10 +45,10 @@ export const loginUser = createAsyncThunk(
 );
 
 export const GoogleAuth = createAsyncThunk(
-  'user/googleUser',
+  "user/googleUser",
   async (userData: GoogleAuth, { rejectWithValue }) => {
     try {
-      const response = await userRegister('/user/googleUser', userData);
+      const response = await userRegister("/user/googleUser", userData);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -57,10 +57,10 @@ export const GoogleAuth = createAsyncThunk(
 );
 
 export const GoogleLogin = createAsyncThunk(
-  'user/googleLogin',
+  "user/googleLogin",
   async (userData: any, { rejectWithValue }) => {
     try {
-      const response = await login('/user/googleLogin', userData);
+      const response = await login("/user/googleLogin", userData);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -68,8 +68,10 @@ export const GoogleLogin = createAsyncThunk(
   }
 );
 
+
+
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     logout(state) {
@@ -79,102 +81,94 @@ const userSlice = createSlice({
         email: null,
         phoneNum: null,
       };
-      state.jwt = null;
-      state.status = 'idle';
+      state.status = "idle";
       state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(signupUser.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(signupUser.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status = "succeeded";
         state.userDetails = {
           _id: action.payload.user.userDatas.id,
           name: action.payload.user.userDatas.name,
           email: action.payload.user.userDatas.email,
           phoneNum: action.payload.user.userDatas.phoneNum,
-          profilePicture:action.payload.user.userDatas.profilePicture
+          profilePicture: action.payload.user.userDatas.profilePicture,
         };
-        state.jwt = action.payload.user.token;
-        localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
-        Cookies.set('jwt', state.jwt); 
+        localStorage.setItem("userDetails", JSON.stringify(state.userDetails));
+          if (action.payload.token) Cookies.set("jwt", action.payload.token);
       })
       .addCase(signupUser.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status = "failed";
         state.error = action.payload as string;
       })
       .addCase(loginUser.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.userDetails = {
-          _id: action.payload.userDetails?.id,
-          name: action.payload.userDetails?.name,
-          email: action.payload.userDetails?.email,
-          phoneNum: action.payload.userDetails?.phoneNum,
-          profilePicture:action.payload.userDetails?.profilePicture
-        };
-        state.jwt = action.payload.token ?? null;
-        alert(state.jwt);
-        localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
-        if (state.jwt) {
-
-          Cookies.set('jwt', state.jwt); 
-          
+      .addCase(
+        loginUser.fulfilled,
+        (state, action: PayloadAction<AuthResponse>) => {
+          state.status = "succeeded";
+          state.userDetails = {
+            _id: action.payload.userDetails?.id,
+            name: action.payload.userDetails?.name,
+            email: action.payload.userDetails?.email,
+            phoneNum: action.payload.userDetails?.phoneNum,
+            profilePicture: action.payload.userDetails?.profilePicture,
+          };
+          localStorage.setItem(
+            "userDetails",
+            JSON.stringify(state.userDetails)
+          );
+          if (action.payload.token) Cookies.set("jwt", action.payload.token);
         }
-        
-      })
+      )
       .addCase(loginUser.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status = "failed";
         state.error = action.payload as string;
       })
       .addCase(GoogleAuth.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
         state.error = null;
       })
       .addCase(GoogleAuth.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status = "succeeded";
         state.userDetails = {
           _id: action.payload.response.userDatas.id,
           name: action.payload.response.userDatas.name,
           email: action.payload.response.userDatas.email,
           phoneNum: action.payload.response.userDatas.phoneNum,
-          profilePicture:action.payload.response.userDatas.profilePicture
+          profilePicture: action.payload.response.userDatas.profilePicture,
         };
-        state.jwt = action.payload.response.token;
-        localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
-        if (state.jwt) {
-          Cookies.set('jwt', state.jwt); 
-        }
+        localStorage.setItem("userDetails", JSON.stringify(state.userDetails));
+        if (action.payload.token) Cookies.set("jwt", action.payload.token);
       })
       .addCase(GoogleAuth.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status = "failed";
         state.error = action.payload as string;
       })
       .addCase(GoogleLogin.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
-      .addCase(GoogleLogin.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+      .addCase(GoogleLogin.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
+        state.status = "succeeded";
         state.userDetails = {
           _id: action.payload.userDetails?.id,
           name: action.payload.userDetails?.name,
           email: action.payload.userDetails?.email,
           phoneNum: action.payload.userDetails?.phoneNum,
-          profilePicture:action.payload.userDetails?.profilePicture
-        };      
-        state.jwt = action.payload.token ?? null;
-        localStorage.setItem('userDetails', JSON.stringify(state.userDetails));
-        if (state.jwt) {
-          Cookies.set('jwt', state.jwt); 
-        }
+          profilePicture: action.payload.userDetails?.profilePicture,
+        };
+        localStorage.setItem("userDetails", JSON.stringify(state.userDetails));
+        if (action.payload.token) Cookies.set("jwt", action.payload.token);
+
       })
       .addCase(GoogleLogin.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status = "failed";
         state.error = action.payload as string;
       });
   },

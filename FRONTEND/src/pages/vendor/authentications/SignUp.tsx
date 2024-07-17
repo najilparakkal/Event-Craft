@@ -10,18 +10,15 @@ import { useEffect } from 'react';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../../../firebase/firebase';
 import React from 'react';
-import { useAppSelector } from '../../../costumeHooks/costum';
 
 
 
 const SignUp = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const vendorDetails = useAppSelector((state) => state.vendor.jwt);
  
   useEffect(() => {
     localStorage.removeItem('timer');
-    if (vendorDetails) return navigate("/vendor/home")
 
   }, [])
   const handleSubmit = async (values: vendor) => {

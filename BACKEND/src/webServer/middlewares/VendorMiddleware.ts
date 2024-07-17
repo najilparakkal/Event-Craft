@@ -8,7 +8,7 @@ import { Vendors } from "../../framworks/database/models/vendor";
 
 const vendorAuth: RequestHandler = async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split("Bearer")[1].trim();
+    const token = req.cookies.jwt
     if (!token) {
       return res.status(401).json({ error: "Token not provided" });
     }

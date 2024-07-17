@@ -1,12 +1,11 @@
 import axios, { AxiosInstance } from "axios";
 import Cookies from "js-cookie";
-const token  =Cookies.get('jwt');
 
 export const authAxiosInstance: AxiosInstance = axios.create({
   baseURL: "http://localhost:3000/api",
   headers: {
     "Content-Type": "application/json",
-    Authorization: "Bearer " + token
+    Authorization: "Bearer " + Cookies.get('jwt')
 
   },
   withCredentials: true,
@@ -14,7 +13,7 @@ export const authAxiosInstance: AxiosInstance = axios.create({
 
 authAxiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

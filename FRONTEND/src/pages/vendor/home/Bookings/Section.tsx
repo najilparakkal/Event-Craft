@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '../../../../costumeHooks/costum';
 import { userBookings, cancelBooking, acceptBooking } from '../../../../API/services/vendor/services';
+import { useNavigate } from 'react-router-dom';
 
 interface Booking {
     _id: string;
@@ -29,10 +30,10 @@ const Section: React.FC = () => {
     const [showAcceptModal, setShowAcceptModal] = useState(false);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-
+    const navigate = useNavigate()
     useEffect(() => {
         const fetchBookings = async () => {
-            const datas = await userBookings(_id+"");
+            const datas = await userBookings(_id + "");
             const accepted = [];
             const pending = [];
             for (const item of datas) {
@@ -242,7 +243,11 @@ const Section: React.FC = () => {
                                     <p><strong>Phone Number:</strong> {selectedBooking.phoneNumber}</p>
                                     <p><strong>Pincode:</strong> {selectedBooking.pincode}</p>
                                 </div>
-                                <button type="button" className="mt-4 text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600" onClick={handleCloseModal}>Connect Client</button>
+                                <button type="button" className="mt-4 text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600" onClick={() => {
+                                    navigate('/vendor/messages')
+                                    handleCloseModal
+                                }
+                                }>Connect Client</button>
                             </div>
                         </div>
                     </div>

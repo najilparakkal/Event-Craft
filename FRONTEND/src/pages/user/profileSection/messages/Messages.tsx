@@ -44,7 +44,7 @@ const Messages: React.FC<MessagesProps> = ({ selectedVendor, sidebarOpen }) => {
       };
       fetchChatRoomId();
     }
-  }, [selectedVendor, _id]);
+  }, [selectedVendor]);
 
   useEffect(() => {
     if (roomId) {

@@ -25,7 +25,6 @@ const VendorRouter: React.FC = () => {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/otp" element={<Otp />} />
         <Route path="/forgot" element={<ForgotPass />} />
-
         <Route path="" element={<Vendor />}>
             <Route path="/home" element={<Home />} />
             <Route path="/services" element={<Services />} />

@@ -38,9 +38,8 @@ const ProfileHeader = () => {
         navigate(navigateTo);
         setSidebarOpen(false);
     };
-
     return (
-        <div className=" m-1 shadow-md rounded-lg p-4 flex justify-between items-center bg-black" >
+        <div className="  shadow-md p-4 flex justify-between items-center bg-black" >
             <div className="flex items-center">
                 <img src="/logo-no-background.png" alt="Logo" className="h-8 w-18" />
 

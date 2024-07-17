@@ -17,8 +17,8 @@ vendorRouter.post("/api/vendor/verifyFotp", authController_1.default.verifyFotp)
 vendorRouter.put("/api/vendor/forgotPassword", authController_1.default.updatePassword);
 vendorRouter.post("/api/vendor/googlesignup", authController_1.default.googleRegistration);
 vendorRouter.post("/api/vendor/googleLogin", authController_1.default.googleLogin);
-vendorRouter.put("/api/vendor/addRequest", VendorMiddleware_1.default, Controller_1.default.request);
-vendorRouter.get("/api/vendor/getCategories", VendorMiddleware_1.default, Controller_1.default.getCategories);
+vendorRouter.put("/api/vendor/addRequest", Controller_1.default.request);
+vendorRouter.get("/api/vendor/getCategories", Controller_1.default.getCategories);
 vendorRouter.post("/api/vendor/uploadPost/:id", VendorMiddleware_1.default, Controller_1.default.uploadPost);
 vendorRouter.get("/api/vendor/requsts/:vendorId", VendorMiddleware_1.default, Controller_1.default.listRequests);
 vendorRouter.post("/api/vendor/acceptRequest", VendorMiddleware_1.default, Controller_1.default.acceptRequest);

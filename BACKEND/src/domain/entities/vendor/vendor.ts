@@ -114,6 +114,22 @@ export interface VendorProfile {
   coverPicture: string;
   posts: PostDetails[];
   availableDate?: string;
+  response?: {
+    vendorName: string;
+    phoneNum: string;
+    profilePicture: string;
+    businessName: string;
+    location: string;
+    coverPicture: string;
+    posts: {
+      title: string;
+      images: string[];
+      description: string;
+      category: string;
+    }[];
+    availableDate: string[];
+  };
+  bookings?: [];
 }
 
 export interface IAcceptRequest {
@@ -139,7 +155,7 @@ export interface IReqVendor {
 
 export interface IReq {
   userId: string;
-  vendorId: string;
+  vendorId?: string;
   requested: string;
 }
 

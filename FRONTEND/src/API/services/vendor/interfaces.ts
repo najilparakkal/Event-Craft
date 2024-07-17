@@ -16,6 +16,7 @@ interface vendorDetails {
 
 
   interface authResponse {
+    token: any;
     response: any;
     vendor: {
       vendorDetails: {

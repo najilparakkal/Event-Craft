@@ -19,14 +19,13 @@ const Header: React.FC = () => {
 
     return (
         <header className="bg-transparent absolute top-0 left-0 w-full z-10">
-                <Toaster position="top-center" reverseOrder={false} />
+            <Toaster position="top-center" reverseOrder={false} />
             <div className="container mx-auto py-4 px-6 flex justify-between items-center">
                 <img src="/logo-no-background.png" className="h-8 sm:h-8" alt="Event Planner Logo" />
                 <nav className="hidden md:flex space-x-4">
                     <a onClick={() => navigate('/vendors')} className="text-gray-600 hover:text-white">Vendors</a>
-                    <a onClick={()=>navigate("/messages")} className="text-white hover:text-gray-600">Messages</a>
-                    <a onClick={()=>navigate("/wishlist")} className="text-white hover:text-gray-600">Profile</a>
-                    <a onClick={() => navigate("/vendor/login")} className="text-white hover:text-gray-600 cursor-pointer">Become a Vendor?</a>
+                    <a onClick={() => navigate("/messages")} className="text-white hover:text-gray-600">Messages</a>
+                    <a onClick={() => navigate("/wishlist")} className="text-white hover:text-gray-600">Profile</a>
                     <a onClick={logoutBtn} className="text-red-600 font-semibold hover:text-gray-600 cursor-pointer">Logout</a>
                 </nav>
                 <button className="md:hidden text-white" onClick={toggleMobileMenu}>
@@ -38,9 +37,8 @@ const Header: React.FC = () => {
             {isMobileMenuOpen && (
                 <nav className="md:hidden bg-black px-6 py-4">
                     <a href="#" className="block text-gray-600 hover:text-white mb-2">Vendors</a>
-                    <a onClick={()=>navigate("/messages")} className="block text-gray-600 hover:text-white mb-2">Messages</a>
+                    <a onClick={() => navigate("/messages")} className="block text-gray-600 hover:text-white mb-2">Messages</a>
                     <a href="#" className="block text-gray-600 hover:text-white mb-2">Profile</a>
-                    <a onClick={() => navigate("/vendor/login")} className="block text-gray-600 hover:text-white mb-2 cursor-pointer">Become a Vendor?</a>
                     <a onClick={() => navigate("/login")} className="block text-gray-600 hover:text-white cursor-pointer">Login</a>
                 </nav>
             )}

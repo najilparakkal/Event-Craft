@@ -7,14 +7,11 @@ import { useNavigate } from 'react-router-dom';
 import { signupUser, GoogleAuth } from '../../../API/services/user/authSlice';
 import { useDispatch } from 'react-redux';
 import { auth, signInWithPopup, provider } from '../../../firebase/firebase';
-import { useAppSelector } from '../../../costumeHooks/costum';
 
 const Signup: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const vendorDetails = useAppSelector((state) => state.user.jwt);
     useEffect(() => {
-        if (vendorDetails) navigate("/home")
         localStorage.removeItem('timer');
     }, [])
     const handleSubmit = async (values: any) => {

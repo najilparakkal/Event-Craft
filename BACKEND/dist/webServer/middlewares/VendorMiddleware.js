@@ -12,9 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const jwtGenarate_1 = require("../../domain/helpers/jwtGenarate");
 const vendor_1 = require("../../framworks/database/models/vendor");
 const vendorAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     try {
-        const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split("Bearer")[1].trim();
+        const token = req.cookies.jwt;
         if (!token) {
             return res.status(401).json({ error: "Token not provided" });
         }
@@ -22,7 +21,7 @@ const vendorAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             .then((payload) => {
             return next();
         })
-            .catch((_b) => __awaiter(void 0, [_b], void 0, function* ({ err, payload }) {
+            .catch((_a) => __awaiter(void 0, [_a], void 0, function* ({ err, payload }) {
             console.log(payload, err);
             if (err.name === "TokenExpiredError") {
                 const data = yield vendor_1.Vendors.findById(payload.id);

@@ -29,7 +29,7 @@ const socketHandler = (io: Server) => {
     socket.on('send message', async (message) => {
       console.log(`Message from ${socket.id}:`, message);
       const { senderId, senderModel, content, chatId } = message;
-
+   
       if (!mongoose.Types.ObjectId.isValid(chatId)) {
         console.error(`Invalid chat ID: ${chatId}`);
         return;

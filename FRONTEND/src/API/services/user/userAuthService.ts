@@ -13,6 +13,7 @@ interface userData {
 }
 
 interface authResponse {
+  token: any;
   response: any;
   user: {
     userDatas: {
@@ -187,7 +188,7 @@ export const useLogout = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('userDetails');
-    Cookies.remove('jwt');
+    // Cookies.remove('jwt');
     dispatch(logout());
   };
 

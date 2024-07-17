@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { addRequest, fetchVendorDetails } from '../../../API/services/user/Services';
 
@@ -23,19 +23,24 @@ const Vendor: React.FC = () => {
     const [vendorDetails, setVendorDetails] = useState<VendorDetails | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [message, setMessage] = useState('');
+    const [showBookingMessage, setShowBookingMessage] = useState(false);
     const { id } = useParams<{ id: string }>();
     const [validationError, setValidationError] = useState('');
     const { _id } = useAppSelector((state) => state.user.userDetails);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredPosts, setFilteredPosts] = useState<VendorDetails['posts']>([]);
-
+    const [bookedVendors, setBookedVendors] = useState<string[]>([]);
+    const [chat, setChat] = useState(false)
+    const navigate = useNavigate()
     useEffect(() => {
         const fetch = async () => {
-            const details = await fetchVendorDetails(id + "");
-            setVendorDetails(details);
+            const details = await fetchVendorDetails(id + "", _id + "");
+            setVendorDetails(details.response);
+            setBookedVendors(details.bookings || []);
+            setChat(details.chat)
         };
         fetch();
-    }, [id]);
+    }, []);
 
     useEffect(() => {
         if (vendorDetails) {
@@ -57,7 +62,11 @@ const Vendor: React.FC = () => {
     };
 
     const toggleModal = () => {
-        setIsModalOpen(!isModalOpen);
+        if (bookedVendors.length > 0) {
+            setIsModalOpen(true);
+        } else {
+            setShowBookingMessage(true);
+        }
     };
 
     const handleSend = async () => {
@@ -69,7 +78,7 @@ const Vendor: React.FC = () => {
         if (response) {
             toast.success('Message sent successfully');
         } else {
-            toast.error('You Have already Connected');
+            toast.error('You have already connected');
         }
         setIsModalOpen(false);
     };
@@ -84,10 +93,13 @@ const Vendor: React.FC = () => {
         setValidationError('');
     };
 
+    const handleCloseBookingMessage = () => {
+        setShowBookingMessage(false);
+    };
+
     if (!vendorDetails) {
         return <div>Loading...</div>;
     }
-
 
     return (
         <div className="bg-black min-h-screen flex flex-col items-center">
@@ -99,7 +111,7 @@ const Vendor: React.FC = () => {
                 <div className="flex-grow">
                     <h2></h2>
                 </div>
-                <div className="bg-[#FD8FAA] p-2 rounded-lg flex flex-col">
+                <div className="bg-black bg-opacity-50 p-2 rounded-lg flex flex-col">
                     <div className="flex justify-between items-start">
                         <div>
                             <h5 className="font-semibold text-white">{vendorDetails.vendorName}</h5>
@@ -111,9 +123,9 @@ const Vendor: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex justify-between space-x-2 mt-2">
-                        <button className="bg-[#FEE5EB] text-white py-1 px-2 rounded-md">CONTACT US</button>
-                        <button className="bg-[#FEE5EB] text-white py-1 px-2 rounded-md" onClick={toggleModal}>CHAT WITH ME</button>
-                        <button className="bg-[#FEE5EB] text-white py-1 px-2 rounded-md" onClick={() => window.scrollTo(0, window.screen.height)}>BOOKING</button>
+                        <button className="bg-gray-800 text-white py-1 px-2 rounded-md">CONTACT US</button>
+                        <button className="bg-gray-800 text-white py-1 px-2 rounded-md" onClick={() => chat ? navigate('/messages') : toggleModal()}>CHAT WITH ME</button>
+                        <button className="bg-gray-800 text-white py-1 px-2 rounded-md" onClick={() => window.scrollTo(0, window.screen.height)}>BOOKING</button>
                     </div>
                     <div className="flex justify-between ">
                         <a className="text-white px-2 rounded-md flex items-center" onClick={handleFavoriteClick}>
@@ -127,7 +139,6 @@ const Vendor: React.FC = () => {
                 </div>
             </main>
 
-            {/* Search Input */}
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 justify-between sm:space-x-2 mb-4 sm:mb-8 w-full max-w-6xl p-6">
                 <h2 className="text-white text-2xl mb-4">Posts</h2>
 
@@ -141,23 +152,30 @@ const Vendor: React.FC = () => {
                 />
             </div>
 
-            <div className="w-full max-w-6xl p-6 mb-10">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {filteredPosts.map((post, index) => (
-                        <div key={index} className="grid gap-4">
-                            {post.images.map((image, imgIndex) => (
-                                <div key={imgIndex}>
-                                    <img className="h-auto max-w-full rounded-lg" src={image} alt="" />
-                                    <h4 className="text-white font-semibold text-xl mt-2">{post.title}</h4>
-                                    <p className="text-white mt-1">{post.description}</p>
-                                </div>
-                            ))}
-                        </div>
-                    ))}
-                </div>
+            <div className="w-full max-w-6xl p-6 mb-10 ">
+                {filteredPosts.length > 0 ? (
+                    <div className="flex flex-wrap gap-4">
+                        {filteredPosts.map((post, index) => (
+                            <div key={index} className="flex flex-col gap-4 w-1/2 md:w-1/4">
+                                {post.images.map((image, imgIndex) => (
+                                    <div key={imgIndex}>
+                                        <img className="h-auto max-w-full rounded-lg" src={image} alt="" />
+                                        <h4 className="text-white font-semibold text-xl mt-2">{post.title}</h4>
+                                        <p className="text-white mt-1">{post.description}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="flex justify-center m-10">
+                        <p className="text-white text-center font-bold">No posts found</p>
+                    </div>
+                )}
+            <Booking vendorId={id + ""} />
             </div>
 
-            {/* Modal Component */}
+
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg p-6 w-full max-w-md">
@@ -170,19 +188,25 @@ const Vendor: React.FC = () => {
                         />
                         {validationError && <p className="text-red-500 text-sm mb-2">{validationError}</p>}
                         <div className="flex justify-end space-x-2">
-                            <button className="bg-gray-300 text-black py-2 px-4 rounded-md" onClick={handleCancel}>Cancel</button>
-                            <button className="bg-[#FD8FAA] text-white py-2 px-4 rounded-md" onClick={handleSend}>Send</button>
+                            <button className="bg-blue-500 text-white px-4 py-2 rounded-md" onClick={handleSend}>Send</button>
+                            <button className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md" onClick={handleCancel}>Cancel</button>
                         </div>
                     </div>
                 </div>
             )}
-            <div className='flex w-5/6 '>
-                <div className='w-full bg-red-500'>
-                    <Booking vendorId={id + ""} />
 
+            {showBookingMessage && (
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                        <h2 className="text-xl font-semibold mb-4">Booking Required</h2>
+                        <p className="mb-4">Please book the vendor's services before you can send a message.</p>
+                        <div className="flex justify-end">
+                            <button className="bg-blue-500 text-white px-4 py-2 rounded-md" onClick={handleCloseBookingMessage}>Close</button>
+                        </div>
+                    </div>
                 </div>
+            )}
 
-            </div>
             <Toaster />
         </div>
     );

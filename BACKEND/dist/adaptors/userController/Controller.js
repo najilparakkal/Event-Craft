@@ -43,7 +43,7 @@ exports.default = {
     }),
     getVendorProfile: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const response = yield home_1.default.getVendorProfile(req.params.vendorId);
+            const response = yield home_1.default.getVendorProfile(req.params.vendorId, req.query.userId + "");
             res.status(200).json(response);
         }
         catch (error) {

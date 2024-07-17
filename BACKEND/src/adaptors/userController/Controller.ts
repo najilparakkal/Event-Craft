@@ -28,7 +28,7 @@ export default {
   },
   getVendorProfile: async (req: Request, res: Response) => {
     try {
-      const response = await userIterator.getVendorProfile(req.params.vendorId);
+      const response = await userIterator.getVendorProfile(req.params.vendorId,req.query.userId+"");
       res.status(200).json(response);
     } catch (error) {
       console.log(error);
@@ -38,7 +38,7 @@ export default {
     try {
       const response = await userIterator.addRequest(req.body);
       if (response?.success) {
-        res.status(200).json({ message: "Request sent successfully" });
+        res.status(200).json({ message: "Request sent successfully" });  
       } else {
         res.status(201).json({ message: "already connected" });
       }

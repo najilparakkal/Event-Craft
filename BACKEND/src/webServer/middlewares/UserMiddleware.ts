@@ -8,8 +8,7 @@ import { Users } from "../../framworks/database/models/user";
 
 const userAuth: RequestHandler = async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split("Bearer")[1].trim();
-    console.log(token,"🏫🏫");
+    const token = req.cookies.jwt
     
     if (!token) {
       return res.status(401).json({ error: "Token not provided" });

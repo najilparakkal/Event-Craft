@@ -19,8 +19,8 @@ export const listVendors = async (data: string) => {
       .populate<{
         licence: ILicence[];
       }>("licence")
+      .populate("posts")
       .exec();
-
     const filteredVendors = vendors.filter((vendor) =>
       vendor.licence.some((licence) => {
         const services = licence.services
@@ -29,13 +29,14 @@ export const listVendors = async (data: string) => {
         return services.includes(data.toLowerCase());
       })
     );
-
     const vendorsWithDetails = filteredVendors.map((vendor) => ({
       _id: vendor._id,
       vendorName: vendor.vendorName,
       email: vendor.email,
       phoneNum: vendor.phoneNum,
-      profilePicture: vendor.licence[0]?.profilePicture,
+      profilePicture: vendor.profilePicture,
+      posts: vendor.posts,
+      coverPicture: vendor.coverPicture,
     }));
     return vendorsWithDetails;
   } catch (error) {
@@ -59,15 +60,17 @@ export const listAll = async () => {
 export const listServices = async () => {
   try {
     const services = await Services.find();
-    return services;
+    const vendors = await Vendors.find()
+      .populate("posts")
+      .populate("licence")
+      .exec();
+    return { services, vendors };
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getVendorProfile = async (
-  vendorId: string
-): Promise<VendorProfile | undefined> => {
+export const getVendorProfile = async (vendorId: string, userId: string) => {
   try {
     const vendor = (await Vendors.findById(vendorId)
       .populate("licence")
@@ -96,7 +99,12 @@ export const getVendorProfile = async (
       description: post.description,
       category: post.category,
     }));
+    const chat = await ChatModel.findOne({
+      users: { $in: [userId, vendorId] },
+      is_accepted: true,  
+    });
 
+    const bookings = await Bookings.find({ userId, vendorId });
     const response: VendorProfile = {
       vendorName,
       phoneNum,
@@ -107,8 +115,7 @@ export const getVendorProfile = async (
       posts: postsDetails,
       availableDate,
     };
-
-    return response;
+    return { response, bookings ,chat:chat ? true : false};
   } catch (error) {
     console.log(error);
     return undefined;

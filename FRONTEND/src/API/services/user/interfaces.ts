@@ -14,6 +14,7 @@ interface AuthResponse {
   response: any; 
   user: {
     userDatas: {
+      profilePicture: string | null | undefined;
       id: string;
       email: string;
       name: string;
