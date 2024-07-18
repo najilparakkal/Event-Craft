@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const home_1 = __importDefault(require("../../domain/usecases/user/home/home"));
+const formidable_1 = require("../../domain/helpers/formidable");
 exports.default = {
     listVendors: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -135,6 +136,25 @@ exports.default = {
         catch (error) {
             console.log(error);
             res.status(500).send("Internal Server Error");
+        }
+    }),
+    getProfile: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.getProfile(req.params.userId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    updateProfile: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { files, fields } = yield (0, formidable_1.multipartFormSubmission)(req);
+            const response = yield home_1.default.updateProfile(req.params.userId, fields, files);
+            res.status(200).json(response);
+        }
+        catch (err) {
+            console.log(err);
         }
     }),
 };

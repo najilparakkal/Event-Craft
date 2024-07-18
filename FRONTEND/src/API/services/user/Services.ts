@@ -1,12 +1,10 @@
 import { authAxiosInstance } from "./axios/AxiosInstance";
 import { outerAxios } from "../outer/axios";
 
-
-
 export const fetchVendors = async (data: string) => {
   try {
     const response = await authAxiosInstance.post("user/vendors", { data });
-    
+
     return response.data;
   } catch (error) {
     console.log(error);
@@ -22,10 +20,8 @@ export const fetchOuterServices = async () => {
   }
 };
 
-
 export const fetchServices = async () => {
   try {
-    
     const response = await authAxiosInstance.get("user/services");
     return response.data;
   } catch (error) {
@@ -33,7 +29,7 @@ export const fetchServices = async () => {
   }
 };
 
-export const fetchVendorDetails = async (data: string,userId:string) => {
+export const fetchVendorDetails = async (data: string, userId: string) => {
   try {
     const response = await authAxiosInstance.get(`user/vendorProfile/${data}`, {
       params: { userId },
@@ -140,6 +136,33 @@ export const cancelBooking = async (percentage: number, bookingId: string) => {
       },
     });
     return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchUserDatas = async (userId: string) => {
+  try {
+    const response = await authAxiosInstance.get(`user/profile/${userId}`);
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const udpdateUser = async (userId: string, datas: any) => {
+  try {
+    const response = await authAxiosInstance.put(
+      `user/updateProfile/${userId}`,
+      datas,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.status === 200 ? response.data : false;
   } catch (error) {
     console.log(error);
   }

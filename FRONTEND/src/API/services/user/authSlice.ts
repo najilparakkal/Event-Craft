@@ -80,10 +80,19 @@ const userSlice = createSlice({
         name: null,
         email: null,
         phoneNum: null,
+        profilePicture:null
       };
       state.status = "idle";
       state.error = null;
     },
+    updateUserDetails(state, action: PayloadAction<Partial<UserDetails>>) {
+      localStorage.removeItem("userDetails");
+      state.userDetails = {
+        ...state.userDetails,
+        ...action.payload,
+      };
+      localStorage.setItem("userDetails", JSON.stringify(state.userDetails));
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -94,7 +103,7 @@ const userSlice = createSlice({
         state.status = "succeeded";
         state.userDetails = {
           _id: action.payload.user.userDatas.id,
-          name: action.payload.user.userDatas.name,
+          name: action.payload.user.userDatas.userName,
           email: action.payload.user.userDatas.email,
           phoneNum: action.payload.user.userDatas.phoneNum,
           profilePicture: action.payload.user.userDatas.profilePicture,
@@ -115,7 +124,7 @@ const userSlice = createSlice({
           state.status = "succeeded";
           state.userDetails = {
             _id: action.payload.userDetails?.id,
-            name: action.payload.userDetails?.name,
+            name: action.payload.userDetails?.userName,
             email: action.payload.userDetails?.email,
             phoneNum: action.payload.userDetails?.phoneNum,
             profilePicture: action.payload.userDetails?.profilePicture,
@@ -139,7 +148,7 @@ const userSlice = createSlice({
         state.status = "succeeded";
         state.userDetails = {
           _id: action.payload.response.userDatas.id,
-          name: action.payload.response.userDatas.name,
+          name: action.payload.response.userDatas.userName,
           email: action.payload.response.userDatas.email,
           phoneNum: action.payload.response.userDatas.phoneNum,
           profilePicture: action.payload.response.userDatas.profilePicture,
@@ -158,7 +167,7 @@ const userSlice = createSlice({
         state.status = "succeeded";
         state.userDetails = {
           _id: action.payload.userDetails?.id,
-          name: action.payload.userDetails?.name,
+          name: action.payload.userDetails?.userName,
           email: action.payload.userDetails?.email,
           phoneNum: action.payload.userDetails?.phoneNum,
           profilePicture: action.payload.userDetails?.profilePicture,
@@ -174,5 +183,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout } = userSlice.actions;
+export const { logout,updateUserDetails } = userSlice.actions;
 export default userSlice.reducer;

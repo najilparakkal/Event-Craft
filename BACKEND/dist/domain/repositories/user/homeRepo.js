@@ -12,7 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
+exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
+const awsConfig_1 = require("../../../config/awsConfig");
 const booking_1 = require("../../../framworks/database/models/booking");
 const chatModal_1 = __importDefault(require("../../../framworks/database/models/chatModal"));
 const requests_1 = require("../../../framworks/database/models/requests");
@@ -258,9 +259,7 @@ const cancelBooking = (percentage, bookingId) => __awaiter(void 0, void 0, void 
         if (!updateUserWallet) {
             throw new Error("User not found");
         }
-        console.log("🎶🎶🎶");
-        const deletee = yield booking_1.Bookings.deleteOne({ _id: bookingId }).exec();
-        console.log(deletee, "🍽️🍽️🍽️");
+        yield booking_1.Bookings.deleteOne({ _id: bookingId }).exec();
         return {
             success: true,
             message: "bookings deleted successfully user Updated",
@@ -271,3 +270,30 @@ const cancelBooking = (percentage, bookingId) => __awaiter(void 0, void 0, void 
     }
 });
 exports.cancelBooking = cancelBooking;
+const getProfile = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield user_1.Users.findById(userId);
+        return user;
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+exports.getProfile = getProfile;
+const updateUser = (userId, datas, files) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const image = yield (0, awsConfig_1.uploadImage)(files.profilePicture[0].filepath);
+        const user = yield user_1.Users.findByIdAndUpdate(userId, {
+            $set: {
+                userName: datas.name,
+                phoneNum: datas.phoneNum,
+                profilePicture: image,
+            },
+        });
+        return { success: true, image };
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.updateUser = updateUser;

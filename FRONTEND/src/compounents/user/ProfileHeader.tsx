@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, To } from 'react-router-dom';
 import { useAppSelector } from '../../costumeHooks/costum';
+import Profile from './Profile';
 
 const ProfileHeader = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [selectedMenuItem, setSelectedMenuItem] = useState('MESSAGES');
+    const [isModalOpen, setModalOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const { profilePicture } = useAppSelector((state) => state.user.userDetails);
-
     useEffect(() => {
+
+      
+
         switch (location.pathname) {
             case '/wishlist':
                 setSelectedMenuItem('WISHLIST');
@@ -33,27 +37,32 @@ const ProfileHeader = () => {
         }
     }, [location.pathname]);
 
-    const handleMenuItemClick = (menuItem: string, navigateTo: string) => {
+    const handleMenuItemClick = (menuItem: React.SetStateAction<string>, navigateTo: To) => {
         setSelectedMenuItem(menuItem);
         navigate(navigateTo);
         setSidebarOpen(false);
     };
+
     return (
-        <div className="  shadow-md p-4 flex justify-between items-center bg-black" >
+        <div className="shadow-md p-4 flex justify-between items-center bg-black">
             <div className="flex items-center">
                 <img src="/logo-no-background.png" alt="Logo" className="h-8 w-18" />
-
             </div>
             <div className="flex items-center">
                 <div className="relative ml-4">
                     {isSidebarOpen && (
-                        <div id="dropdownNotification" className="z-20 absolute right-0 mt-2 w-300 max-w-sm bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-800 dark:divide-gray-700" aria-labelledby="dropdownNotificationButton">
+                        <div
+                            id="dropdownNotification"
+                            className="z-20 absolute right-0 mt-2 w-300 max-w-sm bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-800 dark:divide-gray-700"
+                            aria-labelledby="dropdownNotificationButton"
+                        >
                             <div className="divide-y divide-gray-100 dark:divide-gray-700"></div>
                         </div>
                     )}
                 </div>
-                <a onClick={() => navigate('/home')} className="text-white mr-9 hover:text-white">Home</a>
-
+                <a onClick={() => navigate('/home')} className="text-white mr-9 hover:text-white">
+                    Home
+                </a>
                 <img
                     src={profilePicture ? profilePicture : ""}
                     alt="User"
@@ -61,10 +70,8 @@ const ProfileHeader = () => {
                     onClick={() => setSidebarOpen(!isSidebarOpen)}
                 />
             </div>
-
             <div
-                className={`fixed right-0 rounded-lg m-1 top-0 w-64 h-full bg-gray-100/55 text-white shadow-md p-4 transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
-                    }`}
+                className={`fixed right-0 rounded-lg m-1 top-0 w-64 h-full bg-gray-100/55 text-white shadow-md p-4 transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}
             >
                 <button onClick={() => setSidebarOpen(false)} className="text-black">
                     <svg
@@ -115,17 +122,24 @@ const ProfileHeader = () => {
                     >
                         ADD ACCOUNT
                     </li>
-                    <li className="mt-[200px]  justify-end">
+                    <li className="mt-[200px] justify-end">
                         <img
-                            src={profilePicture?profilePicture:""}
+                            onClick={() => setModalOpen(true)}
+                            src={profilePicture ? profilePicture : ""}
                             alt=""
-                            className='h-20 w-20 rounded-full ml-[74px] object-cover'
+                            className='h-20 w-20 rounded-full ml-[74px] object-cover cursor-pointer'
                         />
                     </li>
                 </ul>
             </div>
+
+            {isModalOpen && (
+                
+                <Profile/>
+            )}
+
         </div>
     );
-}
+};
 
-export default React.memo(ProfileHeader);
+export default ProfileHeader;

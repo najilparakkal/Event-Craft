@@ -71,3 +71,9 @@ interface IRequest{
   _id:string,
   message:string
 }
+
+interface IUserProfile {
+  name: string;
+  phoneNum: string;
+  profilePicture: File;
+}

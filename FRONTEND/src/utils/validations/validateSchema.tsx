@@ -75,7 +75,7 @@ export const LisenseValidation = Yup.object().shape({
     phoneNumber: Yup.string()
         .matches(/^\d{10}$/, 'Phone number must be exactly 10 digits')
         .required('Phone number is required'),
-        location: Yup.string()
+    location: Yup.string()
         .required(' required'),
     upiIdOrPhoneNumber: Yup.string()
         .required('UPI ID or Verified Phone number is required'),
@@ -106,13 +106,13 @@ export const postValidation = Yup.object().shape({
 
 
 
-export const  bookingValidation= Yup.object({
+export const bookingValidation = Yup.object({
     clientName: Yup.string().required('Required'),
     email: Yup.string().email('Invalid email address').required('Required'),
     phoneNumber: Yup.string().required('Required'),
     eventDate: Yup.date().nullable().required('Required').test('is-future-date', 'Wedding date cannot be in the past', (value) => {
-      if (!value) return false;
-      return value >= new Date();
+        if (!value) return false;
+        return value >= new Date();
     }),
     arrivalTime: Yup.string().required('Required'),
     guests: Yup.string().required('Required'),
@@ -120,4 +120,16 @@ export const  bookingValidation= Yup.object({
     pincode: Yup.string().required('Required'),
     endingTime: Yup.string().required('Required'),
     event: Yup.string().required('Required'),
-  })
+})
+
+export const profileValidation = Yup.object({
+    name: Yup.string()
+        .max(50, 'Must be 50 characters or less')
+        .required('Required'),
+    phoneNum: Yup.string()
+        .matches(/^[0-9]+$/, 'Must be only digits')
+        .min(10, 'Must be at least 10 digits')
+        .required('Required'),
+    profilePicture: Yup.string()
+        .required("Required")
+})

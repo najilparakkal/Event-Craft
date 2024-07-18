@@ -16,6 +16,8 @@ import {
   getBookings,
   cancelBooking,
   listAll,
+  getProfile,
+  updateUser
 } from "../../../repositories/user/homeRepo";
 
 export default {
@@ -122,4 +124,33 @@ export default {
       console.log(error);
     }
   },
+  getProfile:async(userId:string)=>{
+    try{
+      const response = await getProfile(userId)
+      const datas = {
+        userName: response?.userName,
+        phoneNum: response?.phoneNum,
+        email: response?.email,
+        registered: response?.registered,
+        profilePicture: response?.profilePicture,
+        wallet: response?.wallet,
+      };
+      return datas
+    }catch(err){
+      console.log(err)
+    }
+  },
+  updateProfile:async(userId:string,{phoneNum,name} ,files:any)=>{
+    try {
+      const datas = {
+        phoneNum: phoneNum[0],
+        name:name[0],
+      }
+      const response = await updateUser(userId,datas,files)
+      return response
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
 };

@@ -2,7 +2,6 @@ import   {   AxiosResponse } from "axios";
 import { useDispatch } from 'react-redux';
 import { logout } from "./authSlice";
 import { authAxiosInstance } from "../vendor/axios/AxiosInstance";
-import Cookies from 'js-cookie';
 
 interface userData {
   name?: string;

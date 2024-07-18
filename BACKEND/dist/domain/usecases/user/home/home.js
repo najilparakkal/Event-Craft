@@ -120,4 +120,34 @@ exports.default = {
             console.log(error);
         }
     }),
+    getProfile: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield (0, homeRepo_1.getProfile)(userId);
+            const datas = {
+                userName: response === null || response === void 0 ? void 0 : response.userName,
+                phoneNum: response === null || response === void 0 ? void 0 : response.phoneNum,
+                email: response === null || response === void 0 ? void 0 : response.email,
+                registered: response === null || response === void 0 ? void 0 : response.registered,
+                profilePicture: response === null || response === void 0 ? void 0 : response.profilePicture,
+                wallet: response === null || response === void 0 ? void 0 : response.wallet,
+            };
+            return datas;
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }),
+    updateProfile: (userId_1, _a, files_1) => __awaiter(void 0, [userId_1, _a, files_1], void 0, function* (userId, { phoneNum, name }, files) {
+        try {
+            const datas = {
+                phoneNum: phoneNum[0],
+                name: name[0],
+            };
+            const response = yield (0, homeRepo_1.updateUser)(userId, datas, files);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    })
 };

@@ -30,4 +30,6 @@ userRouter.get("/api/user/chatId/:userId/:vendorId", UserMiddleware_1.default, C
 userRouter.post("/api/user/addBooking", UserMiddleware_1.default, Controller_1.default.addBooking);
 userRouter.get("/api/user/bookings/:userId", UserMiddleware_1.default, Controller_1.default.getBooking);
 userRouter.delete("/api/user/cancelBooking", UserMiddleware_1.default, Controller_1.default.cancelBooking);
+userRouter.get('/api/user/profile/:userId', UserMiddleware_1.default, Controller_1.default.getProfile);
+userRouter.put('/api/user/updateProfile/:userId', UserMiddleware_1.default, Controller_1.default.updateProfile);
 exports.default = userRouter;

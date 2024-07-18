@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import userIterator from "../../domain/usecases/user/home/home";
+import { multipartFormSubmission } from "../../domain/helpers/formidable";
 
 export default {
   listVendors: async (req: Request, res: Response) => {
@@ -28,7 +29,10 @@ export default {
   },
   getVendorProfile: async (req: Request, res: Response) => {
     try {
-      const response = await userIterator.getVendorProfile(req.params.vendorId,req.query.userId+"");
+      const response = await userIterator.getVendorProfile(
+        req.params.vendorId,
+        req.query.userId + ""
+      );
       res.status(200).json(response);
     } catch (error) {
       console.log(error);
@@ -38,7 +42,7 @@ export default {
     try {
       const response = await userIterator.addRequest(req.body);
       if (response?.success) {
-        res.status(200).json({ message: "Request sent successfully" });  
+        res.status(200).json({ message: "Request sent successfully" });
       } else {
         res.status(201).json({ message: "already connected" });
       }
@@ -110,6 +114,24 @@ export default {
     } catch (error) {
       console.log(error);
       res.status(500).send("Internal Server Error");
+    }
+  },
+  getProfile: async (req: Request, res: Response) => {
+    try {
+      const response = await userIterator.getProfile(req.params.userId);
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  updateProfile: async (req: Request, res: Response) => {
+    try {
+      const { files, fields } = await multipartFormSubmission(req);
+
+      const response = await userIterator.updateProfile(req.params.userId,fields,files);
+      res.status(200).json(response)
+    } catch (err) {
+      console.log(err);
     }
   },
 };

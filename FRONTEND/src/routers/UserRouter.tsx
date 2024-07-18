@@ -11,6 +11,7 @@ import ProfileHome from "../pages/user/profileSection/wishlist/WishlistSection";
 import MessageSection from "../pages/user/profileSection/messages/MessageSection";
 import BookingSection from "../pages/user/profileSection/bookings/BookingSection";
 import { useAppSelector } from "../costumeHooks/costum";
+import ProfileSection from "../pages/user/profileSection/profile/ProfileSection";
 
 
 
@@ -31,6 +32,7 @@ const UserRouter: React.FC = () => {
                 <Route path="/wishlist" element={<ProfileHome />} />
                 <Route path="/messages" element={<MessageSection />} />
                 <Route path="/bookings" element={<BookingSection />} />
+                <Route path="/profile" element={<ProfileSection />} />
             </Route>
         </Routes>
     )  

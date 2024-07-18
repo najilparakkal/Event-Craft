@@ -6,6 +6,8 @@ import Slider from 'react-slick';
 import { fetchOuterServices } from '../../API/services/user/Services';
 import Footer from '../../compounents/user/Footer';
 import VendorsCard from '../../compounents/user/VendorsCard';
+import { useLogout } from '../../API/services/user/userAuthService';
+import { vendorLogout } from '../../API/services/vendor/vendorAuthService';
 
 interface Category {
   id: number;
@@ -41,7 +43,12 @@ const OuterPage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
 
+  const handleLogout = useLogout();
+  const handleVendorLogout = vendorLogout()
+  
   useEffect(() => {
+    handleLogout();
+    handleVendorLogout()   
     const fetch = async () => {
       const datas = await fetchOuterServices();
       setCategories(datas.services);

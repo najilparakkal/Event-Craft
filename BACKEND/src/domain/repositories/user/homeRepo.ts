@@ -1,3 +1,4 @@
+import { uploadImage } from "../../../config/awsConfig";
 import { Bookings } from "../../../framworks/database/models/booking";
 import ChatModel from "../../../framworks/database/models/chatModal";
 import { ILicence } from "../../../framworks/database/models/licence";
@@ -101,7 +102,7 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
     }));
     const chat = await ChatModel.findOne({
       users: { $in: [userId, vendorId] },
-      is_accepted: true,  
+      is_accepted: true,
     });
 
     const bookings = await Bookings.find({ userId, vendorId });
@@ -115,7 +116,7 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
       posts: postsDetails,
       availableDate,
     };
-    return { response, bookings ,chat:chat ? true : false};
+    return { response, bookings, chat: chat ? true : false };
   } catch (error) {
     console.log(error);
     return undefined;
@@ -286,10 +287,8 @@ export const cancelBooking = async (percentage: number, bookingId: string) => {
     if (!updateUserWallet) {
       throw new Error("User not found");
     }
-    console.log("🎶🎶🎶");
 
-    const deletee = await Bookings.deleteOne({ _id: bookingId }).exec();
-    console.log(deletee, "🍽️🍽️🍽️");
+    await Bookings.deleteOne({ _id: bookingId }).exec();
 
     return {
       success: true,
@@ -297,5 +296,31 @@ export const cancelBooking = async (percentage: number, bookingId: string) => {
     };
   } catch (error) {
     console.error("Error cancelling booking:", error);
+  }
+};
+
+export const getProfile = async (userId: string) => {
+  try {
+    const user = await Users.findById(userId);
+    return user;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const updateUser = async (userId: string, datas:any, files:any) => {
+  try {
+    const image = await uploadImage(files.profilePicture[0].filepath);
+
+    const user = await Users.findByIdAndUpdate(userId, {
+      $set: {
+        userName: datas.name,
+        phoneNum: datas.phoneNum,
+        profilePicture: image,
+      },
+    });
+    return { success: true,image };
+  } catch (error) {
+    console.log(error);
   }
 };
