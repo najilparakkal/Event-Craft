@@ -68,7 +68,6 @@ interface GoogleAuth {
 
 interface UserState {
   userDetails: UserDetails;
-  jwt: string | null;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }

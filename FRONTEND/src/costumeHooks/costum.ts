@@ -5,6 +5,10 @@ import { updateVendorDetails } from '../API/services/vendor/aurhSlice';
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+
+
+
+
 export const useUpdateUserDetails = () => {
   const dispatch = useDispatch<AppDispatch>();
   return (updatedDetails: Partial<UserDetails>) => {

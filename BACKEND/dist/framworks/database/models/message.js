@@ -8,16 +8,17 @@ const { Schema } = mongoose_1.default;
 const MessageSchema = new Schema({
     sender: {
         type: Schema.Types.ObjectId,
-        refPath: 'senderModel', // Dynamically reference User or Vendor model
-        required: true
+        refPath: "senderModel",
+        required: true,
     },
     senderModel: {
         type: String,
         required: true,
-        enum: ['User', 'Vendor']
+        enum: ["User", "Vendor"],
     },
     content: { type: String, required: true },
     chat: { type: Schema.Types.ObjectId, ref: "ChatModel" },
+    type: String,
 }, { timestamps: true });
 const Message = mongoose_1.default.model("Message", MessageSchema);
 exports.default = Message;

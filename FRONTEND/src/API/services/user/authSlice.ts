@@ -5,7 +5,6 @@ import Cookies from "js-cookie";
 const storedUserDetails: UserDetails | null = JSON.parse(
   localStorage.getItem("userDetails") || "null"
 );
-const storedJWT: string | null = localStorage.getItem("jwt");
 
 const initialState: UserState = {
   userDetails: storedUserDetails ?? {
@@ -14,7 +13,6 @@ const initialState: UserState = {
     email: null,
     phoneNum: null,
   },
-  jwt: storedJWT,
   status: "idle",
   error: null,
 };

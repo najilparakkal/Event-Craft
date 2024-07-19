@@ -32,7 +32,7 @@ interface vendorDetails {
   }
 
   
-interface AuthResponse {
+export interface IAuthResponse {
   vendorDetails?: any;
   token?: string | null;
   response: any; 

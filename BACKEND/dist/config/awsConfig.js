@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadImage = void 0;
+exports.uploadBufferToS3 = exports.uploadImage = void 0;
 const user_random_name_generator_1 = require("user_random_name_generator");
 const client_s3_1 = require("@aws-sdk/client-s3");
 const fs_1 = __importDefault(require("fs"));
@@ -44,3 +44,24 @@ function uploadImage(image) {
     });
 }
 exports.uploadImage = uploadImage;
+const uploadBufferToS3 = (buffer, mimeType) => __awaiter(void 0, void 0, void 0, function* () {
+    const fileName = yield (0, user_random_name_generator_1.generateName)();
+    const params = {
+        Bucket: process.env.AWS_BUCKET_NAME + "",
+        Key: fileName,
+        Body: Buffer.from(buffer),
+        ContentType: mimeType,
+    };
+    try {
+        const command = new client_s3_1.PutObjectCommand(params);
+        yield s3.send(command);
+        return `https://${params.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`;
+    }
+    catch (error) {
+        console.error("Error uploading file:", error);
+        throw new Error("File upload failed");
+    }
+});
+exports.uploadBufferToS3 = uploadBufferToS3;
+// 'audio/webm;codecs=opus' audio
+// 

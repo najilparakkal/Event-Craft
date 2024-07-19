@@ -4,6 +4,7 @@ import Messages from './Messages';
 import { useAppSelector } from '../../../../costumeHooks/costum';
 import { fetchVendorsInChat } from '../../../../API/services/user/Services';
 import ProfileHeader from '../../../../compounents/user/ProfileHeader';
+import { useSocket } from '../../../../API/services/outer/SocketProvider';
 
 interface Vendor {
   _id: string;
@@ -13,6 +14,10 @@ interface Vendor {
 
 const MessageSection: React.FC = () => {
   const { _id } = useAppSelector((state) => state.user.userDetails);
+
+  const {socket} = useSocket() 
+
+
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [vendors, setVendors] = useState<Vendor[]>([]);
@@ -28,6 +33,8 @@ const MessageSection: React.FC = () => {
   useEffect(() => {
     const fetchAcceptedVendors = async () => {
       try {
+        console.log(socket);
+        
         const acceptedVendors = await fetchVendorsInChat(_id + "");
         setVendors(acceptedVendors);
       } catch (error) {

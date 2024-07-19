@@ -1,21 +1,17 @@
-import { io, Socket } from 'socket.io-client';
+// import { io, Socket } from 'socket.io-client';
+// import { useSocket } from '../API/services/outer/SocketProvider';
 
-const socket: Socket = io('http://localhost:3000');
+// // const socket: Socket = io('http://localhost:3000');
+// const {socket} = useSocket()
 
-export const onReceiveMessage = (callback: (message: any) => void) => {
-  socket.on('new message', callback);
-};
+
 
 export const onRoomMessages = (callback: (messages: any[]) => void) => {
-  socket.on('room messages', callback);
-};
-
-export const sendMessage = (message: any) => {
-  socket.emit('send message', message);
-};
-
-export const joinRoom = (room: string) => {
-  socket.emit('join room', room);
-};
   
-export { socket };
+};
+
+
+
+
+  
+// export { socket };

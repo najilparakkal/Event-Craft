@@ -1,7 +1,8 @@
-import React, { useState, useEffect, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent, useRef } from 'react';
 import { useAppSelector } from '../../../../costumeHooks/costum';
-import { onReceiveMessage, sendMessage, joinRoom, onRoomMessages, socket } from '../../../../socket/socket';
 import { acceptRequest, cancelRequest, fetchChatId } from '../../../../API/services/vendor/services';
+import { useSocket } from '../../../../API/services/outer/SocketProvider';
+import { FaMicrophone, FaPaperclip } from 'react-icons/fa';
 
 interface User {
   _id: string;
@@ -9,10 +10,10 @@ interface User {
 }
 
 interface Message {
-  sender: string | null | undefined;
   _id: string;
-  senderId: string;
-  content: string;
+  sender: string;
+  content: Blob | string; // Blob for media content, string for text content
+  type: 'text' | 'audio' | 'video' | 'document'; // Added type property
 }
 
 interface Chat {
@@ -30,12 +31,24 @@ interface MessagesProps {
 }
 
 const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
+  const { socket } = useSocket();
   const [messages, setMessages] = useState<Message[]>([]);
   const [req, setReq] = useState<Chat | null>(null);
   const [newMessage, setNewMessage] = useState<string>('');
   const { _id } = useAppSelector((state) => state.vendor.vendorDetails);
   const [roomId, setRoomId] = useState<string | null>(null);
   const [isRejected, setIsRejected] = useState<boolean>(false);
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [recordingTime, setRecordingTime] = useState<number>(0);
+  const [audioBlob, setAudioBlob] = useState<Blob[]>([]);
+  const [stream, setStream] = useState<MediaRecorder | null>(null);
+  const divRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (divRef.current) {
+      divRef.current.scrollTo({ top: divRef.current.scrollHeight });
+    }
+  }, [messages]);
 
   useEffect(() => {
     if (selectedUser) {
@@ -48,41 +61,71 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
   }, [selectedUser]);
 
   useEffect(() => {
+    document.addEventListener('keypress', (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        isRecording ? sendAudio : handleSubmit()
+      }
+    })
+  }, [])
+
+  useEffect(() => {
     if (roomId) {
-      joinRoom(roomId);
+      socket.emit('join room', roomId);
 
       const receiveMessageHandler = (message: Message) => {
         setMessages((prevMessages) => [...prevMessages, message]);
       };
 
-      onRoomMessages((fetchedMessages: any) => {
+      socket.on('room messages', (fetchedMessages: any) => {
         setReq(fetchedMessages.chat);
         setMessages(fetchedMessages.messages);
       });
 
-      onReceiveMessage(receiveMessageHandler);
+      socket.on('new message', receiveMessageHandler);
 
       return () => {
         socket.off('receive message', receiveMessageHandler);
         socket.off('room messages');
       };
     }
-  }, [roomId]);
+  }, [roomId, socket]);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (newMessage.trim() && selectedUser && roomId) {
+  const sendAudio = async () => {
+    if (stream) {
+      stream?.getTracks().forEach(track => track.stop());
+      const mergedBlob = new Blob(audioBlob, { type: 'audio/webm;codecs=opus' });
       const messageToSend = {
         senderId: _id,
-        recipientId: selectedUser._id,
-        content: newMessage,
+        recipientId: selectedUser?._id,
+        content: mergedBlob,
         chatId: roomId,
-        senderModel: 'Vendor'
+        type: 'audio', // Specify type
+        senderModel: 'Vendor',
       };
+      socket.emit('send_voice_message', messageToSend);
+      setAudioBlob([]);
+    }
+  };
 
-      sendMessage(messageToSend);
-      setNewMessage('');
+  const handleSubmit = async () => {
+    if (isRecording) {
+      await sendAudio();
+      setIsRecording(false);
+    } else {
+
+      if (newMessage.trim() && selectedUser && roomId) {
+        const messageToSend = {
+          senderId: _id,
+          recipientId: selectedUser._id,
+          content: newMessage,
+          chatId: roomId,
+          type: 'text',
+          senderModel: 'Vendor'
+        };
+
+        socket.emit('send message', messageToSend);
+        setNewMessage('');
+      }
     }
   };
 
@@ -90,7 +133,7 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
     try {
       const response = await acceptRequest(id, _id + "");
       if (response) {
-        setReq((prevReq) => prevReq ? { ...prevReq, is_accepted: true } : null);
+        setReq(prevReq => prevReq ? { ...prevReq, is_accepted: true } : null);
       }
     } catch (error) {
       console.log(error);
@@ -108,6 +151,51 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
     }
   };
 
+  const toggleRecording = () => {
+    setIsRecording(!isRecording);
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(media => {
+      const mediaRecorder = new MediaRecorder(media);
+      mediaRecorder.start(1000);
+      mediaRecorder.ondataavailable = (event) => {
+        setAudioBlob(prevBlobs => [...prevBlobs, event.data]);
+      };
+
+      setStream(media);
+      if (!isRecording) {
+        setRecordingTime(0);
+      }
+    });
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isRecording) {
+      timer = setInterval(() => {
+        setRecordingTime(prevTime => prevTime + 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [isRecording]);
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
+  const handlePause = () => {
+    // Implement pause logic here
+  };
+
+  const VoiceRecorder: React.FC = () => (
+    <div className="flex items-center">
+      <div className="mr-2 p-2 bg-white text-black rounded-lg">{formatTime(recordingTime)}</div>
+      <button type="button" onClick={handlePause} className="ml-2 p-2 bg-red-500 text-white rounded-lg">
+        Pause
+      </button>
+    </div>
+  );
+
   return (
     <div className={`flex flex-col ${sidebarOpen ? 'w-full' : 'w-full'} h-[550px] bg-blue-500 transition-all duration-300`}>
       <div className="flex items-center p-2 bg-[#edebeb] text-black border-white border-b-2 border-t-2">
@@ -115,7 +203,7 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
           {selectedUser ? selectedUser.userName : 'Select a user to start chatting'}
         </h1>
       </div>
-      <div className="p-2 space-y-4 scrollNoDiv scrollbar-hidden overflow-y-auto flex-1 bg-[#EFE8DE]">
+      <div className="p-2 space-y-4 overflow-y-auto flex-1 bg-[#EFE8DE]" ref={divRef}>
         {messages.length === 0 && req?.is_accepted === false ? (
           <div className="flex justify-center items-center h-full">
             <div id="alert-additional-content-1" className="p-4 mb-4 border rounded-lg bg-transparent dark:text-blue-400 w-1/2" role="alert">
@@ -156,19 +244,54 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
             </div>
           </div>
         ) : (
-          messages.map((message) => (
-            <div
-              key={message._id}
-              className={`p-2 rounded-lg ${message.sender === _id ? 'bg-[#E2FFC7] text-black ml-auto self-end' : 'bg-white'}`}
-              style={{ maxWidth: `${(message.content.length * 9) + 30}px` }}
-            >
-              {message.content}
-            </div>
-          ))
+          messages.map((message, index) => {
+            const { sender, content, type } = message;
+
+            return (
+              <div
+                key={index}
+                className={`flex ${sender === _id ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`p-2 rounded-lg ${sender === _id ? 'bg-[#E2FFC7] text-black ml-auto self-end' : 'bg-white'}`}
+                  style={{ maxWidth: `${(message.content.length * 9) + 30}px` }}
+                >
+                  {type === 'text' && content.trim() && <p>{content}</p>}
+                  {type === 'audio' && (
+                    <audio controls>
+                      <source src={message.content} type="audio/webm" />
+                      Your browser does not support the audio element.
+                    </audio>
+                  )}
+                  {type === 'video' && (
+                    <video controls className="w-full max-w-sm">
+                      <source src={message.content} type="video/mp4" />
+                      Your browser does not support the video element.
+                    </video>
+                  )}
+                  {type === 'document' && (
+                    <a href={message.content} download className="block text-blue-500 hover:underline">
+                      Download Document
+                    </a>
+                  )}
+                </div>
+              </div>
+            )
+          })
         )}
       </div>
       {selectedUser && req?.is_accepted && (
         <form onSubmit={handleSubmit} className="p-2 bg-[#EFE8DE] flex">
+          <button type="button" className="mr-2 p-2 bg-gray-800 text-white rounded-full">
+            <FaPaperclip />
+          </button>
+          {isRecording ? (
+            <VoiceRecorder />
+          ) : (
+            <button type="button" onClick={toggleRecording} className="mr-2 p-2 bg-gray-800 text-white rounded-full">
+              <FaMicrophone />
+            </button>
+          )}
           <input
             type="text"
             value={newMessage}

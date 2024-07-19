@@ -32,3 +32,27 @@ export async function uploadImage(image: any) {
     throw new Error("File upload failed");
   }
 }
+
+export const uploadBufferToS3 = async (buffer: ArrayBuffer, mimeType: string): Promise<string> => {
+  const fileName = await generateName();
+
+  const params = {
+    Bucket: process.env.AWS_BUCKET_NAME+"",
+    Key: fileName,
+    Body: Buffer.from(buffer),
+    ContentType: mimeType,
+  };
+
+  try {
+    const command = new PutObjectCommand(params);
+    await s3.send(command);
+    return `https://${params.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`;
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    throw new Error("File upload failed");
+  }
+};
+
+
+// 'audio/webm;codecs=opus' audio
+// 
