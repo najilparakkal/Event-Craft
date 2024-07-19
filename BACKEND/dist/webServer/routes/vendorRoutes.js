@@ -29,4 +29,6 @@ vendorRouter.get("/api/vendor/chatId/:userId/:vendorId", VendorMiddleware_1.defa
 vendorRouter.get("/api/vendor/bookings/:vendorId", VendorMiddleware_1.default, Controller_1.default.getBookings);
 vendorRouter.delete("/api/vendor/cancelBooking/:bookingId", VendorMiddleware_1.default, Controller_1.default.cancelBooking);
 vendorRouter.patch("/api/vendor/acceptBooking/:bookingId", VendorMiddleware_1.default, Controller_1.default.acceptBooking);
+vendorRouter.get("/api/vendor/profile/:vendorId", VendorMiddleware_1.default, Controller_1.default.getProfile);
+vendorRouter.put("/api/vendor/updateProfile/:vendorId", VendorMiddleware_1.default, Controller_1.default.updateProfile);
 exports.default = vendorRouter;

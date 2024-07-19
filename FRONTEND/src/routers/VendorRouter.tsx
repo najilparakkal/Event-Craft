@@ -12,6 +12,7 @@ import Vendor from "../routeAuth/Vendor";
 import MessageSection from "../pages/vendor/home/messages/MessageSection";
 import Bookings from "../pages/vendor/home/Bookings/Bookings";
 import { useAppSelector } from "../costumeHooks/costum";
+import ProfileSection from "../pages/vendor/home/profile/ProfileSection";
 
 const VendorRouter: React.FC = () => {
   const vendor = useAppSelector((state) => state.vendor.vendorDetails._id);
@@ -32,6 +33,7 @@ const VendorRouter: React.FC = () => {
             <Route path="/addPost/:id" element={<Post />} />
             <Route path="/messages" element={<MessageSection />} />
             <Route path="/bookings" element={<Bookings />} />
+            <Route path="/profile" element={<ProfileSection/>}/>
         </Route>
       </Routes>
     </div>

@@ -135,4 +135,24 @@ export default {
       console.log(error);
     }
   },
+  getProfile:async(req:Request, res:Response)=>{
+    try {
+      const response = await requesIterator.getProfile(req.params.vendorId)
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  updateProfile:async(req: Request, res: Response)=>{
+    try {
+      const { files, fields } = await multipartFormSubmission(req);
+      
+      const response = await requesIterator.updateProfile(req.params.vendorId,fields,files);
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
 };

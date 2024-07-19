@@ -310,16 +310,21 @@ export const getProfile = async (userId: string) => {
 
 export const updateUser = async (userId: string, datas:any, files:any) => {
   try {
-    const image = await uploadImage(files.profilePicture[0].filepath);
-
-    const user = await Users.findByIdAndUpdate(userId, {
-      $set: {
-        userName: datas.name,
-        phoneNum: datas.phoneNum,
-        profilePicture: image,
-      },
-    });
-    return { success: true,image };
+    if (files.profileImage) {
+      const image = await uploadImage(files.profilePicture[0].filepath);
+  
+      const user = await Users.findByIdAndUpdate(userId, {
+        $set: {
+          userName: datas.name,
+          phoneNum: datas.phoneNum,
+          profilePicture: image,
+        },
+      });
+      
+      return { success: true, image };
+    } else {
+      return { success: true };
+    }
   } catch (error) {
     console.log(error);
   }

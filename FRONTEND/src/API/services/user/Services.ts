@@ -162,6 +162,7 @@ export const udpdateUser = async (userId: string, datas: any) => {
         },
       }
     );
+    
     return response.status === 200 ? response.data : false;
   } catch (error) {
     console.log(error);

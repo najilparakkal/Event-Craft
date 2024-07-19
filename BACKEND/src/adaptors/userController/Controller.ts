@@ -127,7 +127,6 @@ export default {
   updateProfile: async (req: Request, res: Response) => {
     try {
       const { files, fields } = await multipartFormSubmission(req);
-
       const response = await userIterator.updateProfile(req.params.userId,fields,files);
       res.status(200).json(response)
     } catch (err) {

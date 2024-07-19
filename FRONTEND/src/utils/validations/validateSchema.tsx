@@ -133,3 +133,17 @@ export const profileValidation = Yup.object({
     profilePicture: Yup.string()
         .required("Required")
 })
+
+export const vendorProfileValidation = Yup.object({
+    name: Yup.string()
+        .max(50, 'Must be 50 characters or less')
+        .required('Required'),
+    phoneNum: Yup.string()
+        .matches(/^[0-9]+$/, 'Must be only digits')
+        .min(10, 'Must be at least 10 digits')
+        .required('Required'),
+    profilePicture: Yup.string()
+        .required("Required"),
+    coverPicture: Yup.string()
+        .required("Required")
+})

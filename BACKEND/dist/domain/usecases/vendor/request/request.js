@@ -111,5 +111,39 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    getProfile: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield requestRepo_1.default.getProfile(vendorId);
+            const datas = {
+                vendorName: response === null || response === void 0 ? void 0 : response.vendorName,
+                email: response === null || response === void 0 ? void 0 : response.email,
+                phoneNum: response === null || response === void 0 ? void 0 : response.phoneNum,
+                profilePicture: response === null || response === void 0 ? void 0 : response.profilePicture,
+                coverPicture: response === null || response === void 0 ? void 0 : response.coverPicture,
+                verified: response === null || response === void 0 ? void 0 : response.verified,
+                blocked: response === null || response === void 0 ? void 0 : response.blocked,
+                posts: response === null || response === void 0 ? void 0 : response.posts,
+                licence: response === null || response === void 0 ? void 0 : response.licence,
+                registered: response === null || response === void 0 ? void 0 : response.registered
+            };
+            return datas;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    updateProfile: (userId_1, _a, files_1) => __awaiter(void 0, [userId_1, _a, files_1], void 0, function* (userId, { phoneNum, name }, files) {
+        try {
+            const datas = {
+                phoneNum: phoneNum[0],
+                name: name[0],
+            };
+            const response = yield requestRepo_1.default.updateVendor(userId, datas, files);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

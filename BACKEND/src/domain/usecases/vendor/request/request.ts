@@ -102,5 +102,40 @@ export default{
       console.log(error);
       
     }
+  },
+  getProfile:async(vendorId:string)=>{
+    try {
+      const response = await requestRepo.getProfile(vendorId)
+      const datas = {
+        vendorName: response?.vendorName,
+        email: response?.email,
+        phoneNum: response?.phoneNum,
+        profilePicture: response?.profilePicture,
+        coverPicture: response?.coverPicture,
+        verified: response?.verified,
+        blocked: response?.blocked,
+        posts: response?.posts,
+        licence: response?.licence,
+        registered:response?.registered
+      };      
+      return datas
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  updateProfile: async(userId:string,{phoneNum,name} ,files:any)=>{
+    try {
+      
+      const datas = {
+        phoneNum: phoneNum[0],
+        name:name[0],
+      }
+      const response = await requestRepo.updateVendor(userId,datas,files)
+      return response
+    } catch (error) {
+      console.log(error);
+      
+    }
   }
 }

@@ -187,7 +187,6 @@ export default {
   getBookings: async (vendorId: string) => {
     try {
       const bookings = await Bookings.find({ vendorId }).lean();
-     
 
       return bookings;
     } catch (error) {
@@ -227,16 +226,61 @@ export default {
         { $set: { accepted: true } },
         { new: true }
       );
-  
+
       if (!updatedBooking) {
-        throw new Error('Booking not found');
+        throw new Error("Booking not found");
       }
-  
-      
+
       return updatedBooking;
     } catch (error) {
       console.error("Error accepting booking:", error);
       throw error;
     }
-  }
+  },
+  getProfile: async (vendorId: string) => {
+    try {
+      const vendor = await Vendors.findById(vendorId)
+        .populate("posts")
+        .populate("licence");
+
+      return vendor;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  updateVendor: async (vendorId: string, datas: any, files: any) => {
+    try {
+      let profile, cover;
+  
+      if (files.profilePicture) {
+        profile = await uploadImage(files.profilePicture[0].filepath);
+      }
+  
+      if (files.coverPicture) {
+        cover = await uploadImage(files.coverPicture[0].filepath);
+      }
+  
+      const updateData: any = {
+        vendorName: datas.name,
+        phoneNum: datas.phoneNum,
+      };
+  
+      if (profile) {
+        updateData.profilePicture = profile;
+      }
+  
+      if (cover) {
+        updateData.coverPicture = cover;
+      }
+  
+      const vendor = await Vendors.findByIdAndUpdate(vendorId, {
+        $set: updateData,
+      });
+  
+      return { success: true, profile };
+    } catch (error) {
+      console.log(error);
+      return { success: false, error };
+    }
+  },
 };

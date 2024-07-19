@@ -82,6 +82,14 @@ const vendorSlice = createSlice({
       state.status = "idle";
       state.error = null;
     },
+    updateVendorDetails(state, action: PayloadAction<Partial<vendorDetails>>) {
+      localStorage.removeItem("vendorDetails");
+      state.vendorDetails = {
+        ...state.vendorDetails,
+        ...action.payload,
+      };
+      localStorage.setItem("vendorDetails", JSON.stringify(state.vendorDetails));
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -182,5 +190,5 @@ const vendorSlice = createSlice({
   },
 });
 
-export const { logout } = vendorSlice.actions;
+export const { logout,updateVendorDetails } = vendorSlice.actions;
 export default vendorSlice.reducer;

@@ -59,7 +59,9 @@ export const fetchRequest = async (vendorId: string) => {
 };
 export const cancelRequest = async (roomId: string) => {
   try {
-    const response = await authAxiosInstance.delete(`vendor/removeRequest/${roomId}`);
+    const response = await authAxiosInstance.delete(
+      `vendor/removeRequest/${roomId}`
+    );
     return response.status === 200;
   } catch (error) {
     console.log(error);
@@ -153,8 +155,35 @@ export const acceptBooking = async (bookingId: string) => {
     const resoponse = await authAxiosInstance.patch(
       `vendor/acceptBooking/${bookingId}`
     );
-    
+
     return resoponse.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const vendorDetails = async (vendorId: string) => {
+  try {
+    const response = await authAxiosInstance.get(`/vendor/profile/${vendorId}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateVendor = async (vendorId: string, datas) => {
+  try {
+    console.log(datas);
+    const response = await authAxiosInstance.put(
+      `/vendor/updateProfile/${vendorId}`,
+      datas,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.status === 200 ? response.data : false;
   } catch (error) {
     console.log(error);
   }

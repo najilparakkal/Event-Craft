@@ -13,9 +13,8 @@ interface UserData {
     wallet: number;
 }
 
-const Profile: React.FC = () => {
+const Profile = ({setModalOpen}:any) => {
     const [details, setDetails] = useState<UserData | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(true);
     const { _id, name, phoneNum, email, profilePicture } = useAppSelector((state) => state.user.userDetails);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>(profilePicture || '');
@@ -42,9 +41,9 @@ const Profile: React.FC = () => {
     };
 
     const handleImageRemove = () => {
-        setImagePreview(''); // Clear image preview
-        formik.setFieldValue("profilePicture", ""); // Clear the formik field
-        if (fileInputRef.current) fileInputRef.current.value = ""; // Clear the file input
+        setImagePreview(''); 
+        formik.setFieldValue("profilePicture", "");
+        if (fileInputRef.current) fileInputRef.current.value = ""; 
     };
 
     const formik = useFormik({
@@ -62,9 +61,9 @@ const Profile: React.FC = () => {
                 updateUserDetails({
                     name: values.name,
                     phoneNum: values.phoneNum,
-                    profilePicture: update.image
+                    profilePicture: update.image ?? profilePicture
                 });
-                setIsModalOpen(false);
+                setModalOpen(false)
                 const updatedDatas = await fetchUserDatas(_id + "");
                 setDetails(updatedDatas);
 
@@ -73,12 +72,11 @@ const Profile: React.FC = () => {
         },
     });
 
-    if (!isModalOpen) return null;
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="bg-white w-11/12 max-w-md flex flex-col gap-5 p-5 rounded-lg shadow-lg text-[#161931]">
-                <button className="self-end text-gray-700 hover:text-gray-900" onClick={() => setIsModalOpen(false)}>
+                <button className="self-end text-gray-700 hover:text-gray-900" onClick={() => setModalOpen()}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -89,7 +87,7 @@ const Profile: React.FC = () => {
                             <div className="flex flex-col items-center mt-4">
                                 <img
                                     className="object-cover w-24 h-24 p-1 rounded-full ring-2 ring-indigo-300 dark:ring-indigo-500 cursor-pointer"
-                                    src={imagePreview || 'default-profile-pic-url'}
+                                    src={imagePreview as string || 'default-profile-pic-url'}
                                     alt="Profile picture"
                                     onClick={() => fileInputRef.current?.click()}
                                 />

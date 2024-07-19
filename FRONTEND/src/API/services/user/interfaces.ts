@@ -32,7 +32,7 @@ interface UserData {
   uid?: string;
 }
 
-// Redux slice state interfaces
+
 interface UserDetails {
   _id?: string | null;
   name?: string | null;
@@ -40,7 +40,13 @@ interface UserDetails {
   phoneNum?: string | null;
   profilePicture?: string |null     ;
 }   
-
+interface VendorDetails {
+  _id?: string | null;
+  name?: string | null;
+  email?: string | null;
+  phoneNum?: string | null;
+  profilePicture?: string |null     ;
+}   
 
 interface BookingData {
   arrivalTime: string;

@@ -10,7 +10,7 @@ userRouter.post("/api/user/otp",authController.otpVerification)
 userRouter.post("/api/user/Fotp",authController.forgotOtpVerification) 
 userRouter.post("/api/user/resendOtp",authController.resendOtp)
 userRouter.post("/api/user/login",authController.login)
-userRouter.post("/api/user/validEmail",authController.checkEmail)
+userRouter.post("/api/user/validEmail",authController.checkEmail)t 
 userRouter.post("/api/user/Fotp",authController.checkEmail)
 userRouter.post("/api/user/changePassword",authController.change)
 userRouter.post("/api/user/googleUser",authController.googleRegistration)

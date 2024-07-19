@@ -147,4 +147,23 @@ exports.default = {
             console.log(error);
         }
     }),
+    getProfile: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.getProfile(req.params.vendorId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    updateProfile: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { files, fields } = yield (0, formidable_1.multipartFormSubmission)(req);
+            const response = yield request_1.default.updateProfile(req.params.vendorId, fields, files);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    })
 };

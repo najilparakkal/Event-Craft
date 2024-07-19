@@ -18,6 +18,7 @@ const licence_1 = require("../../../framworks/database/models/licence");
 const message_1 = __importDefault(require("../../../framworks/database/models/message"));
 const requests_1 = require("../../../framworks/database/models/requests");
 const user_1 = require("../../../framworks/database/models/user");
+const vendor_1 = require("../../../framworks/database/models/vendor");
 const booking_1 = require("../../../framworks/database/models/booking");
 exports.default = {
     addRequest: (datas, images) => __awaiter(void 0, void 0, void 0, function* () {
@@ -197,7 +198,7 @@ exports.default = {
         try {
             const updatedBooking = yield booking_1.Bookings.findByIdAndUpdate(bookingId, { $set: { accepted: true } }, { new: true });
             if (!updatedBooking) {
-                throw new Error('Booking not found');
+                throw new Error("Booking not found");
             }
             return updatedBooking;
         }
@@ -205,5 +206,45 @@ exports.default = {
             console.error("Error accepting booking:", error);
             throw error;
         }
-    })
+    }),
+    getProfile: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const vendor = yield vendor_1.Vendors.findById(vendorId)
+                .populate("posts")
+                .populate("licence");
+            return vendor;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    updateVendor: (vendorId, datas, files) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            let profile, cover;
+            if (files.profilePicture) {
+                profile = yield (0, awsConfig_1.uploadImage)(files.profilePicture[0].filepath);
+            }
+            if (files.coverPicture) {
+                cover = yield (0, awsConfig_1.uploadImage)(files.coverPicture[0].filepath);
+            }
+            const updateData = {
+                vendorName: datas.name,
+                phoneNum: datas.phoneNum,
+            };
+            if (profile) {
+                updateData.profilePicture = profile;
+            }
+            if (cover) {
+                updateData.coverPicture = cover;
+            }
+            const vendor = yield vendor_1.Vendors.findByIdAndUpdate(vendorId, {
+                $set: updateData,
+            });
+            return { success: true, profile };
+        }
+        catch (error) {
+            console.log(error);
+            return { success: false, error };
+        }
+    }),
 };

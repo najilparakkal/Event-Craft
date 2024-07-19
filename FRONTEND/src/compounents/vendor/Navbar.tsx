@@ -86,7 +86,7 @@ const logout =vendorLogout();
         </button>
         <ul className="mt-4 flex flex-col">
           <li className="mb-4 justify-end">
-            <img src={profilePicture ? profilePicture : ''} alt="" className="h-20 w-20 rounded-full ml-[74px] object-cover" />
+            <img onClick={()=>navigate('/vendor/profile')} src={profilePicture ? profilePicture : ''} alt="" className="h-20 w-20 rounded-full ml-[74px] object-cover" />
           </li>
           <li
             onClick={() => handleMenuItemClick('ADD POST', `/vendor/addPost/${_id}`)}

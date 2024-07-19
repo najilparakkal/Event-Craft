@@ -282,15 +282,20 @@ const getProfile = (userId) => __awaiter(void 0, void 0, void 0, function* () {
 exports.getProfile = getProfile;
 const updateUser = (userId, datas, files) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const image = yield (0, awsConfig_1.uploadImage)(files.profilePicture[0].filepath);
-        const user = yield user_1.Users.findByIdAndUpdate(userId, {
-            $set: {
-                userName: datas.name,
-                phoneNum: datas.phoneNum,
-                profilePicture: image,
-            },
-        });
-        return { success: true, image };
+        if (files.profileImage) {
+            const image = yield (0, awsConfig_1.uploadImage)(files.profilePicture[0].filepath);
+            const user = yield user_1.Users.findByIdAndUpdate(userId, {
+                $set: {
+                    userName: datas.name,
+                    phoneNum: datas.phoneNum,
+                    profilePicture: image,
+                },
+            });
+            return { success: true, image };
+        }
+        else {
+            return { success: true };
+        }
     }
     catch (error) {
         console.log(error);

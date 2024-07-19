@@ -12,7 +12,7 @@ const ProfileHeader = () => {
     const { profilePicture } = useAppSelector((state) => state.user.userDetails);
     useEffect(() => {
 
-      
+
 
         switch (location.pathname) {
             case '/wishlist':
@@ -122,9 +122,9 @@ const ProfileHeader = () => {
                     >
                         ADD ACCOUNT
                     </li>
-                    <li className="mt-[200px] justify-end">
+                    <li className="mt-[200px] justify-end" onClick={() => setModalOpen(true)}
+                    >
                         <img
-                            onClick={() => setModalOpen(true)}
                             src={profilePicture ? profilePicture : ""}
                             alt=""
                             className='h-20 w-20 rounded-full ml-[74px] object-cover cursor-pointer'
@@ -134,8 +134,8 @@ const ProfileHeader = () => {
             </div>
 
             {isModalOpen && (
-                
-                <Profile/>
+
+                <Profile setModalOpen={()=>setModalOpen(false)} />
             )}
 
         </div>
