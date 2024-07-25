@@ -40,8 +40,30 @@ const socketHandler = (io: Server) => {
         type: "audio",
       });
       await newMessage.save();
+      io.to(chatId).emit("new message", newMessage);
 
     });
+
+
+    socket.on("send_file", async (message) => {
+      
+      const { senderId, senderModel, content, chatId,type } = message;
+      
+      
+      const newMessage = new Message({
+        sender: senderId,
+        senderModel: senderModel,
+        content,
+        chat: chatId,
+        type: type,
+      });
+      await newMessage.save();  
+      io.to(chatId).emit("new message", newMessage);
+
+      
+    });
+
+
     socket.on("send message", async (message) => {
       console.log(`Message from ${socket.id}:`, message);
       const { senderId, senderModel, content, chatId } = message;
@@ -49,7 +71,7 @@ const socketHandler = (io: Server) => {
       if (!mongoose.Types.ObjectId.isValid(chatId)) {
         console.error(`Invalid chat ID: ${chatId}`);
         return;
-      }
+      } 
 
       try {
         const newMessage = new Message({

@@ -48,6 +48,19 @@ const socketHandler = (io) => {
                 type: "audio",
             });
             yield newMessage.save();
+            io.to(chatId).emit("new message", newMessage);
+        }));
+        socket.on("send_file", (message) => __awaiter(void 0, void 0, void 0, function* () {
+            const { senderId, senderModel, content, chatId, type } = message;
+            const newMessage = new message_1.default({
+                sender: senderId,
+                senderModel: senderModel,
+                content,
+                chat: chatId,
+                type: type,
+            });
+            yield newMessage.save();
+            io.to(chatId).emit("new message", newMessage);
         }));
         socket.on("send message", (message) => __awaiter(void 0, void 0, void 0, function* () {
             console.log(`Message from ${socket.id}:`, message);
