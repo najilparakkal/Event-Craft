@@ -14,6 +14,7 @@ const services_1 = require("../../../framworks/database/models/services");
 const licence_1 = require("../../../framworks/database/models/licence");
 const user_1 = require("../../../framworks/database/models/user");
 const vendor_1 = require("../../../framworks/database/models/vendor");
+const booking_1 = require("../../../framworks/database/models/booking");
 exports.default = {
     listUsers: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -185,7 +186,6 @@ exports.default = {
                 $set: { vendor: true },
                 $push: { licence: acceptRequest._id },
             }, { new: true, upsert: true });
-            ;
             if (!updatedVendor) {
                 return {
                     success: false,
@@ -201,5 +201,38 @@ exports.default = {
                 error: "An error occurred while accepting the vendor request",
             };
         }
-    })
+    }),
+    getDashboard: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const usersCount = yield user_1.Users.countDocuments({ verified: true });
+            const bookingsCount = yield booking_1.Bookings.countDocuments();
+            const vendorsCount = yield vendor_1.Vendors.countDocuments({ vendor: true });
+            const users = yield user_1.Users.find();
+            const vendors = yield vendor_1.Vendors.find();
+            const vendorsDates = vendors.map((item) => {
+                return item.registered;
+            });
+            const usersDates = users.map((item) => {
+                return item.registered;
+            });
+            const latestUsers = yield user_1.Users.find({}, { profilePicture: 1, registered: 1, verified: 1, userName: 1 })
+                .sort({ registered: -1 })
+                .limit(3);
+            const latestVendors = yield vendor_1.Vendors.find({}, { profilePicture: 1, registered: 1, verified: 1, vendorName: 1 })
+                .sort({ registered: -1 })
+                .limit(3);
+            return {
+                usersCount,
+                bookingsCount,
+                vendorsCount,
+                usersDates,
+                vendorsDates,
+                latestUsers,
+                latestVendors,
+            };
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
 };

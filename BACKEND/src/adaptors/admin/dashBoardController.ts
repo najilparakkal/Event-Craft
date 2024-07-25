@@ -102,18 +102,24 @@ export default {
       console.log(error);
     }
   },
-  accept:async( req: Request, res: Response) => {
+  accept: async (req: Request, res: Response) => {
     try {
-        
-        const response = await dashboard.acceptVendor(req.body.dataa)
-        if(response?.success) {
-            res.status(200).json(response);
-        }else{
-            res.status(400).json(response);
-        }
+      const response = await dashboard.acceptVendor(req.body.dataa);
+      if (response?.success) {
+        res.status(200).json(response);
+      } else {
+        res.status(400).json(response);
+      }
     } catch (error) {
-        console.log(error);
-        
+      console.log(error);
     }
-  }
+  },
+  getDashboard: async (req: Request, res: Response) => {
+    try {
+      const response = await dashboard.getDashboard();
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };

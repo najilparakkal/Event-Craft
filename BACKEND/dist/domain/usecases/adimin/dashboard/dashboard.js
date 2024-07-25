@@ -104,4 +104,13 @@ exports.default = {
             console.log(error);
         }
     }),
+    getDashboard: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield dashRepositories_1.default.getDashboard();
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    })
 };

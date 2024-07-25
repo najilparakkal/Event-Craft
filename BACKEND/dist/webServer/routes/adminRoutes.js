@@ -18,4 +18,5 @@ adminRouter.patch("/api/admin/removeCategory", dashBoardController_1.default.rem
 adminRouter.get("/api/admin/request", dashBoardController_1.default.listRequest);
 adminRouter.post("/api/admin/rejectVendor", dashBoardController_1.default.reject);
 adminRouter.post("/api/admin/acceptVendor", dashBoardController_1.default.accept);
+adminRouter.get('/api/admin/dashboard', dashBoardController_1.default.getDashboard);
 exports.default = adminRouter;

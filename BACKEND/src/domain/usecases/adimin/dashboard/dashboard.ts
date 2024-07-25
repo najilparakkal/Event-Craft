@@ -93,4 +93,13 @@ export default {
       console.log(error);
     }
   },
+  getDashboard:async()=>{
+    try {
+      const response = await dashRepositories.getDashboard()
+      return response;
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
 };

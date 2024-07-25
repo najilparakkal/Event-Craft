@@ -8,8 +8,9 @@ import {
   listVendors,
   vendorBlock,
 } from "../../entities/admin/admin";
+import { Bookings } from "../../../framworks/database/models/booking";
 export default {
-  listUsers: async (data: listUsers) => { 
+  listUsers: async (data: listUsers) => {
     try {
       let users;
       switch (data.list) {
@@ -165,13 +166,13 @@ export default {
       console.log(error);
     }
   },
-  acceptVendor : async (_id: string) => {
+  acceptVendor: async (_id: string) => {
     try {
       const acceptRequest = await Licence.findByIdAndUpdate(
         { _id },
         { $set: { verified: true } },
         { new: true }
-      );      
+      );
       if (!acceptRequest) {
         return {
           success: false,
@@ -184,24 +185,63 @@ export default {
           $set: { vendor: true },
           $push: { licence: acceptRequest._id },
         },
-        { new: true, upsert: true } 
+        { new: true, upsert: true }
       );
-      ;
-      
       if (!updatedVendor) {
         return {
           success: false,
           error: "Failed to update vendor with licence information",
         };
       }
-  
+
       return { success: true };
     } catch (error) {
-      console.error("An error occurred while accepting the vendor request:", error);
+      console.error(
+        "An error occurred while accepting the vendor request:",
+        error
+      );
       return {
         success: false,
         error: "An error occurred while accepting the vendor request",
       };
     }
-  }
+  },
+  getDashboard: async () => {
+    try {
+      const usersCount = await Users.countDocuments({ verified: true });
+      const bookingsCount = await Bookings.countDocuments();
+      const vendorsCount = await Vendors.countDocuments({ vendor: true });
+      const users = await Users.find();
+      const vendors = await Vendors.find();
+      const vendorsDates = vendors.map((item) => {
+        return item.registered;
+      });
+      const usersDates = users.map((item) => {
+        return item.registered;
+      });
+      const latestUsers = await Users.find(
+        {},
+        { profilePicture: 1, registered: 1, verified: 1, userName: 1 }
+      )
+        .sort({ registered: -1 })
+        .limit(3);
+      const latestVendors = await Vendors.find(
+        {},
+        { profilePicture: 1, registered: 1, verified: 1, vendorName: 1 }
+      )
+        .sort({ registered: -1 })
+        .limit(3);
+      return {
+        usersCount,
+        bookingsCount,
+        vendorsCount,
+        usersDates,
+        vendorsDates,
+        latestUsers,
+        latestVendors,
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };

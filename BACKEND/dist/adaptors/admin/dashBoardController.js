@@ -132,5 +132,14 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
-    })
+    }),
+    getDashboard: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield dashboard_1.default.getDashboard();
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
 };

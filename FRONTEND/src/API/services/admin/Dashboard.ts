@@ -106,3 +106,12 @@ export const acceptVendor = async (dataa: string) => {
     console.log(error);
   }
 };
+export const fetchDetails = async()=>{
+  try {
+     const response =   await authAxiosInstance.get('admin/dashboard')
+     return response.data;
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
