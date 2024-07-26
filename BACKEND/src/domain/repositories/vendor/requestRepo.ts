@@ -251,36 +251,57 @@ export default {
   updateVendor: async (vendorId: string, datas: any, files: any) => {
     try {
       let profile, cover;
-  
+
       if (files.profilePicture) {
         profile = await uploadImage(files.profilePicture[0].filepath);
       }
-  
+
       if (files.coverPicture) {
         cover = await uploadImage(files.coverPicture[0].filepath);
       }
-  
+
       const updateData: any = {
         vendorName: datas.name,
         phoneNum: datas.phoneNum,
       };
-  
+
       if (profile) {
         updateData.profilePicture = profile;
       }
-  
+
       if (cover) {
         updateData.coverPicture = cover;
       }
-  
+
       const vendor = await Vendors.findByIdAndUpdate(vendorId, {
         $set: updateData,
       });
-  
+
       return { success: true, profile };
     } catch (error) {
       console.log(error);
       return { success: false, error };
+    }
+  },
+  getDates: async (vendorId: string) => {
+    try {
+      const vendor = await Vendors.findById(vendorId);
+      const dates = vendor?.availableDate;
+      return dates;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  updateDates: async (vendorId: string, date: []) => {
+    try {
+      const vendors = await Vendors.findById(vendorId);
+      if (vendors) {
+        vendors.availableDate = [...new Set([...date])];
+        await vendors.save();
+      }
+      return { success: true };
+    } catch (error) {
+      console.log(error);
     }
   },
 };

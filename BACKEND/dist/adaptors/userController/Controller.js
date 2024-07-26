@@ -129,8 +129,7 @@ exports.default = {
     }),
     cancelBooking: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const { percentage, bookingId } = req.query;
-            const response = yield home_1.default.cancelBooking(percentage, bookingId);
+            const response = yield home_1.default.cancelBooking(req.body.percentage, req.body.bookingId);
             res.status(200).send(response);
         }
         catch (error) {
@@ -155,6 +154,15 @@ exports.default = {
         }
         catch (err) {
             console.log(err);
+        }
+    }),
+    getDates: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.getDates(req.params.vendorId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
         }
     }),
 };

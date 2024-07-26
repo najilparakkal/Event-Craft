@@ -13,8 +13,8 @@ interface Vendor {
 interface Message {
   _id: string;
   sender: string;
-  content: Blob | string; // Blob for media content, string for text content
-  type: 'text' | 'audio' | 'video' | 'document' | 'image'; // Added type property
+  content: Blob | string; 
+  type: 'text' | 'audio' | 'video' | 'document' | 'image'; 
 }
 
 interface Chat {
@@ -42,7 +42,7 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [recordingTime, setRecordingTime] = useState<number>(0);
   const [audioBlob, setAudioBlob] = useState<Blob[]>([]);
-  const [stream, setStream] = useState<MediaRecorder | null>(null);
+  const [stream, setStream] = useState<any>(null);
   const divRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -97,7 +97,7 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
 
   const sendAudio = async () => {
     if (stream) {
-      stream?.getTracks().forEach(track => track.stop());
+      stream?.getTracks().forEach((track:any) => track.stop());
       const mergedBlob = new Blob(audioBlob, { type: 'audio/webm;codecs=opus' });
       const messageToSend = {
         senderId: _id,

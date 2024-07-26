@@ -28,6 +28,7 @@ vendorRouter.delete("/api/vendor/cancelBooking/:bookingId",vendorAuth,Controller
 vendorRouter.patch("/api/vendor/acceptBooking/:bookingId",vendorAuth,Controller.acceptBooking)
 vendorRouter.get("/api/vendor/profile/:vendorId",vendorAuth,Controller.getProfile)
 vendorRouter.put("/api/vendor/updateProfile/:vendorId",vendorAuth,Controller.updateProfile)
-
+vendorRouter.get('/api/vendor/absentDates/:vendorId',vendorAuth,Controller.getDates)
+vendorRouter.patch('/api/vendor/updateDates/:vendorId',vendorAuth,Controller.updateDates)
 
 export default vendorRouter

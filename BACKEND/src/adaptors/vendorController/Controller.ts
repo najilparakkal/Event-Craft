@@ -154,5 +154,23 @@ export default {
       console.log(error);
       
     }
+  },
+  getDates:async(req:Request, res:Response)=>{
+    try {
+      const response = await requesIterator.getDates(req.params.vendorId)
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  updateDates:async(req: Request, res: Response)=>{
+    try {
+      const response = await requesIterator.updateDates(req.params.vendorId,req.body.dates);
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error);
+      
+    }
   }
 };

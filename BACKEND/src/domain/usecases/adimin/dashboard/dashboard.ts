@@ -72,7 +72,7 @@ export default {
       console.log(error);
     }
   },
-  rejectVendor: async (data:rejectingVendor) => {
+  rejectVendor: async (data: rejectingVendor) => {
     try {
       const response = await dashRepositories.rejectVendor(data.id);
       if (response?.success) {
@@ -93,10 +93,25 @@ export default {
       console.log(error);
     }
   },
-  getDashboard:async()=>{
+  getDashboard: async () => {
     try {
-      const response = await dashRepositories.getDashboard()
+      const response = await dashRepositories.getDashboard();
       return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  getBookings: async () => {
+    try {
+      return await dashRepositories.getBookings();
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  refundBooking:async(refund:number,bookingId:string)=>{
+    try {
+      return await dashRepositories.refund(refund,bookingId)
+      
     } catch (error) {
       console.log(error);
       

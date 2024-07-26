@@ -129,11 +129,10 @@ export const vendorBookings = async (userId: string) => {
 
 export const cancelBooking = async (percentage: number, bookingId: string) => {
   try {
-    const response = await authAxiosInstance.delete("user/cancelBooking", {
-      params: {
+    
+    const response = await authAxiosInstance.post("user/cancelBooking", { 
         percentage,
-        bookingId,
-      },
+        bookingId, 
     });
     return response.data;
   } catch (error) {
@@ -168,3 +167,12 @@ export const udpdateUser = async (userId: string, datas: any) => {
     console.log(error);
   }
 };
+
+export const vendorAbsend = async(vendorId:string)=>{
+  try{
+    const response =  await authAxiosInstance.get(`user/vendorDates/${vendorId}`)
+    return response.data
+  }catch(err){
+    console.log(err)
+  }
+}

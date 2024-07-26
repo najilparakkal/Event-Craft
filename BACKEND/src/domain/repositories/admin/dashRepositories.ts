@@ -9,6 +9,7 @@ import {
   vendorBlock,
 } from "../../entities/admin/admin";
 import { Bookings } from "../../../framworks/database/models/booking";
+import { CancelBookings } from "../../../framworks/database/models/cancelBooking";
 export default {
   listUsers: async (data: listUsers) => {
     try {
@@ -240,6 +241,36 @@ export default {
         latestUsers,
         latestVendors,
       };
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  getBookings: async () => {
+    try {
+      const bookings = await CancelBookings.find();
+
+      return bookings;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  refund: async (amount: number, bookingId: string) => {
+    try {
+      const booking = await Bookings.findById(bookingId);
+      if (!booking) {
+        throw new Error("Booking not found");
+      }
+      const user = await Users.findById(booking?.userId);
+      
+      await Users.findByIdAndUpdate(
+        booking.userId,
+        { $inc: { wallet: amount } },
+        { new: true }
+      ).exec();
+      booking.status = "cancelled";
+      await booking.save();
+      await CancelBookings.deleteOne({  bookingId });
+      return { success: true };
     } catch (error) {
       console.log(error);
     }

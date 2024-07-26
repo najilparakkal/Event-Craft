@@ -17,7 +17,8 @@ import {
   cancelBooking,
   listAll,
   getProfile,
-  updateUser
+  updateUser,
+  getDatesOfVendor
 } from "../../../repositories/user/homeRepo";
 
 export default {
@@ -140,14 +141,25 @@ export default {
       console.log(err)
     }
   },
-  updateProfile:async(userId:string,{phoneNum,name} ,files:any)=>{
+  updateProfile:async(userId:string,obj:any ,files:any)=>{
     try {
+
       const datas = {
-        phoneNum: phoneNum[0],
-        name:name[0],
+        phoneNum: obj.phoneNum[0],
+        name:obj.name[0],
       }
       const response = await updateUser(userId,datas,files)
       return response
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  getDates:async(vendorId:string)=>{
+    try {
+      const response =  await getDatesOfVendor(vendorId)
+       const dates = response?.availableDate
+       return dates
     } catch (error) {
       console.log(error);
       

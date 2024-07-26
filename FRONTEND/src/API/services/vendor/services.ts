@@ -171,9 +171,8 @@ export const vendorDetails = async (vendorId: string) => {
   }
 };
 
-export const updateVendor = async (vendorId: string, datas) => {
+export const updateVendor = async (vendorId: string, datas: any) => {
   try {
-    console.log(datas);
     const response = await authAxiosInstance.put(
       `/vendor/updateProfile/${vendorId}`,
       datas,
@@ -188,3 +187,20 @@ export const updateVendor = async (vendorId: string, datas) => {
     console.log(error);
   }
 };
+
+export const fetchDates = async (vendorId: string) => {
+  try {
+    const response = await authAxiosInstance.get(`/vendor/absentDates/${vendorId}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateVendorDate = async(dates:any,vendorId:string)=>{
+  try{
+    await authAxiosInstance.patch(`/vendor/updateDates/${vendorId}`,{dates})
+  }catch(err){
+    console.log(err)
+  }
+}

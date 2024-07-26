@@ -34,7 +34,7 @@ const Profile = ({setModalOpen}:any) => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreview(reader.result);
-                formik.setFieldValue("profilePicture", file); // Store file for form submission
+                formik.setFieldValue("profilePicture", file); 
             };
             reader.readAsDataURL(file);
         }
@@ -57,7 +57,9 @@ const Profile = ({setModalOpen}:any) => {
 
 
             const update = await udpdateUser(_id + "", values)
-            if (update) {               
+            console.log(values,"👋");
+            if (update) {      
+                         
                 updateUserDetails({
                     name: values.name,
                     phoneNum: values.phoneNum,

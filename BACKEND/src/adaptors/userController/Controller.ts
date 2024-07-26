@@ -107,9 +107,10 @@ export default {
   },
   cancelBooking: async (req: Request, res: Response): Promise<void> => {
     try {
-      const { percentage, bookingId } = req.query;
-
-      const response = await userIterator.cancelBooking(percentage, bookingId);
+      const response = await userIterator.cancelBooking(
+        req.body.percentage,
+        req.body.bookingId
+      );
       res.status(200).send(response);
     } catch (error) {
       console.log(error);
@@ -127,10 +128,22 @@ export default {
   updateProfile: async (req: Request, res: Response) => {
     try {
       const { files, fields } = await multipartFormSubmission(req);
-      const response = await userIterator.updateProfile(req.params.userId,fields,files);
-      res.status(200).json(response)
+      const response = await userIterator.updateProfile(
+        req.params.userId,
+        fields,
+        files
+      );
+      res.status(200).json(response);
     } catch (err) {
       console.log(err);
+    }
+  },
+  getDates: async (req: Request, res: Response) => {
+    try {
+      const response = await userIterator.getDates(req.params.vendorId);
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
     }
   },
 };

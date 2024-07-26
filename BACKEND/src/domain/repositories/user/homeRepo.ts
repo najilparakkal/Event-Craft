@@ -1,5 +1,6 @@
 import { uploadImage } from "../../../config/awsConfig";
 import { Bookings } from "../../../framworks/database/models/booking";
+import { CancelBookings } from "../../../framworks/database/models/cancelBooking";
 import ChatModel from "../../../framworks/database/models/chatModal";
 import { ILicence } from "../../../framworks/database/models/licence";
 import { Request } from "../../../framworks/database/models/requests";
@@ -90,7 +91,6 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
       posts,
       availableDate,
     } = vendor;
-
     const profilePicture = licence[0]?.profilePicture || "";
     const businessName = licence[0]?.businessName || "";
     const location = licence[0]?.location || "";
@@ -105,6 +105,20 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
       is_accepted: true,
     });
 
+    const servicesArray = licence.map((item:any) => item.services).flat();
+    const services = servicesArray.flatMap((serviceList:any) =>
+      serviceList.split(",").map((service:any) => service.trim())
+    );
+
+
+    const allServices = await Services.aggregate([
+      {
+        $match: {
+          name: { $in: services },
+        },
+      },
+    ]);
+
     const bookings = await Bookings.find({ userId, vendorId });
     const response: VendorProfile = {
       vendorName,
@@ -116,7 +130,7 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
       posts: postsDetails,
       availableDate,
     };
-    return { response, bookings, chat: chat ? true : false };
+    return { response, bookings, chat: chat ? true : false, services:allServices };
   } catch (error) {
     console.log(error);
     return undefined;
@@ -276,23 +290,33 @@ export const cancelBooking = async (percentage: number, bookingId: string) => {
       throw new Error("Booking not found");
     }
 
-    const refund = (booking.advance * percentage) / 100;
+    const createCancelledBooking = await CancelBookings.create({
+      userId: booking.userId,
+      vendorId: booking.vendorId,
+      percentage,
+      advance: booking.advance,
+      bookingId,
+    });
+    const bookings = await Bookings.findByIdAndUpdate(bookingId, {
+      $set: { status: "requested to cancel" },
+    });
+    // const refund = (booking.advance * percentage) / 100;
 
-    const updateUserWallet = await Users.findByIdAndUpdate(
-      booking.userId,
-      { $inc: { wallet: refund } },
-      { new: true }
-    ).exec();
+    // const updateUserWallet = await Users.findByIdAndUpdate(
+    //   booking.userId,
+    //   { $inc: { wallet: refund } },
+    //   { new: true }
+    // ).exec();
 
-    if (!updateUserWallet) {
-      throw new Error("User not found");
-    }
+    // if (!updateUserWallet) {
+    //   throw new Error("User not found");
+    // }
 
-    await Bookings.deleteOne({ _id: bookingId }).exec();
+    // await Bookings.deleteOne({ _id: bookingId }).exec();
 
     return {
       success: true,
-      message: "bookings deleted successfully user Updated",
+      booking: bookings?.status,
     };
   } catch (error) {
     console.error("Error cancelling booking:", error);
@@ -308,11 +332,11 @@ export const getProfile = async (userId: string) => {
   }
 };
 
-export const updateUser = async (userId: string, datas:any, files:any) => {
+export const updateUser = async (userId: string, datas: any, files: any) => {
   try {
     if (files.profileImage) {
       const image = await uploadImage(files.profilePicture[0].filepath);
-  
+
       const user = await Users.findByIdAndUpdate(userId, {
         $set: {
           userName: datas.name,
@@ -320,11 +344,19 @@ export const updateUser = async (userId: string, datas:any, files:any) => {
           profilePicture: image,
         },
       });
-      
+
       return { success: true, image };
     } else {
       return { success: true };
     }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getDatesOfVendor = async (vendorId: string) => {
+  try {
+    return await Vendors.findById(vendorId);
   } catch (error) {
     console.log(error);
   }

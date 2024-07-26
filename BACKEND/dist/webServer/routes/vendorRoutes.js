@@ -31,4 +31,6 @@ vendorRouter.delete("/api/vendor/cancelBooking/:bookingId", VendorMiddleware_1.d
 vendorRouter.patch("/api/vendor/acceptBooking/:bookingId", VendorMiddleware_1.default, Controller_1.default.acceptBooking);
 vendorRouter.get("/api/vendor/profile/:vendorId", VendorMiddleware_1.default, Controller_1.default.getProfile);
 vendorRouter.put("/api/vendor/updateProfile/:vendorId", VendorMiddleware_1.default, Controller_1.default.updateProfile);
+vendorRouter.get('/api/vendor/absentDates/:vendorId', VendorMiddleware_1.default, Controller_1.default.getDates);
+vendorRouter.patch('/api/vendor/updateDates/:vendorId', VendorMiddleware_1.default, Controller_1.default.updateDates);
 exports.default = vendorRouter;

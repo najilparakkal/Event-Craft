@@ -66,7 +66,7 @@ const vendorSchema = new Schema<IVendors>({
   },
   availableDate: [
     {
-      type: Date,
+      type: String,
     }
   ],
   coverPicture: {
@@ -93,7 +93,7 @@ export interface IVendors extends Document {
   licence?: ILicence["_id"][];
   posts?: IPost["_id"][];
   chats?: IChatModel["_id"][];
-  availableDate?: Date[]; 
+  availableDate: string[]; 
   coverPicture?: string;
   refreshToken?:string
 }

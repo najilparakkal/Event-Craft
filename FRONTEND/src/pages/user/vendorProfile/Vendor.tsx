@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { addRequest, fetchVendorDetails } from '../../../API/services/user/Services';
-
+import Slider from 'react-slick';
 import Booking from './Booking';
-
 import { useAppSelector } from '../../../costumeHooks/costum';
 import Header from '../../../compounents/user/Header';
 
@@ -18,6 +17,8 @@ interface VendorDetails {
     posts: { title: string; images: string[]; description: string; category: string }[];
 }
 
+
+
 const Vendor: React.FC = () => {
     const [isFavorite, setIsFavorite] = useState(false);
     const [vendorDetails, setVendorDetails] = useState<VendorDetails | null>(null);
@@ -29,8 +30,12 @@ const Vendor: React.FC = () => {
     const { _id } = useAppSelector((state) => state.user.userDetails);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredPosts, setFilteredPosts] = useState<VendorDetails['posts']>([]);
+    const [filteredServices, setFilteredServices] = useState<VendorDetails['posts']>([]);
+
     const [bookedVendors, setBookedVendors] = useState<string[]>([]);
     const [chat, setChat] = useState(false)
+    const [services, setServices] = useState([])
+
     const navigate = useNavigate()
     useEffect(() => {
         const fetch = async () => {
@@ -38,9 +43,21 @@ const Vendor: React.FC = () => {
             setVendorDetails(details.response);
             setBookedVendors(details.bookings || []);
             setChat(details.chat)
+            setServices(details.services)
         };
         fetch();
     }, []);
+
+    useEffect(() => {
+        if (searchTerm) {
+            const filtered = services.filter((service: any) =>
+                service?.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setFilteredServices(filtered);
+        } else {
+            setFilteredServices(services);
+        }
+    }, [searchTerm, services]);
 
     useEffect(() => {
         if (vendorDetails) {
@@ -96,10 +113,51 @@ const Vendor: React.FC = () => {
     const handleCloseBookingMessage = () => {
         setShowBookingMessage(false);
     };
+    console.log(services, "🍽️🍽️🍽️🍽️");
 
     if (!vendorDetails) {
         return <div>Loading...</div>;
     }
+    const settings = {
+        dots: true,
+        infinite: true,
+        speed: 1000,
+        slidesToShow: 4,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 3000,
+        responsive: [
+            {
+                breakpoint: 1024,
+                settings: {
+                    slidesToShow: 3,
+                    slidesToScroll: 1,
+                    infinite: true,
+                    dots: true,
+                    autoplay: true,
+                    autoplaySpeed: 7000,
+                },
+            },
+            {
+                breakpoint: 600,
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 1,
+                    autoplay: true,
+                    autoplaySpeed: 8000,
+                },
+            },
+            {
+                breakpoint: 480,
+                settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    autoplay: true,
+                    autoplaySpeed: 3000,
+                },
+            },
+        ],
+    };
 
     return (
         <div className="bg-black min-h-screen flex flex-col items-center">
@@ -138,19 +196,34 @@ const Vendor: React.FC = () => {
                     </div>
                 </div>
             </main>
+            <div className="w-full max-w-6xl p-6 mb-10">
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 justify-between sm:space-x-2 mb-4 sm:mb-8 w-full max-w-6xl p-6">
+                    <h2 className="text-white text-2xl mb-4">Posts & Services</h2>
 
-            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 justify-between sm:space-x-2 mb-4 sm:mb-8 w-full max-w-6xl p-6">
-                <h2 className="text-white text-2xl mb-4">Posts</h2>
+                    <input
+                        type="text"
+                        placeholder="Search services"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="px-20 py-2 rounded-md bg-gray-300 text-black placeholder-gray-700 w-full sm:w-auto"
+                        style={{ textAlign: 'center', paddingBottom: '0.5rem' }}
+                    />
+                </div>
+                <Slider {...settings}>
+                    {filteredServices.map((service: any) => (
+                        <div key={service._id} className="relative bg-gray-300 p-1 shadow-md text-center cursor-pointer">
+                            <img src={service.image} alt={service.name} className="w-full h-32 object-cover" />
+                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                <h4 className="text-lg font-bold text-white">{service.name}</h4>
+                            </div>
+                        </div>
+                    ))}
+                </Slider>
 
-                <input
-                    type="text"
-                    placeholder="Search services"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="px-20 py-2 rounded-md bg-gray-300 text-black placeholder-gray-700 w-full sm:w-auto"
-                    style={{ textAlign: 'center', paddingBottom: '0.5rem' }}
-                />
+
+
             </div>
+
 
             <div className="w-full max-w-6xl p-6 mb-10 ">
                 {filteredPosts.length > 0 ? (
@@ -172,7 +245,7 @@ const Vendor: React.FC = () => {
                         <p className="text-white text-center font-bold">No posts found</p>
                     </div>
                 )}
-            <Booking vendorId={id + ""} />
+                <Booking vendorId={id + ""} />
             </div>
 
 

@@ -9,7 +9,6 @@ import { ToastContainer } from 'react-toastify';
 import Modal from 'react-modal';
 import SocketProvider from './API/services/outer/SocketProvider.tsx';
 
-// Set the app element for accessibility
 Modal.setAppElement('#root');
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>

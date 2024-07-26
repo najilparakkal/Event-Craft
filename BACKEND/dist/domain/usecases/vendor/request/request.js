@@ -133,13 +133,31 @@ exports.default = {
             console.log(error);
         }
     }),
-    updateProfile: (userId_1, _a, files_1) => __awaiter(void 0, [userId_1, _a, files_1], void 0, function* (userId, { phoneNum, name }, files) {
+    updateProfile: (userId, obj, files) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const datas = {
-                phoneNum: phoneNum[0],
-                name: name[0],
+                phoneNum: obj.phoneNum[0],
+                name: obj.name[0],
             };
             const response = yield requestRepo_1.default.updateVendor(userId, datas, files);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    getDates: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield requestRepo_1.default.getDates(vendorId);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    updateDates: (vendorId, dates) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield requestRepo_1.default.updateDates(vendorId, dates);
             return response;
         }
         catch (error) {

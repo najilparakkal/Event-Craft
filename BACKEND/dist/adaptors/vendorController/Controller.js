@@ -165,5 +165,23 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    getDates: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.getDates(req.params.vendorId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    updateDates: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.updateDates(req.params.vendorId, req.body.dates);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

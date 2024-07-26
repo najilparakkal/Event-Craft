@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, Document } from "mongoose";
+  import mongoose, { Schema, model, Document } from "mongoose";
 
 export interface IBooking extends Document {
   clientName: string;
@@ -15,6 +15,7 @@ export interface IBooking extends Document {
   advance:number;
   event:string;
   accepted:boolean;
+  status:string;
 }
 
 const bookingSchema = new Schema<IBooking>({
@@ -35,7 +36,7 @@ const bookingSchema = new Schema<IBooking>({
     required: true,
   },
   event:{
-
+    type:String
   },
   arrivalTime: {
     type: String,
@@ -69,6 +70,10 @@ const bookingSchema = new Schema<IBooking>({
   },
   vendorId:{
     type:String
+  },
+  status:{
+    type:String,
+    default:"pending"
   }
 
 });

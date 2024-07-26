@@ -122,4 +122,30 @@ export default {
       console.log(error);
     }
   },
+  getBookings:async(req:Request, res:Response)=>{
+    try {
+      const response = await dashboard.getBookings()
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+
+  refundBooking:async(req:Request, res:Response) => {
+    try {
+      const { amount } = req.body;
+      const { bookingId } = req.params;
+            
+      const response = await dashboard.refundBooking(amount,bookingId)
+      if(response?.success){
+        res.status(200).json(response)
+      }else{
+        res.status(404).json(response)
+      }
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
 };

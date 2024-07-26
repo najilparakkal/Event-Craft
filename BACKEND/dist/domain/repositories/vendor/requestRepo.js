@@ -247,4 +247,27 @@ exports.default = {
             return { success: false, error };
         }
     }),
+    getDates: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const vendor = yield vendor_1.Vendors.findById(vendorId);
+            const dates = vendor === null || vendor === void 0 ? void 0 : vendor.availableDate;
+            return dates;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    updateDates: (vendorId, date) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const vendors = yield vendor_1.Vendors.findById(vendorId);
+            if (vendors) {
+                vendors.availableDate = [...new Set([...date])];
+                yield vendors.save();
+            }
+            return { success: true };
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
 };

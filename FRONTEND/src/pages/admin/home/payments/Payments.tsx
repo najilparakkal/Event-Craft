@@ -1,14 +1,84 @@
-import React from 'react'
-import Dashboard from './Dashboard'
+import React, { useEffect, useState } from 'react';
+import { fetchCanelldBookings, refundUser } from '../../../../API/services/admin/Dashboard';
+import { toast, Toaster } from 'react-hot-toast';
 
-const Payments:React.FC = () => {
-  return (
-    <div>
-      <Dashboard />
-
-    </div>
-
-  )
+interface Booking {
+  _id: string;
+  bookingId: string;
+  advance: number;
+  percentage: number;
+  createdAt: string;
+  updatedAt: string;
+  userId: string;
+  vendorId: string;
 }
 
-export default Payments
+const Payments: React.FC = () => {
+  const [bookings, setBookings] = useState<Booking[]>([]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      const datas = await fetchCanelldBookings();
+      setBookings(datas);
+    };
+    fetch();
+  }, []);
+
+  const handleRefundClick = async (advance: number, percentage: number, bookingId: string) => {
+    const refundAmount = (advance * percentage) / 100;
+    const refund = await refundUser(refundAmount, bookingId);
+    if (refund) {
+      toast.success('Refunded successfully');
+      setBookings((prevBookings) => prevBookings.filter((booking) => booking.bookingId !== bookingId));
+    } else {
+      toast.error('Failed to refund');
+    }
+  };
+
+  return (
+    <div className="p-4">
+      <Toaster position="top-center" reverseOrder={false} />
+
+      <h1 className="text-2xl font-bold mb-4 text-gray-800">Payments</h1>
+      <div className="overflow-x-auto">
+        {bookings.length === 0 ? (
+          <div className="text-3xl font-bold text-center text-gray-500">NO REQUESTS</div>
+        ) : (
+          <table className="min-w-full bg-white">
+            <thead>
+              <tr>
+                <th className="py-2 px-4 border-b border-gray-200 text-left">SN</th>
+                <th className="py-2 px-4 border-b border-gray-200 text-left">Booking ID</th>
+                <th className="py-2 px-4 border-b border-gray-200 text-left">Advance</th>
+                <th className="py-2 px-4 border-b border-gray-200 text-left">Percentage</th>
+                <th className="py-2 px-4 border-b border-gray-200 text-left">Requested</th>
+                <th className="py-2 px-4 border-b border-gray-200 text-left">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bookings.map((booking, index) => (
+                <tr key={booking._id}>
+                  <td className="py-2 px-4 border-b border-gray-200">{index + 1}</td>
+                  <td className="py-2 px-4 border-b border-gray-200">{booking.bookingId.substring(0, 7)}...</td>
+                  <td className="py-2 px-4 border-b border-gray-200">{booking.advance}</td>
+                  <td className="py-2 px-4 border-b border-gray-200">{booking.percentage}%</td>
+                  <td className="py-2 px-4 border-b border-gray-200">{new Date(booking.createdAt).toLocaleDateString()}</td>
+                  <td className="py-2 px-4 border-b border-gray-200">
+                    <button
+                      className="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2"
+                      onClick={() => handleRefundClick(booking.advance, booking.percentage, booking.bookingId)}
+                    >
+                      Refund
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Payments;

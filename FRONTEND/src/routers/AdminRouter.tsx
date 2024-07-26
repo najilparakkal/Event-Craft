@@ -4,8 +4,8 @@ import Home from "../pages/admin/home/dashboard/Home";
 import User from "../pages/admin/home/user/User";
 import Vendor from "../pages/admin/home/vendor/Vendor";
 import Categories from "../pages/admin/home/categories/Categories";
-import Payments from "../pages/admin/home/payments/Payments";
 import Requtes from "../pages/admin/home/Requstes/Requests";
+import Dashboard from "../pages/admin/home/payments/Dashboard";
 
 const UserRouter: React.FC = () => {
     return (
@@ -15,7 +15,7 @@ const UserRouter: React.FC = () => {
             <Route path="/Users" element={< User />} />
             <Route path="/Vendors" element={< Vendor />} />
             <Route path="/Categories" element={< Categories />} />
-            <Route path="/Payments" element={< Payments />} />
+            <Route path="/Payments" element={< Dashboard />} />
             <Route path="/Requests" element={<Requtes />} />
 
         </Routes>

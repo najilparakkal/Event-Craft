@@ -15,5 +15,8 @@ adminRouter.get("/api/admin/request",dashBoardController.listRequest)
 adminRouter.post("/api/admin/rejectVendor",dashBoardController.reject)
 adminRouter.post("/api/admin/acceptVendor",dashBoardController.accept)
 adminRouter.get('/api/admin/dashboard',dashBoardController.getDashboard)
+adminRouter.get('/api/admin/cancelBookings',dashBoardController.getBookings)
+adminRouter.patch('/api/admin/refund/:bookingId',dashBoardController.refundBooking)
+
 
 export default adminRouter  

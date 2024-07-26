@@ -112,5 +112,21 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    getBookings: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield dashRepositories_1.default.getBookings();
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    refundBooking: (refund, bookingId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield dashRepositories_1.default.refund(refund, bookingId);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

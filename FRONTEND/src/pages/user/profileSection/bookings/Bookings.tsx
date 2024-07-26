@@ -18,6 +18,7 @@ interface Booking {
   userId: string;
   vendorId: string;
   vendorName: string;
+  status: string;
 }
 
 const Bookings: React.FC = () => {
@@ -26,6 +27,7 @@ const Bookings: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [refundPercentage, setRefundPercentage] = useState<number>(0);
+  const [cancelledBookings, setCancelledBookings] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -59,8 +61,7 @@ const Bookings: React.FC = () => {
   const handleConfirmCancel = async () => {
     if (selectedBooking) {
       await cancelBooking(refundPercentage, selectedBooking._id);
-      setBookings((prevBookings) => prevBookings.filter(booking => booking._id !== selectedBooking._id));
-
+      setCancelledBookings((prev) => [...prev, selectedBooking._id]);
       handleCloseModal();
     }
   };
@@ -84,7 +85,13 @@ const Bookings: React.FC = () => {
           <div>{booking.event}</div>
           <div>{booking.advance}</div>
           <div className="flex">
-            <button className="text-red-600 hover:text-red-800" onClick={() => handleCancelClick(booking)}>Cancel</button>
+            {booking.status === 'pending' ? (
+              <button className="text-red-600 hover:text-red-800" onClick={() => handleCancelClick(booking)}>
+                {cancelledBookings.includes(booking._id) ? "Requested to cancel" : "Cancel"}
+              </button>
+            ) : (
+              <span>Requested to cancel</span>
+            )}
           </div>
         </div>
       ))}
@@ -94,17 +101,17 @@ const Bookings: React.FC = () => {
             <div className="relative bg-white rounded-lg shadow-lg">
               <button type="button" className="absolute top-3 right-2.5 text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center" onClick={handleCloseModal}>
                 <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                 </svg>
                 <span className="sr-only">Close modal</span>
               </button>
               <div className="p-6 text-center">
                 <svg className="mx-auto mb-4 text-gray-400 w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
                 <h3 className="mb-5 text-lg font-normal text-gray-700">Are you sure you want to cancel the booking?</h3>
                 <p className="mb-5 text-sm text-gray-600">
-                  {`If you cancel now, you will get ${refundPercentage}% of the money back.`}
+                  If you cancel now, you will get {refundPercentage}% of the money back.
                 </p>
                 <button className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center" onClick={handleConfirmCancel}>
                   Yes, I'm sure

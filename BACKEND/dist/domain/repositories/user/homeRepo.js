@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
+exports.getDatesOfVendor = exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
 const awsConfig_1 = require("../../../config/awsConfig");
 const booking_1 = require("../../../framworks/database/models/booking");
+const cancelBooking_1 = require("../../../framworks/database/models/cancelBooking");
 const chatModal_1 = __importDefault(require("../../../framworks/database/models/chatModal"));
 const requests_1 = require("../../../framworks/database/models/requests");
 const services_1 = require("../../../framworks/database/models/services");
@@ -101,6 +102,15 @@ const getVendorProfile = (vendorId, userId) => __awaiter(void 0, void 0, void 0,
             users: { $in: [userId, vendorId] },
             is_accepted: true,
         });
+        const servicesArray = licence.map((item) => item.services).flat();
+        const services = servicesArray.flatMap((serviceList) => serviceList.split(",").map((service) => service.trim()));
+        const allServices = yield services_1.Services.aggregate([
+            {
+                $match: {
+                    name: { $in: services },
+                },
+            },
+        ]);
         const bookings = yield booking_1.Bookings.find({ userId, vendorId });
         const response = {
             vendorName,
@@ -112,7 +122,7 @@ const getVendorProfile = (vendorId, userId) => __awaiter(void 0, void 0, void 0,
             posts: postsDetails,
             availableDate,
         };
-        return { response, bookings, chat: chat ? true : false };
+        return { response, bookings, chat: chat ? true : false, services: allServices };
     }
     catch (error) {
         console.log(error);
@@ -254,15 +264,29 @@ const cancelBooking = (percentage, bookingId) => __awaiter(void 0, void 0, void 
         if (!booking) {
             throw new Error("Booking not found");
         }
-        const refund = (booking.advance * percentage) / 100;
-        const updateUserWallet = yield user_1.Users.findByIdAndUpdate(booking.userId, { $inc: { wallet: refund } }, { new: true }).exec();
-        if (!updateUserWallet) {
-            throw new Error("User not found");
-        }
-        yield booking_1.Bookings.deleteOne({ _id: bookingId }).exec();
+        const createCancelledBooking = yield cancelBooking_1.CancelBookings.create({
+            userId: booking.userId,
+            vendorId: booking.vendorId,
+            percentage,
+            advance: booking.advance,
+            bookingId,
+        });
+        const bookings = yield booking_1.Bookings.findByIdAndUpdate(bookingId, {
+            $set: { status: "requested to cancel" },
+        });
+        // const refund = (booking.advance * percentage) / 100;
+        // const updateUserWallet = await Users.findByIdAndUpdate(
+        //   booking.userId,
+        //   { $inc: { wallet: refund } },
+        //   { new: true }
+        // ).exec();
+        // if (!updateUserWallet) {
+        //   throw new Error("User not found");
+        // }
+        // await Bookings.deleteOne({ _id: bookingId }).exec();
         return {
             success: true,
-            message: "bookings deleted successfully user Updated",
+            booking: bookings === null || bookings === void 0 ? void 0 : bookings.status,
         };
     }
     catch (error) {
@@ -302,3 +326,12 @@ const updateUser = (userId, datas, files) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.updateUser = updateUser;
+const getDatesOfVendor = (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        return yield vendor_1.Vendors.findById(vendorId);
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.getDatesOfVendor = getDatesOfVendor;

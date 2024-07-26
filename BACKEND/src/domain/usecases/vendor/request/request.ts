@@ -124,15 +124,33 @@ export default{
       
     }
   },
-  updateProfile: async(userId:string,{phoneNum,name} ,files:any)=>{
+  updateProfile: async(userId:string,obj:any ,files:any)=>{
     try {
       
       const datas = {
-        phoneNum: phoneNum[0],
-        name:name[0],
+        phoneNum:obj.phoneNum[0],
+        name:obj.name[0],
       }
       const response = await requestRepo.updateVendor(userId,datas,files)
       return response
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  getDates:async(vendorId:string)=>{
+    try {
+      const response = await requestRepo.getDates(vendorId)
+      return response
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  updateDates:async(vendorId:string,dates:[])=>{
+    try {
+      const response = await requestRepo.updateDates(vendorId,dates)
+      return response 
     } catch (error) {
       console.log(error);
       

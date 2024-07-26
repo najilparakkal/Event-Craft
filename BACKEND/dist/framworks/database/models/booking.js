@@ -19,7 +19,9 @@ const bookingSchema = new mongoose_1.Schema({
         type: Date,
         required: true,
     },
-    event: {},
+    event: {
+        type: String
+    },
     arrivalTime: {
         type: String,
         required: true,
@@ -52,6 +54,10 @@ const bookingSchema = new mongoose_1.Schema({
     },
     vendorId: {
         type: String
+    },
+    status: {
+        type: String,
+        default: "pending"
     }
 });
 exports.Bookings = (0, mongoose_1.model)("Bookings", bookingSchema);

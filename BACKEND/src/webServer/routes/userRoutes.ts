@@ -25,9 +25,9 @@ userRouter.get("/api/user/fetchVendors/:userId",userAuth, Controller.fetchVendor
 userRouter.get("/api/user/chatId/:userId/:vendorId",userAuth,Controller.getChatId);
 userRouter.post("/api/user/addBooking",userAuth, Controller.addBooking); 
 userRouter.get("/api/user/bookings/:userId",userAuth, Controller.getBooking);
-userRouter.delete("/api/user/cancelBooking",userAuth,Controller.cancelBooking)
+userRouter.post("/api/user/cancelBooking",userAuth,Controller.cancelBooking)
 userRouter.get('/api/user/profile/:userId',userAuth,Controller.getProfile)
 userRouter.put('/api/user/updateProfile/:userId',userAuth,Controller.updateProfile)
-    
+userRouter.get('/api/user/vendorDates/:vendorId',userAuth,Controller.getDates)
   
 export default userRouter                   

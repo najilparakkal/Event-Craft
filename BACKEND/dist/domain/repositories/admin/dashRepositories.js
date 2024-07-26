@@ -15,6 +15,7 @@ const licence_1 = require("../../../framworks/database/models/licence");
 const user_1 = require("../../../framworks/database/models/user");
 const vendor_1 = require("../../../framworks/database/models/vendor");
 const booking_1 = require("../../../framworks/database/models/booking");
+const cancelBooking_1 = require("../../../framworks/database/models/cancelBooking");
 exports.default = {
     listUsers: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -230,6 +231,32 @@ exports.default = {
                 latestUsers,
                 latestVendors,
             };
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    getBookings: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const bookings = yield cancelBooking_1.CancelBookings.find();
+            return bookings;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    refund: (amount, bookingId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const booking = yield booking_1.Bookings.findById(bookingId);
+            if (!booking) {
+                throw new Error("Booking not found");
+            }
+            const user = yield user_1.Users.findById(booking === null || booking === void 0 ? void 0 : booking.userId);
+            yield user_1.Users.findByIdAndUpdate(booking.userId, { $inc: { wallet: amount } }, { new: true }).exec();
+            booking.status = "cancelled";
+            yield booking.save();
+            yield cancelBooking_1.CancelBookings.deleteOne({ bookingId });
+            return { success: true };
         }
         catch (error) {
             console.log(error);

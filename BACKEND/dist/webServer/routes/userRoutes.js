@@ -29,7 +29,8 @@ userRouter.get("/api/user/fetchVendors/:userId", UserMiddleware_1.default, Contr
 userRouter.get("/api/user/chatId/:userId/:vendorId", UserMiddleware_1.default, Controller_1.default.getChatId);
 userRouter.post("/api/user/addBooking", UserMiddleware_1.default, Controller_1.default.addBooking);
 userRouter.get("/api/user/bookings/:userId", UserMiddleware_1.default, Controller_1.default.getBooking);
-userRouter.delete("/api/user/cancelBooking", UserMiddleware_1.default, Controller_1.default.cancelBooking);
+userRouter.post("/api/user/cancelBooking", UserMiddleware_1.default, Controller_1.default.cancelBooking);
 userRouter.get('/api/user/profile/:userId', UserMiddleware_1.default, Controller_1.default.getProfile);
 userRouter.put('/api/user/updateProfile/:userId', UserMiddleware_1.default, Controller_1.default.updateProfile);
+userRouter.get('/api/user/vendorDates/:vendorId', UserMiddleware_1.default, Controller_1.default.getDates);
 exports.default = userRouter;

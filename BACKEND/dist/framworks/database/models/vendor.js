@@ -63,7 +63,7 @@ const vendorSchema = new mongoose_1.Schema({
     },
     availableDate: [
         {
-            type: Date,
+            type: String,
         }
     ],
     coverPicture: {

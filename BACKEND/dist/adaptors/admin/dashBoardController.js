@@ -142,4 +142,29 @@ exports.default = {
             console.log(error);
         }
     }),
+    getBookings: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield dashboard_1.default.getBookings();
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    refundBooking: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { amount } = req.body;
+            const { bookingId } = req.params;
+            const response = yield dashboard_1.default.refundBooking(amount, bookingId);
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                res.status(200).json(response);
+            }
+            else {
+                res.status(404).json(response);
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    })
 };

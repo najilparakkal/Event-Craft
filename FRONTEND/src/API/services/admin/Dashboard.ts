@@ -43,7 +43,7 @@ export const blockorUnBlockUsers = async (id: string) => {
   }
 };
 
-export const addCategory = async (datas:any) => {
+export const addCategory = async (datas: any) => {
   try {
     await authAxiosInstance.post("admin/addCategory", datas, {
       headers: {
@@ -66,15 +66,13 @@ export const getCategory = async () => {
 
 export const removeCategory = async (_id: string) => {
   try {
-     await authAxiosInstance.patch("admin/removeCategory", {
+    await authAxiosInstance.patch("admin/removeCategory", {
       data: { _id },
     });
   } catch (error) {
     console.log(error);
   }
 };
-
-
 
 export const fetchRequest = async () => {
   try {
@@ -85,12 +83,15 @@ export const fetchRequest = async () => {
   }
 };
 
-export const rejectVendor = async (id: string,reason:string) => {
+export const rejectVendor = async (id: string, reason: string) => {
   try {
-    console.log(id,reason);
-    
-   const {data} =  await authAxiosInstance.post("admin/rejectVendor", { id,reason });
-   return data.success
+    console.log(id, reason);
+
+    const { data } = await authAxiosInstance.post("admin/rejectVendor", {
+      id,
+      reason,
+    });
+    return data.success;
   } catch (error) {
     console.log(error);
   }
@@ -106,12 +107,31 @@ export const acceptVendor = async (dataa: string) => {
     console.log(error);
   }
 };
-export const fetchDetails = async()=>{
+export const fetchDetails = async () => {
   try {
-     const response =   await authAxiosInstance.get('admin/dashboard')
-     return response.data;
+    const response = await authAxiosInstance.get("admin/dashboard");
+    return response.data;
   } catch (error) {
     console.log(error);
-    
   }
-}
+};
+
+export const fetchCanelldBookings = async () => {
+  try {
+    const response = await authAxiosInstance.get("admin/cancelBookings");
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const refundUser = async (amount: number, bookingId: string) => {
+  try {
+    const response = await authAxiosInstance.patch(
+      `admin/refund/${bookingId}`,
+      { amount }
+    );
+    return response.status === 200;
+  } catch (error) {
+    console.log(error);
+  }
+};
