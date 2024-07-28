@@ -146,7 +146,6 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
 
   const rejectUser = async (id: string) => {
     try {
-      console.log(id);
       
       const response = await cancelRequest(roomId + "");
       if (response) {

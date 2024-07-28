@@ -148,6 +148,7 @@ exports.default = {
     }),
     updateProfile: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
+            console.log("🍽️🍽️🍽️");
             const { files, fields } = yield (0, formidable_1.multipartFormSubmission)(req);
             const response = yield home_1.default.updateProfile(req.params.userId, fields, files);
             res.status(200).json(response);

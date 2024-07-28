@@ -10,10 +10,8 @@ const ProfileHeader = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { profilePicture } = useAppSelector((state) => state.user.userDetails);
+
     useEffect(() => {
-
-
-
         switch (location.pathname) {
             case '/wishlist':
                 setSelectedMenuItem('WISHLIST');
@@ -71,7 +69,8 @@ const ProfileHeader = () => {
                 />
             </div>
             <div
-                className={`fixed right-0 rounded-lg m-1 top-0 w-64 h-full bg-gray-100/55 text-white shadow-md p-4 transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}
+                className={`fixed right-0 top-0 rounded-lg m-1 w-64 h-full bg-gray-100/55 text-white shadow-md p-4 transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}
+                style={{ zIndex: 50 }} // Increase z-index to make sure it's in front
             >
                 <button onClick={() => setSidebarOpen(false)} className="text-black">
                     <svg
@@ -122,8 +121,7 @@ const ProfileHeader = () => {
                     >
                         ADD ACCOUNT
                     </li>
-                    <li className="mt-[200px] justify-end" onClick={() => setModalOpen(true)}
-                    >
+                    <li className="mt-[200px] justify-end" onClick={() => setModalOpen(true)}>
                         <img
                             src={profilePicture ? profilePicture : ""}
                             alt=""
@@ -134,10 +132,8 @@ const ProfileHeader = () => {
             </div>
 
             {isModalOpen && (
-
-                <Profile setModalOpen={()=>setModalOpen(false)} />
+                <Profile setModalOpen={() => setModalOpen(false)} />
             )}
-
         </div>
     );
 };

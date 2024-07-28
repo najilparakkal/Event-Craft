@@ -22,7 +22,7 @@ const socketHandler = (io: Server) => {
         const messages = await Message.find({ chat: room }).sort({
           createdAt: 1,
         });
-        const chat = await ChatModel.findById({ _id: room });        
+        const chat = await ChatModel.findById({ _id: room });
         socket.emit("room messages", { messages, chat });
       } catch (error) {
         console.error("Error fetching messages:", error);
@@ -41,15 +41,11 @@ const socketHandler = (io: Server) => {
       });
       await newMessage.save();
       io.to(chatId).emit("new message", newMessage);
-
     });
 
-
     socket.on("send_file", async (message) => {
-      
-      const { senderId, senderModel, content, chatId,type } = message;
-      
-      
+      const { senderId, senderModel, content, chatId, type } = message;
+
       const newMessage = new Message({
         sender: senderId,
         senderModel: senderModel,
@@ -57,12 +53,9 @@ const socketHandler = (io: Server) => {
         chat: chatId,
         type: type,
       });
-      await newMessage.save();  
+      await newMessage.save();
       io.to(chatId).emit("new message", newMessage);
-
-      
     });
-
 
     socket.on("send message", async (message) => {
       console.log(`Message from ${socket.id}:`, message);
@@ -71,7 +64,7 @@ const socketHandler = (io: Server) => {
       if (!mongoose.Types.ObjectId.isValid(chatId)) {
         console.error(`Invalid chat ID: ${chatId}`);
         return;
-      } 
+      }
 
       try {
         const newMessage = new Message({
@@ -91,6 +84,51 @@ const socketHandler = (io: Server) => {
       } catch (error) {
         console.error("Error saving message:", error);
       }
+    });
+
+    socket.on("list_vendors", async () => {
+      console.log("x🍽️🍽️🍽️🍽️🍽️");
+      
+      // if (!mongoose.Types.ObjectId.isValid(chatId)) {
+      //   console.error(`Invalid chat ID: ${chatId}`);
+      //   return;
+      // }
+
+      // try {
+      //   const chat = await ChatModel.findById(chatId)
+      //     .populate("vendors")
+      //     .populate({
+      //       path: "messages",
+      //       options: { sort: { createdAt: -1 } },
+      //     });
+
+      //   if (!chat) {
+      //     console.error(`Chat not found with ID: ${chatId}`);
+      //     return;
+      //   }
+
+      //   const vendors = chat.vendors;
+      //   const lastMessagedVendors = vendors.sort((a, b) => {
+      //     const lastMessageA = chat.messages.find(
+      //       (message) => message.sender.toString() === a._id.toString()
+      //     );
+      //     const lastMessageB = chat.messages.find(
+      //       (message) => message.sender.toString() === b._id.toString()
+      //     );
+
+      //     if (lastMessageA && lastMessageB) {
+      //       return (
+      //         new Date(lastMessageB.createdAt).getTime() -
+      //         new Date(lastMessageA.createdAt).getTime()
+      //       );
+      //     }
+      //     return 0;
+      //   });
+
+        socket.emit("vendors_list", "🎶🎶🎶");
+      // } catch (error) {
+      //   console.error("Error listing vendors:", error);
+      // }
     });
   });
 };

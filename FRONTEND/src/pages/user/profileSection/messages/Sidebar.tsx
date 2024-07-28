@@ -18,7 +18,6 @@ const Sidebar: React.FC<SidebarProps> = ({ vendors, onVendorClick, sidebarOpen }
     <div className={`h-full  text-white rounded-md border-white  transition-transform duration-300 ease-in-out transform ${sidebarOpen ? 'w-1/3' : 'w-0 overflow-hidden'}`}>
       <div className="flex items-center justify-between p-4 bg-black border-white border-b-2">
         <h1 className="text-lg font-bold ">Chats</h1>
-        
       </div>
       <ul className="h-full overflow-y-auto border-white border-1">
         {vendors.map(vendor => (

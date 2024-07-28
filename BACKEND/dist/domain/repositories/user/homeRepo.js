@@ -306,7 +306,7 @@ const getProfile = (userId) => __awaiter(void 0, void 0, void 0, function* () {
 exports.getProfile = getProfile;
 const updateUser = (userId, datas, files) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (files.profileImage) {
+        if (files) {
             const image = yield (0, awsConfig_1.uploadImage)(files.profilePicture[0].filepath);
             const user = yield user_1.Users.findByIdAndUpdate(userId, {
                 $set: {

@@ -219,12 +219,7 @@ const Vendor: React.FC = () => {
                         </div>
                     ))}
                 </Slider>
-
-
-
             </div>
-
-
             <div className="w-full max-w-6xl p-6 mb-10 ">
                 {filteredPosts.length > 0 ? (
                     <div className="flex flex-wrap gap-4">

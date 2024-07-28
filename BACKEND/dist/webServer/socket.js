@@ -87,6 +87,44 @@ const socketHandler = (io) => {
                 console.error("Error saving message:", error);
             }
         }));
+        socket.on("list_vendors", () => __awaiter(void 0, void 0, void 0, function* () {
+            console.log("x🍽️🍽️🍽️🍽️🍽️");
+            // if (!mongoose.Types.ObjectId.isValid(chatId)) {
+            //   console.error(`Invalid chat ID: ${chatId}`);
+            //   return;
+            // }
+            // try {
+            //   const chat = await ChatModel.findById(chatId)
+            //     .populate("vendors")
+            //     .populate({
+            //       path: "messages",
+            //       options: { sort: { createdAt: -1 } },
+            //     });
+            //   if (!chat) {
+            //     console.error(`Chat not found with ID: ${chatId}`);
+            //     return;
+            //   }
+            //   const vendors = chat.vendors;
+            //   const lastMessagedVendors = vendors.sort((a, b) => {
+            //     const lastMessageA = chat.messages.find(
+            //       (message) => message.sender.toString() === a._id.toString()
+            //     );
+            //     const lastMessageB = chat.messages.find(
+            //       (message) => message.sender.toString() === b._id.toString()
+            //     );
+            //     if (lastMessageA && lastMessageB) {
+            //       return (
+            //         new Date(lastMessageB.createdAt).getTime() -
+            //         new Date(lastMessageA.createdAt).getTime()
+            //       );
+            //     }
+            //     return 0;
+            //   });
+            socket.emit("vendors_list", "🎶🎶🎶");
+            // } catch (error) {
+            //   console.error("Error listing vendors:", error);
+            // }
+        }));
     });
 };
 exports.default = socketHandler;

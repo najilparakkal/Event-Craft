@@ -3,6 +3,7 @@ import { useFormik } from 'formik';
 import { fetchUserDatas, udpdateUser } from '../../API/services/user/Services';
 import { useAppSelector, useUpdateUserDetails } from '../../costumeHooks/costum';
 import { profileValidation } from '../../utils/validations/validateSchema';
+import {toast,Toaster} from 'react-hot-toast'
 
 interface UserData {
     email: string;
@@ -13,7 +14,7 @@ interface UserData {
     wallet: number;
 }
 
-const Profile = ({setModalOpen}:any) => {
+const Profile = ({ setModalOpen }: any) => {
     const [details, setDetails] = useState<UserData | null>(null);
     const { _id, name, phoneNum, email, profilePicture } = useAppSelector((state) => state.user.userDetails);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -34,16 +35,16 @@ const Profile = ({setModalOpen}:any) => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreview(reader.result);
-                formik.setFieldValue("profilePicture", file); 
+                formik.setFieldValue("profilePicture", file);
             };
             reader.readAsDataURL(file);
         }
     };
 
     const handleImageRemove = () => {
-        setImagePreview(''); 
+        setImagePreview('');
         formik.setFieldValue("profilePicture", "");
-        if (fileInputRef.current) fileInputRef.current.value = ""; 
+        if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
     const formik = useFormik({
@@ -53,30 +54,39 @@ const Profile = ({setModalOpen}:any) => {
             profilePicture: profilePicture || ''
         },
         validationSchema: profileValidation,
-        onSubmit: async (values) => {
-
-
-            const update = await udpdateUser(_id + "", values)
-            console.log(values,"👋");
-            if (update) {      
-                         
-                updateUserDetails({
-                    name: values.name,
-                    phoneNum: values.phoneNum,
-                    profilePicture: update.image ?? profilePicture
-                });
-                setModalOpen(false)
-                const updatedDatas = await fetchUserDatas(_id + "");
-                setDetails(updatedDatas);
-
-            }
-
-        },
+        onSubmit: async (values) =>  {
+            toast.promise(
+                udpdateUser(_id + "", values),
+                {
+                    loading: 'Updating user details...',
+                    success: 'User details updated successfully!',
+                    error: 'Error updating user details.',
+                }
+            ).then(update => {
+                if (update) {
+                    updateUserDetails({
+                        name: values.name,
+                        phoneNum: values.phoneNum,
+                        profilePicture: update.image ?? profilePicture
+                    });
+                    setModalOpen(false);
+                    fetchUserDatas(_id + "").then(updatedDatas => {
+                        setDetails(updatedDatas);
+                    });
+                }
+            }).catch(error => {
+                console.error('Update failed', error);
+            });
+        }
     });
 
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
+            <Toaster
+                position="top-right"
+                reverseOrder={false}
+            />
             <div className="bg-white w-11/12 max-w-md flex flex-col gap-5 p-5 rounded-lg shadow-lg text-[#161931]">
                 <button className="self-end text-gray-700 hover:text-gray-900" onClick={() => setModalOpen()}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">

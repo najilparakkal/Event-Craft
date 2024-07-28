@@ -4,6 +4,7 @@ import { fetchChatId, cancelRequest } from '../../../../API/services/user/Servic
 import { useSocket } from '../../../../API/services/outer/SocketProvider';
 import { FaMicrophone, FaPaperclip } from 'react-icons/fa';
 import { uploadToS3Bucket } from '../../../../firebase/s3Bucket';
+import { formatDistanceToNow, parseISO } from 'date-fns';
 
 interface Vendor {
   _id: string;
@@ -13,8 +14,9 @@ interface Vendor {
 interface Message {
   _id: string;
   sender: string;
-  content: Blob | string; 
-  type: 'text' | 'audio' | 'video' | 'document' | 'image'; 
+  content: Blob | string;
+  type: 'text' | 'audio' | 'video' | 'document' | 'image';
+  createdAt: string;
 }
 
 interface Chat {
@@ -71,33 +73,32 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
       }
     });
   }, []);
-
   useEffect(() => {
     if (roomId) {
       socket.emit('join room', roomId);
-  
+
       const receiveMessageHandler = (message: Message) => {
         setMessages((prevMessages) => [...prevMessages, message]);
       };
-  
+
       socket.on('room messages', (fetchedMessages: any) => {
         setReq(fetchedMessages.chat);
         setMessages(fetchedMessages.messages);
       });
-  
+
       socket.on('new message', receiveMessageHandler);
-  
+
       return () => {
         socket.off('new message', receiveMessageHandler);
         socket.off('room messages');
       };
     }
   }, [roomId, socket]);
-  
+
 
   const sendAudio = async () => {
     if (stream) {
-      stream?.getTracks().forEach((track:any) => track.stop());
+      stream?.getTracks().forEach((track: any) => track.stop());
       const mergedBlob = new Blob(audioBlob, { type: 'audio/webm;codecs=opus' });
       const messageToSend = {
         senderId: _id,
@@ -203,6 +204,8 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
     }
   };
 
+  console.log(messages, "❌❌❌❌");
+
 
   const handleFileInputClick = () => {
     if (fileInputRef.current) {
@@ -292,37 +295,66 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
             const isTextMessage = message.type === 'text';
             const isDocumentMessage = message.type === 'document';
             const isImageMessage = message.type === 'image';
+            const messageTime = formatDistanceToNow(parseISO(message?.createdAt), { addSuffix: true });
 
             return (
               <div
                 key={index}
-                className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-2`}
               >
-                <div className={`p-2 rounded-lg max-w-md ${!isAudioMessage && (isCurrentUser ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black')}`}>
-                  {isTextMessage && <p className="break-words">{message.content + ""}</p>}
+                <div className={`relative p-0.5 rounded-lg max-w-md ${!isAudioMessage && (isCurrentUser ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black')}`}>
+                  {isTextMessage && (
+                    <div className="ml-1">
+                      <p>{message.content + ""}</p>
+                    </div>
+                  )}
                   {isAudioMessage && (
-                    <audio controls>
-                      <source src={message.content + ""} type="audio/webm" />
-                      Your browser does not support the audio element.
-                    </audio>
+                    <div className="w-full mt-2">
+                      <audio controls>
+                        <source src={message.content + ""} type="audio/webm" />
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
                   )}
                   {isVideoMessage && (
-                    <video controls>
-                      <source src={message.content + ""} type="video/mp4" />
-                      Your browser does not support the video element.
-                    </video>
+                    <div className="relative small-line-border">
+                      <video controls className="rounded-lg w-full max-w-xs">
+                        <source src={message.content + ""} type="video/mp4" />
+                        Your browser does not support the video element.
+                      </video>
+                      <span className="absolute bottom-1 right-1 text-xs text-white bg-black bg-opacity-50 rounded px-1">
+                        {messageTime}
+                      </span>
+                    </div>
                   )}
                   {isDocumentMessage && (
-                    <a href={message.content + ""} download>
-                      Download Document
-                    </a>
+                    <div className="mt-2">
+                      <a href={message.content + ""} download className="underline text-blue-500">
+                        Download Document
+                      </a>
+                      <span className="block text-xs text-gray-400 mt-1">
+                        {messageTime}
+                      </span>
+                    </div>
                   )}
                   {isImageMessage && (
-                    <img src={message.content + ""} alt="Image" />
+                    <div className="relative">
+                      <img src={message.content + ""} alt="Image" className="max-w-full h-auto rounded-lg" />
+                      <span className="absolute bottom-1 right-1 text-xs text-white bg-black bg-opacity-50 rounded px-1">
+                        {messageTime}
+                      </span>
+                    </div>
+                  )}
+                  {!isImageMessage && !isVideoMessage && (
+                    <span className="block text-xs text-gray-400 ml-8 mt-1">
+                      {messageTime}
+                    </span>
                   )}
                 </div>
               </div>
             );
+
+
           })
         )}
       </div>

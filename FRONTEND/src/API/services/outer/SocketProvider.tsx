@@ -14,7 +14,6 @@ function SocketProvider({ children }: any) {
         if (!socket) {
             const newSocket = io('http://localhost:3000')
             setSocket(newSocket);
-
         }
 
         return () => {
@@ -24,7 +23,7 @@ function SocketProvider({ children }: any) {
         }
     }, [socket])
 
-    
+
     return (
         <socketContext.Provider value={{ socket }}>
             {children}
@@ -35,7 +34,7 @@ function SocketProvider({ children }: any) {
 export default SocketProvider
 
 export const useSocket = () => {
-   const context = useContext(socketContext);
-   if (context === undefined) { throw new Error('useAuth must be used within an AuthProvider');}
-   return context;
+    const context = useContext(socketContext);
+    if (context === undefined) { throw new Error('useAuth must be used within an AuthProvider'); }
+    return context;
 };

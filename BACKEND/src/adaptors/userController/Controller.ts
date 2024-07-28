@@ -127,6 +127,8 @@ export default {
   },
   updateProfile: async (req: Request, res: Response) => {
     try {
+      console.log("🍽️🍽️🍽️");
+      
       const { files, fields } = await multipartFormSubmission(req);
       const response = await userIterator.updateProfile(
         req.params.userId,

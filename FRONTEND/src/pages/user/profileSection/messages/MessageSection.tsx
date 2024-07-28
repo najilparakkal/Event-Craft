@@ -14,27 +14,28 @@ interface Vendor {
 
 const MessageSection: React.FC = () => {
   const { _id } = useAppSelector((state) => state.user.userDetails);
-
-  const {socket} = useSocket() 
-
-
+  const { socket } = useSocket();
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [vendors, setVendors] = useState<Vendor[]>([]);
-
+  
   const handleVendorClick = (vendor: Vendor) => {
     setSelectedVendor(vendor);
   };
-
+  
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  // alert(socket);
+  
   useEffect(() => {
+    
+    // socket.emit("list_vendors")
+    
+
     const fetchAcceptedVendors = async () => {
       try {
-        console.log(socket);
-        
         const acceptedVendors = await fetchVendorsInChat(_id + "");
         setVendors(acceptedVendors);
       } catch (error) {
