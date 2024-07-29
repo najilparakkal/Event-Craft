@@ -17,6 +17,7 @@ interface Message {
   content: Blob | string;
   type: 'text' | 'audio' | 'video' | 'document' | 'image';
   createdAt: string;
+  read: boolean;
 }
 
 interface Chat {
@@ -49,7 +50,7 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-
+  
   useEffect(() => {
     if (divRef.current) {
       divRef.current.scrollTo({ top: divRef.current.scrollHeight });
@@ -76,7 +77,7 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
   useEffect(() => {
     if (roomId) {
       socket.emit('join room', roomId);
-
+      socket.emit('read_message',roomId,_id)
       const receiveMessageHandler = (message: Message) => {
         setMessages((prevMessages) => [...prevMessages, message]);
       };
@@ -93,7 +94,7 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
         socket.off('room messages');
       };
     }
-  }, [roomId, socket]);
+  }, [roomId, socket,messages]);
 
 
   const sendAudio = async () => {
@@ -186,7 +187,6 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
           type: messageType,
           senderModel: 'User',
         };
-        console.log(content, messageToSend, "🍽️🍽️");
         setSelectedFile(null);
         setModalOpen(false);
         socket.emit('send_file', messageToSend)
@@ -203,10 +203,6 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
       }
     }
   };
-
-  console.log(messages, "❌❌❌❌");
-
-
   const handleFileInputClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -296,16 +292,20 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
             const isDocumentMessage = message.type === 'document';
             const isImageMessage = message.type === 'image';
             const messageTime = formatDistanceToNow(parseISO(message?.createdAt), { addSuffix: true });
-
+          
+            const readIndicator = message.read
+              ? '✔✔' 
+              : '✔'; 
+          
             return (
               <div
                 key={index}
                 className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-2`}
               >
-                <div className={`relative p-0.5 rounded-lg max-w-md ${!isAudioMessage && (isCurrentUser ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black')}`}>
+                <div className={`relative p-2 rounded-lg max-w-md ${!isAudioMessage && (isCurrentUser ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black')}`}>
                   {isTextMessage && (
                     <div className="ml-1">
-                      <p>{message.content + ""}</p>
+                      <p>{message.content+""}</p>
                     </div>
                   )}
                   {isAudioMessage && (
@@ -314,49 +314,84 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
                         <source src={message.content + ""} type="audio/webm" />
                         Your browser does not support the audio element.
                       </audio>
+                      <div className="flex justify-end mt-1">
+                        <span className="text-xs text-gray-400 mr-1">
+                          {messageTime}
+                        </span>
+                        {isCurrentUser && (
+                          <span className={`text-xs ${message.read ? 'text-blue-100' : 'text-gray-400'}`}>
+                            {readIndicator}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   )}
                   {isVideoMessage && (
                     <div className="relative small-line-border">
                       <video controls className="rounded-lg w-full max-w-xs">
-                        <source src={message.content + ""} type="video/mp4" />
+                        <source src={message.content+""} type="video/mp4" />
                         Your browser does not support the video element.
                       </video>
-                      <span className="absolute bottom-1 right-1 text-xs text-white bg-black bg-opacity-50 rounded px-1">
-                        {messageTime}
-                      </span>
+                      <div className="absolute bottom-1 right-1 flex items-center text-xs text-white bg-black bg-opacity-50 rounded px-1">
+                        <span>{messageTime}</span>
+                        {isCurrentUser && (
+                          <span className={`ml-1 ${message.read ? 'text-blue-500' : 'text-gray-400'}`}>
+                            {readIndicator}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   )}
                   {isDocumentMessage && (
                     <div className="mt-2">
-                      <a href={message.content + ""} download className="underline text-blue-500">
+                      <a href={message.content+""} download className="underline text-blue-500">
                         Download Document
                       </a>
-                      <span className="block text-xs text-gray-400 mt-1">
-                        {messageTime}
-                      </span>
+                      <div className="flex justify-end mt-1">
+                        <span className="text-xs text-gray-400 mr-1">
+                          {messageTime}
+                        </span>
+                        {isCurrentUser && (
+                          <span className={`text-xs ${message.read ? 'text-blue-500' : 'text-gray-400'}`}>
+                            {readIndicator}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   )}
                   {isImageMessage && (
                     <div className="relative">
-                      <img src={message.content + ""} alt="Image" className="max-w-full h-auto rounded-lg" />
-                      <span className="absolute bottom-1 right-1 text-xs text-white bg-black bg-opacity-50 rounded px-1">
-                        {messageTime}
-                      </span>
+                      <img src={message.content+""} alt="Image" className="max-w-full h-auto rounded-lg" />
+                      <div className="absolute bottom-1 right-1 flex items-center text-xs text-white bg-black bg-opacity-50 rounded px-1">
+                        <span>{messageTime}</span>
+                        {isCurrentUser && (
+                          <span className={`ml-1 ${message.read ? 'text-blue-500' : 'text-gray-400'}`}>
+                            {readIndicator}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   )}
-                  {!isImageMessage && !isVideoMessage && (
-                    <span className="block text-xs text-gray-400 ml-8 mt-1">
-                      {messageTime}
-                    </span>
+                  {!isImageMessage && !isVideoMessage && !isAudioMessage && (
+                    <div className="flex justify-end  relative text-xs text-gray-400">
+                      <span className="mr-1">
+                        {messageTime}
+                      </span>
+                      {isCurrentUser && (
+                        <span className={`${message.read ? 'text-blue-500' : 'text-gray-400'}`}>
+                          {readIndicator}
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
             );
-
-
           })
-        )}
+        )
+        
+        
+        }
       </div>
 
 

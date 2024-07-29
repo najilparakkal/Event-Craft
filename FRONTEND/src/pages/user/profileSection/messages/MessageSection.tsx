@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
 import Messages from './Messages';
 import { useAppSelector } from '../../../../costumeHooks/costum';
-import { fetchVendorsInChat } from '../../../../API/services/user/Services';
 import ProfileHeader from '../../../../compounents/user/ProfileHeader';
 import { useSocket } from '../../../../API/services/outer/SocketProvider';
 
@@ -18,32 +17,29 @@ const MessageSection: React.FC = () => {
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [vendors, setVendors] = useState<Vendor[]>([]);
-  
+
   const handleVendorClick = (vendor: Vendor) => {
     setSelectedVendor(vendor);
   };
-  
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // alert(socket);
-  
   useEffect(() => {
-    
-    // socket.emit("list_vendors")
-    
+    if (socket) {
+      socket.emit("list_vendors", _id);
 
-    const fetchAcceptedVendors = async () => {
-      try {
-        const acceptedVendors = await fetchVendorsInChat(_id + "");
-        setVendors(acceptedVendors);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchAcceptedVendors();
-  }, [_id]);
+      const handleSortedList = (data: Vendor[]) => {
+        setVendors(data);
+      };
+
+      socket.on("sorted_list", handleSortedList);
+      return () => {
+        socket.off("sorted_list", handleSortedList);
+      };
+    }
+  }, [socket, _id,vendors]); 
 
   return (
     <div className="overflow-hidden bg-gray-200">

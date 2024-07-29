@@ -17,6 +17,7 @@ const awsConfig_1 = require("../../../config/awsConfig");
 const booking_1 = require("../../../framworks/database/models/booking");
 const cancelBooking_1 = require("../../../framworks/database/models/cancelBooking");
 const chatModal_1 = __importDefault(require("../../../framworks/database/models/chatModal"));
+const message_1 = __importDefault(require("../../../framworks/database/models/message"));
 const requests_1 = require("../../../framworks/database/models/requests");
 const services_1 = require("../../../framworks/database/models/services");
 const user_1 = require("../../../framworks/database/models/user");
@@ -79,7 +80,7 @@ const listServices = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.listServices = listServices;
 const getVendorProfile = (vendorId, userId) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+    var _a, _b;
     try {
         const vendor = (yield vendor_1.Vendors.findById(vendorId)
             .populate("licence")
@@ -89,9 +90,9 @@ const getVendorProfile = (vendorId, userId) => __awaiter(void 0, void 0, void 0,
             throw new Error("Vendor not found");
         }
         const { vendorName, phoneNum, licence, coverPicture, posts, availableDate, } = vendor;
-        const profilePicture = ((_a = licence[0]) === null || _a === void 0 ? void 0 : _a.profilePicture) || "";
-        const businessName = ((_b = licence[0]) === null || _b === void 0 ? void 0 : _b.businessName) || "";
-        const location = ((_c = licence[0]) === null || _c === void 0 ? void 0 : _c.location) || "";
+        const profilePicture = vendor.profilePicture;
+        const businessName = ((_a = licence[0]) === null || _a === void 0 ? void 0 : _a.businessName) || "";
+        const location = ((_b = licence[0]) === null || _b === void 0 ? void 0 : _b.location) || "";
         const postsDetails = posts.map((post) => ({
             title: post.title,
             images: post.images,
@@ -188,9 +189,20 @@ exports.cancelRequest = cancelRequest;
 const listVendorsInUserChat = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const chats = yield chatModal_1.default.find({ users: userId });
-        const vendorIds = chats.map((chat) => chat.users.find((user) => user.toString() !== userId));
-        const vendors = yield vendor_1.Vendors.find({ _id: { $in: vendorIds } });
-        return vendors;
+        const vendorIds = chats
+            .map((chat) => chat.users.find((user) => user.toString() !== userId))
+            .filter(Boolean);
+        const sortedVendorMessages = yield message_1.default.find({
+            senderModel: "Vendor",
+            sender: { $in: vendorIds }
+        }).sort({ createdAt: -1 });
+        const uniqueVendorIds = [
+            ...new Set(sortedVendorMessages.map((message) => message.sender.toString()))
+        ];
+        const sortedVendors = yield vendor_1.Vendors.find({ _id: { $in: uniqueVendorIds } })
+            .select('_id vendorName profilePicture')
+            .then(vendors => uniqueVendorIds.map(id => vendors.find(vendor => vendor._id.toString() === id)));
+        return sortedVendors;
     }
     catch (error) {
         console.error("Error fetching vendors:", error);

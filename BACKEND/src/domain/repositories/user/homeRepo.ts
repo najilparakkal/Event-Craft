@@ -3,6 +3,7 @@ import { Bookings } from "../../../framworks/database/models/booking";
 import { CancelBookings } from "../../../framworks/database/models/cancelBooking";
 import ChatModel from "../../../framworks/database/models/chatModal";
 import { ILicence } from "../../../framworks/database/models/licence";
+import Message from "../../../framworks/database/models/message";
 import { Request } from "../../../framworks/database/models/requests";
 import { Services } from "../../../framworks/database/models/services";
 import { Users } from "../../../framworks/database/models/user";
@@ -91,7 +92,7 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
       posts,
       availableDate,
     } = vendor;
-    const profilePicture = licence[0]?.profilePicture || "";
+    const profilePicture = vendor.profilePicture
     const businessName = licence[0]?.businessName || "";
     const location = licence[0]?.location || "";
     const postsDetails = posts.map((post: any) => ({
@@ -212,17 +213,32 @@ export const cancelRequest = async (_id: string) => {
 export const listVendorsInUserChat = async (userId: string) => {
   try {
     const chats = await ChatModel.find({ users: userId });
-    const vendorIds = chats.map((chat) =>
-      chat.users.find((user) => user.toString() !== userId)
-    );
 
-    const vendors = await Vendors.find({ _id: { $in: vendorIds } });
-    return vendors;
+    const vendorIds = chats
+      .map((chat) => chat.users.find((user) => user.toString() !== userId))
+      .filter(Boolean);
+
+    const sortedVendorMessages = await Message.find({
+      senderModel: "Vendor",
+      sender: { $in: vendorIds }
+    }).sort({ createdAt: -1 });
+ 
+    const uniqueVendorIds = [
+      ...new Set(sortedVendorMessages.map((message) => message.sender.toString()))
+    ];
+
+    const sortedVendors = await Vendors.find({ _id: { $in: uniqueVendorIds } })
+      .select('_id vendorName profilePicture')
+      .then(vendors => uniqueVendorIds.map(id => vendors.find(vendor => vendor._id.toString() === id)));
+
+                 
+    return sortedVendors;
   } catch (error) {
     console.error("Error fetching vendors:", error);
     throw error;
   }
 };
+         
 
 export const chatId = async (userId: string, vendorId: string) => {
   try {

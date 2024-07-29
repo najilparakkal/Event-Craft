@@ -5,7 +5,7 @@ const MessageSchema = new Schema(
   {
     sender: {
       type: Schema.Types.ObjectId,
-      refPath: "senderModel", 
+      refPath: "senderModel",
       required: true,
     },
     senderModel: {
@@ -16,6 +16,7 @@ const MessageSchema = new Schema(
     content: { type: String, required: true },
     chat: { type: Schema.Types.ObjectId, ref: "ChatModel" },
     type: String,
+    read: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

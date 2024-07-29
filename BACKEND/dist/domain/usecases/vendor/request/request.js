@@ -51,13 +51,12 @@ exports.default = {
         }
     }),
     fetchUsers: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const response = yield requestRepo_1.default.fetchUsers(vendorId);
-            return response;
-        }
-        catch (error) {
-            console.log(error);
-        }
+        // try {
+        //   const response = await requestRepo.fetchUsers(vendorId);
+        //   return response;
+        // } catch (error) {
+        //   console.log(error);
+        // }
     }),
     fetchMessages: (chatId) => __awaiter(void 0, void 0, void 0, function* () {
         try {

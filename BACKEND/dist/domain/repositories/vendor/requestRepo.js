@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.fetchUsers = void 0;
 const awsConfig_1 = require("../../../config/awsConfig");
 const chatModal_1 = __importDefault(require("../../../framworks/database/models/chatModal"));
 const licence_1 = require("../../../framworks/database/models/licence");
@@ -97,18 +98,6 @@ exports.default = {
         }
         catch (error) {
             console.log(error);
-        }
-    }),
-    fetchUsers: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const chats = yield chatModal_1.default.find({ users: vendorId });
-            const userIds = chats.map((chat) => chat.users.find((user) => user.toString() !== vendorId));
-            const users = yield user_1.Users.find({ _id: { $in: userIds } });
-            return users;
-        }
-        catch (error) {
-            console.error("Error fetching users:", error);
-            throw error;
         }
     }),
     fetchMessages: (chatId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -271,3 +260,27 @@ exports.default = {
         }
     }),
 };
+const fetchUsers = (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const chats = yield chatModal_1.default.find({ users: vendorId });
+        const userId = chats
+            .map((chat) => chat.users.find((user) => user.toString() !== vendorId))
+            .filter(Boolean);
+        const sortedVendorMessages = yield message_1.default.find({
+            senderModel: "User",
+            sender: { $in: userId }
+        }).sort({ createdAt: -1 });
+        const uniqueUserId = [
+            ...new Set(sortedVendorMessages.map((message) => message.sender.toString()))
+        ];
+        const sortedUsers = yield user_1.Users.find({ _id: { $in: uniqueUserId } })
+            .select('_id userName profilePicture')
+            .then(users => uniqueUserId.map(id => users.find(user => user._id.toString() === id)));
+        return sortedUsers;
+    }
+    catch (error) {
+        console.error("Error fetching users:", error);
+        throw error;
+    }
+});
+exports.fetchUsers = fetchUsers;

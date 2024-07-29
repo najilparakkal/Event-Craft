@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.fetchVendors = void 0;
 const homeRepo_1 = require("../../../repositories/user/homeRepo");
 exports.default = {
     listVendors: (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -68,15 +69,6 @@ exports.default = {
     cancelRequest: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield (0, homeRepo_1.cancelRequest)(data.chatId + "");
-            return response;
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }),
-    fetchVendors: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const response = yield (0, homeRepo_1.listVendorsInUserChat)(data);
             return response;
         }
         catch (error) {
@@ -161,3 +153,13 @@ exports.default = {
         }
     })
 };
+const fetchVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const response = yield (0, homeRepo_1.listVendorsInUserChat)(data);
+        return response;
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.fetchVendors = fetchVendors;

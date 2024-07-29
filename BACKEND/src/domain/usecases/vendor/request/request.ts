@@ -41,13 +41,13 @@ export default{
     }
   },
   fetchUsers:async(vendorId:string)=>{
-    try {
-      const response = await requestRepo.fetchUsers(vendorId);
-      return response;
-    } catch (error) {
-      console.log(error);
+    // try {
+    //   const response = await requestRepo.fetchUsers(vendorId);
+    //   return response;
+    // } catch (error) {
+    //   console.log(error);
       
-    }
+    // }
   },
   fetchMessages:async(chatId:string)=>{
     try {

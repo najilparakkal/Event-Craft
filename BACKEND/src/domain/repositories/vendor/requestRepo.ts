@@ -115,21 +115,6 @@ export default {
     }
   },
 
-  fetchUsers: async (vendorId: string) => {
-    try {
-      const chats = await ChatModel.find({ users: vendorId });
-
-      const userIds = chats.map((chat) =>
-        chat.users.find((user) => user.toString() !== vendorId)
-      );
-
-      const users = await Users.find({ _id: { $in: userIds } });
-      return users;
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      throw error;
-    }
-  },
   fetchMessages: async (chatId: string) => {
     try {
       const messages = await Message.find({ chat: chatId }).sort({
@@ -304,4 +289,31 @@ export default {
       console.log(error);
     }
   },
+};
+
+export const fetchUsers = async (vendorId: string) => {
+  try {
+    const chats = await ChatModel.find({ users: vendorId });
+    const userId = chats
+    .map((chat) => chat.users.find((user) => user.toString() !== vendorId))
+    .filter(Boolean);
+    const sortedVendorMessages = await Message.find({
+      senderModel: "User",
+      sender: { $in: userId }
+    }).sort({ createdAt: -1 });
+
+    const uniqueUserId = [
+      ...new Set(sortedVendorMessages.map((message) => message.sender.toString()))
+    ];
+
+    const sortedUsers = await Users.find({ _id: { $in: uniqueUserId } })
+    .select('_id userName profilePicture')
+    .then(users => uniqueUserId.map(id => users.find(user => user._id.toString() === id)));
+
+
+    return sortedUsers;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
 };

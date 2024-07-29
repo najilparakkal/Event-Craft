@@ -16,6 +16,8 @@ const message_1 = __importDefault(require("../framworks/database/models/message"
 const chatModal_1 = __importDefault(require("../framworks/database/models/chatModal"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const awsConfig_1 = require("../config/awsConfig");
+const homeRepo_1 = require("../domain/repositories/user/homeRepo");
+const requestRepo_1 = require("../domain/repositories/vendor/requestRepo");
 const socketHandler = (io) => {
     io.on("connection", (socket) => {
         console.log(`Socket connected: ${socket.id}`);
@@ -87,43 +89,32 @@ const socketHandler = (io) => {
                 console.error("Error saving message:", error);
             }
         }));
-        socket.on("list_vendors", () => __awaiter(void 0, void 0, void 0, function* () {
-            console.log("x🍽️🍽️🍽️🍽️🍽️");
-            // if (!mongoose.Types.ObjectId.isValid(chatId)) {
-            //   console.error(`Invalid chat ID: ${chatId}`);
-            //   return;
-            // }
-            // try {
-            //   const chat = await ChatModel.findById(chatId)
-            //     .populate("vendors")
-            //     .populate({
-            //       path: "messages",
-            //       options: { sort: { createdAt: -1 } },
-            //     });
-            //   if (!chat) {
-            //     console.error(`Chat not found with ID: ${chatId}`);
-            //     return;
-            //   }
-            //   const vendors = chat.vendors;
-            //   const lastMessagedVendors = vendors.sort((a, b) => {
-            //     const lastMessageA = chat.messages.find(
-            //       (message) => message.sender.toString() === a._id.toString()
-            //     );
-            //     const lastMessageB = chat.messages.find(
-            //       (message) => message.sender.toString() === b._id.toString()
-            //     );
-            //     if (lastMessageA && lastMessageB) {
-            //       return (
-            //         new Date(lastMessageB.createdAt).getTime() -
-            //         new Date(lastMessageA.createdAt).getTime()
-            //       );
-            //     }
-            //     return 0;
-            //   });
-            socket.emit("vendors_list", "🎶🎶🎶");
-            // } catch (error) {
-            //   console.error("Error listing vendors:", error);
-            // }
+        socket.on("read_message", (chatId, senderId) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                yield message_1.default.updateMany({ chat: chatId, sender: { $ne: senderId }, read: false }, { $set: { read: true } });
+                const message = yield message_1.default.find({ chat: chatId });
+            }
+            catch (error) {
+                console.error("Error updating messages:", error);
+            }
+        }));
+        socket.on("list_vendors", (userId) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                const venders = yield (0, homeRepo_1.listVendorsInUserChat)(userId);
+                socket.emit("sorted_list", venders);
+            }
+            catch (error) {
+                console.error("Error fetching vendors: ", error);
+            }
+        }));
+        socket.on("list_users", (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                const users = yield (0, requestRepo_1.fetchUsers)(vendorId);
+                socket.emit("sorted_user_list", users);
+            }
+            catch (error) {
+                console.log(error);
+            }
         }));
     });
 };

@@ -83,14 +83,7 @@ export default {
       console.log(error);
     }
   },
-  fetchVendors: async (data: string) => {
-    try {
-      const response = await listVendorsInUserChat(data);
-      return response;
-    } catch (error) {
-      console.log(error);
-    }
-  },
+
   getChatId: async (data: any) => {
     try {
       const response = await chatId(data.userId, data.vendorId);
@@ -166,3 +159,12 @@ export default {
     }
   }
 };
+
+export const fetchVendors= async (data: string) => {
+  try {
+    const response = await listVendorsInUserChat(data);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}

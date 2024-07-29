@@ -19,6 +19,7 @@ const MessageSchema = new Schema({
     content: { type: String, required: true },
     chat: { type: Schema.Types.ObjectId, ref: "ChatModel" },
     type: String,
+    read: { type: Boolean, default: false },
 }, { timestamps: true });
 const Message = mongoose_1.default.model("Message", MessageSchema);
 exports.default = Message;

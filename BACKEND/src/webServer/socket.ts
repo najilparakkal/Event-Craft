@@ -4,6 +4,10 @@ import ChatModel from "../framworks/database/models/chatModal";
 import mongoose from "mongoose";
 import formidable from "formidable";
 import { uploadBufferToS3, uploadImage } from "../config/awsConfig";
+import { Vendors } from "../framworks/database/models/vendor";
+import { fetchVendors } from "../domain/usecases/user/home/home";
+import { listVendorsInUserChat } from "../domain/repositories/user/homeRepo";
+import { fetchUsers } from "../domain/repositories/vendor/requestRepo";
 
 const socketHandler = (io: Server) => {
   io.on("connection", (socket: Socket) => {
@@ -86,49 +90,33 @@ const socketHandler = (io: Server) => {
       }
     });
 
-    socket.on("list_vendors", async () => {
-      console.log("x🍽️🍽️🍽️🍽️🍽️");
-      
-      // if (!mongoose.Types.ObjectId.isValid(chatId)) {
-      //   console.error(`Invalid chat ID: ${chatId}`);
-      //   return;
-      // }
+    socket.on("read_message", async (chatId, senderId) => {
+      try {
+        await Message.updateMany(
+          { chat: chatId, sender: { $ne: senderId }, read: false },
+          { $set: { read: true } }
+        );
+        const message = await Message.find({ chat: chatId });
+      } catch (error) {
+        console.error("Error updating messages:", error);
+      }
+    });
 
-      // try {
-      //   const chat = await ChatModel.findById(chatId)
-      //     .populate("vendors")
-      //     .populate({
-      //       path: "messages",
-      //       options: { sort: { createdAt: -1 } },
-      //     });
-
-      //   if (!chat) {
-      //     console.error(`Chat not found with ID: ${chatId}`);
-      //     return;
-      //   }
-
-      //   const vendors = chat.vendors;
-      //   const lastMessagedVendors = vendors.sort((a, b) => {
-      //     const lastMessageA = chat.messages.find(
-      //       (message) => message.sender.toString() === a._id.toString()
-      //     );
-      //     const lastMessageB = chat.messages.find(
-      //       (message) => message.sender.toString() === b._id.toString()
-      //     );
-
-      //     if (lastMessageA && lastMessageB) {
-      //       return (
-      //         new Date(lastMessageB.createdAt).getTime() -
-      //         new Date(lastMessageA.createdAt).getTime()
-      //       );
-      //     }
-      //     return 0;
-      //   });
-
-        socket.emit("vendors_list", "🎶🎶🎶");
-      // } catch (error) {
-      //   console.error("Error listing vendors:", error);
-      // }
+    socket.on("list_vendors", async (userId) => {
+      try {
+        const venders = await listVendorsInUserChat(userId);
+        socket.emit("sorted_list", venders);
+      } catch (error) {
+        console.error("Error fetching vendors: ", error);
+      }
+    });
+    socket.on("list_users", async (vendorId) => {
+      try {
+        const users = await fetchUsers(vendorId);
+        socket.emit("sorted_user_list", users);
+      } catch (error) {
+        console.log(error);
+      }
     });
   });
 };
