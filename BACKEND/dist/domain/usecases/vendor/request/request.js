@@ -162,5 +162,22 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    updateBooking: (bookingId, status) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield requestRepo_1.default.updateBooking(bookingId, status);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    billing: (datas, bookingId, totalAmount) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield requestRepo_1.default.billing(datas, bookingId, totalAmount);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

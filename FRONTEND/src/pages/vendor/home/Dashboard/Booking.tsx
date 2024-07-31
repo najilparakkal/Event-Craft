@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '../../../../costumeHooks/costum';
-import { userBookings, cancelBooking, acceptBooking } from '../../../../API/services/vendor/services';
+import { userBookings, cancelBooking, acceptBooking, updateBooking } from '../../../../API/services/vendor/services';
 import { useNavigate } from 'react-router-dom';
+import Billing from './Billing';
 
 interface Booking {
     _id: string;
@@ -20,9 +21,10 @@ interface Booking {
     vendorId: string;
     vendorName: string;
     accepted: boolean;
+    status: string;
 }
 
-const Section: React.FC = () => {
+const Booking: React.FC = () => {
     const { _id } = useAppSelector((state) => state.vendor.vendorDetails);
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [acceptedBookings, setAcceptedBookings] = useState<Booking[]>([]);
@@ -30,7 +32,9 @@ const Section: React.FC = () => {
     const [showAcceptModal, setShowAcceptModal] = useState(false);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-    const navigate = useNavigate()
+    const [showSubmitBillModal, setShowSubmitBillModal] = useState(false);
+    const [selectedBillBooking, setSelectedBillBooking] = useState(null);
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchBookings = async () => {
             const datas = await userBookings(_id + "");
@@ -46,7 +50,6 @@ const Section: React.FC = () => {
             setAcceptedBookings(accepted);
             setBookings(pending);
         };
-
         fetchBookings();
     }, [_id]);
 
@@ -99,6 +102,33 @@ const Section: React.FC = () => {
         }
     };
 
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedOption, setSelectedOption] = useState('Status');
+
+    const toggleMenu = () => setIsOpen(!isOpen);
+
+    const handleSelectOption = async (option: string, bookingId: string) => {
+        const updatedBooking = await updateBooking(bookingId, option);
+        setSelectedOption(option);
+        setIsOpen(false);
+
+        if (option === 'Completed' || option === 'Cancelled') {
+            setBookings((prevBookings) => prevBookings.filter(booking => booking._id !== bookingId));
+            setAcceptedBookings((prevAccepted: any) => [...prevAccepted, updatedBooking]);
+        } else if (option === 'Pending') {
+            setAcceptedBookings((prevAccepted) => prevAccepted.filter(booking => booking._id !== bookingId));
+            setBookings((prevBookings: any) => [...prevBookings, updatedBooking]);
+        }
+    };
+    const handleOpenBilling = () => {
+        setShowSubmitBillModal(true);
+    };
+
+    const handleCloseBilling = () => {
+        setShowSubmitBillModal(false);
+    };
+
+
     return (
         <div>
             {acceptedBookings.length > 0 && (
@@ -113,6 +143,7 @@ const Section: React.FC = () => {
                                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Client Name</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Action</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">More Info</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Submit Bill</th> {/* New Field */}
                                 </tr>
                             </thead>
                             <tbody className="bg-gray-600 divide-y divide-gray-500">
@@ -122,12 +153,60 @@ const Section: React.FC = () => {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{new Date(booking.eventDate).toLocaleDateString()}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{booking.clientName}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            <button className="text-green-500 hover:text-red-300">Pending</button>
+                                            {booking.status === 'Pending' ? (
+                                                <div className="relative inline-block text-left">
+                                                    <button
+                                                        onClick={toggleMenu}
+                                                        id="dropdownDefaultButton"
+                                                        className="text-white  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
+                                                        type="button"
+                                                    >
+                                                        {booking.status}
+                                                        <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+                                                        </svg>
+                                                    </button>
+
+                                                    {isOpen && (
+                                                        <div id="dropdown" className="absolute bottom-full right-0 mb-2 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow flex">
+                                                            <ul className="flex space-x-2 py-2 text-sm text-gray-700  dark:text-gray-200">
+                                                                <li>
+                                                                    <a
+                                                                        href="#"
+                                                                        onClick={() => handleSelectOption('Completed', booking._id)}
+                                                                        className="block px-4 py-2   text-green-600 "
+                                                                    >
+                                                                        Completed
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a
+                                                                        href="#"
+                                                                        onClick={() => handleSelectOption('Cancelled', booking._id)}
+                                                                        className="block px-4 py-2 text-red-700   "
+                                                                    >
+                                                                        Cancelled
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <span>{booking.status}</span>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            <button className="text-blue-500 hover:text-blue-300" onClick={() => handleDetailsClick(booking)}>More..</button>
+                                            <button className="text-blue-500 hover:text-blue-700" onClick={() => handleDetailsClick(booking)}>View</button>
                                         </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                            <button className="text-green-500 hover:text-green-700" onClick={handleOpenBilling}>Submit Bill</button>
+                                        </td>
+                                        {showSubmitBillModal && (
+                                            <Billing isOpen={showSubmitBillModal} bookingId={booking._id} onClose={handleCloseBilling} />
+                                        )}
                                     </tr>
+
                                 ))}
                             </tbody>
                         </table>
@@ -257,4 +336,4 @@ const Section: React.FC = () => {
     );
 };
 
-export default Section;
+export default Booking;

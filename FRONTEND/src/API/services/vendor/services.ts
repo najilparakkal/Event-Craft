@@ -190,17 +190,48 @@ export const updateVendor = async (vendorId: string, datas: any) => {
 
 export const fetchDates = async (vendorId: string) => {
   try {
-    const response = await authAxiosInstance.get(`/vendor/absentDates/${vendorId}`);
+    const response = await authAxiosInstance.get(
+      `/vendor/absentDates/${vendorId}`
+    );
     return response.data;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const updateVendorDate = async(dates:any,vendorId:string)=>{
-  try{
-    await authAxiosInstance.patch(`/vendor/updateDates/${vendorId}`,{dates})
-  }catch(err){
-    console.log(err)
+export const updateVendorDate = async (dates: any, vendorId: string) => {
+  try {
+    await authAxiosInstance.patch(`/vendor/updateDates/${vendorId}`, { dates });
+  } catch (err) {
+    console.log(err);
   }
-}
+};
+
+export const updateBooking = async (bookingId: string, status: string) => {
+  try {
+    const response = await authAxiosInstance.put(
+      `/vendor/updateBooking/${bookingId}`,
+      { status }
+    );
+    return response.status === 200;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const billRequest = async (
+  datas: { item: string; amount: string }[],
+  bookingId: string,
+  totalAmount: number
+) => {
+  try {
+    const response = await authAxiosInstance.post("/vendor/billing", {
+      datas,
+      bookingId,
+      totalAmount,
+    });
+    return response.status === 201;
+  } catch (error) {
+    console.log(error);
+  }
+};

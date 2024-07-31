@@ -10,6 +10,7 @@ import io from "socket.io-client";
 
 import {
   IAcceptRequest,
+  IBookingStatus,
   IReq,
   IReqVendor,
   IRequestWithUser,
@@ -17,6 +18,8 @@ import {
   MessageData,
 } from "../../entities/vendor/vendor";
 import { Bookings } from "../../../framworks/database/models/booking";
+import mongoose from "mongoose";
+import BillModel from "../../../framworks/database/models/billing";
 
 export default {
   addRequest: async (datas: any, images: any) => {
@@ -187,15 +190,11 @@ export default {
         throw new Error("Booking not found");
       }
 
-      const user = await Users.findByIdAndUpdate(
+      await Users.findByIdAndUpdate(
         booking.userId,
         { $inc: { wallet: booking.advance } },
         { new: true }
       );
-
-      if (!user) {
-        throw new Error("User not found");
-      }
 
       await Bookings.findByIdAndDelete(bookingId);
 
@@ -206,6 +205,7 @@ export default {
   },
   acceptBooking: async (bookingId: string) => {
     try {
+      // Find and update the booking to accepted
       const updatedBooking = await Bookings.findByIdAndUpdate(
         bookingId,
         { $set: { accepted: true } },
@@ -216,6 +216,19 @@ export default {
         throw new Error("Booking not found");
       }
 
+      const updateVendor = await Vendors.findByIdAndUpdate(
+        updatedBooking.vendorId,
+        {
+          $inc: {
+            wallet: updatedBooking.advance,
+          },
+        },
+        { new: true }
+      );
+
+      if (!updateVendor) {
+        throw new Error("Vendor not found");
+      }
       return updatedBooking;
     } catch (error) {
       console.error("Error accepting booking:", error);
@@ -289,27 +302,73 @@ export default {
       console.log(error);
     }
   },
+  updateBooking: async (bookingId: string, status: string) => {
+    try {
+      await Bookings.findByIdAndUpdate(bookingId, {
+        $set: {
+          status: status,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  billing: async (
+    datas: { item: string; amount: string }[],
+    bookingId: string,
+    totalAmount: number
+  ) => {
+    try {
+      const booking = await Bookings.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(bookingId),
+            status: { $in: ["Completed", "Cancelled"] },
+          },
+        },
+      ]);
+      if (!booking) {
+        return { success: false, message: "Booking not found" };
+      }
+
+      await BillModel.create({
+        totalAmount,
+        bookingId,
+        items: datas,
+        userId: booking[0].userId,
+        vendorId: booking[0].vendorId,
+      });
+      return { success: true };
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
 export const fetchUsers = async (vendorId: string) => {
   try {
     const chats = await ChatModel.find({ users: vendorId });
     const userId = chats
-    .map((chat) => chat.users.find((user) => user.toString() !== vendorId))
-    .filter(Boolean);
+      .map((chat) => chat.users.find((user) => user.toString() !== vendorId))
+      .filter(Boolean);
     const sortedVendorMessages = await Message.find({
       senderModel: "User",
-      sender: { $in: userId }
+      sender: { $in: userId },
     }).sort({ createdAt: -1 });
 
     const uniqueUserId = [
-      ...new Set(sortedVendorMessages.map((message) => message.sender.toString()))
+      ...new Set(
+        sortedVendorMessages.map((message) => message.sender.toString())
+      ),
     ];
 
     const sortedUsers = await Users.find({ _id: { $in: uniqueUserId } })
-    .select('_id userName profilePicture')
-    .then(users => uniqueUserId.map(id => users.find(user => user._id.toString() === id)));
-
+      .select("_id userName profilePicture")
+      .then((users) =>
+        uniqueUserId.map((id) =>
+          users.find((user: any) => user._id.toString() === id)
+        )
+      );
 
     return sortedUsers;
   } catch (error) {

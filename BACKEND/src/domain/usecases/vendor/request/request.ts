@@ -155,5 +155,22 @@ export default{
       console.log(error);
       
     }
+  },
+  updateBooking:async(bookingId:string,status:string)=>{
+    try {
+      const response = await requestRepo.updateBooking(bookingId,status)
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  billing:async(datas: { item: string; amount: string }[], bookingId: string, totalAmount: number)=>{
+    try {
+      const response = await requestRepo.billing(datas,bookingId,totalAmount);
+      return response
+    } catch (error) {
+      console.log(error);
+      
+    }
   }
 }

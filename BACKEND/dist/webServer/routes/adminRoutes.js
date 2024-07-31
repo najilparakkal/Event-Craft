@@ -21,4 +21,5 @@ adminRouter.post("/api/admin/acceptVendor", dashBoardController_1.default.accept
 adminRouter.get('/api/admin/dashboard', dashBoardController_1.default.getDashboard);
 adminRouter.get('/api/admin/cancelBookings', dashBoardController_1.default.getBookings);
 adminRouter.patch('/api/admin/refund/:bookingId', dashBoardController_1.default.refundBooking);
+adminRouter.get('/api/admin/bills', dashBoardController_1.default.bills);
 exports.default = adminRouter;

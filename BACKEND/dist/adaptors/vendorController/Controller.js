@@ -183,5 +183,29 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    updateBooking: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield request_1.default.updateBooking(req.params.bookingId, req.body);
+            res.status(200);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    billing: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { datas, bookingId, totalAmount } = req.body;
+            const response = yield request_1.default.billing(datas, bookingId, totalAmount);
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                res.status(201).json({ status: 200, message: "Billed successfully" });
+            }
+            else {
+                res.status(203).json({ staus: 203, message: "Failed to process" });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

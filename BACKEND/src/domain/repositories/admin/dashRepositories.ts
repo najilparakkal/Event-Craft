@@ -10,6 +10,7 @@ import {
 } from "../../entities/admin/admin";
 import { Bookings } from "../../../framworks/database/models/booking";
 import { CancelBookings } from "../../../framworks/database/models/cancelBooking";
+import BillModel from "../../../framworks/database/models/billing";
 export default {
   listUsers: async (data: listUsers) => {
     try {
@@ -261,7 +262,7 @@ export default {
         throw new Error("Booking not found");
       }
       const user = await Users.findById(booking?.userId);
-      
+
       await Users.findByIdAndUpdate(
         booking.userId,
         { $inc: { wallet: amount } },
@@ -269,8 +270,15 @@ export default {
       ).exec();
       booking.status = "cancelled";
       await booking.save();
-      await CancelBookings.deleteOne({  bookingId });
+      await CancelBookings.deleteOne({ bookingId });
       return { success: true };
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  bills: async () => {
+    try {
+      return await BillModel.find();
     } catch (error) {
       console.log(error);
     }

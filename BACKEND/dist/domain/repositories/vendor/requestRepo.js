@@ -21,6 +21,8 @@ const requests_1 = require("../../../framworks/database/models/requests");
 const user_1 = require("../../../framworks/database/models/user");
 const vendor_1 = require("../../../framworks/database/models/vendor");
 const booking_1 = require("../../../framworks/database/models/booking");
+const mongoose_1 = __importDefault(require("mongoose"));
+const billing_1 = __importDefault(require("../../../framworks/database/models/billing"));
 exports.default = {
     addRequest: (datas, images) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -172,10 +174,7 @@ exports.default = {
             if (!booking) {
                 throw new Error("Booking not found");
             }
-            const user = yield user_1.Users.findByIdAndUpdate(booking.userId, { $inc: { wallet: booking.advance } }, { new: true });
-            if (!user) {
-                throw new Error("User not found");
-            }
+            yield user_1.Users.findByIdAndUpdate(booking.userId, { $inc: { wallet: booking.advance } }, { new: true });
             yield booking_1.Bookings.findByIdAndDelete(bookingId);
             return { success: true };
         }
@@ -185,9 +184,18 @@ exports.default = {
     }),
     acceptBooking: (bookingId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
+            // Find and update the booking to accepted
             const updatedBooking = yield booking_1.Bookings.findByIdAndUpdate(bookingId, { $set: { accepted: true } }, { new: true });
             if (!updatedBooking) {
                 throw new Error("Booking not found");
+            }
+            const updateVendor = yield vendor_1.Vendors.findByIdAndUpdate(updatedBooking.vendorId, {
+                $inc: {
+                    wallet: updatedBooking.advance,
+                },
+            }, { new: true });
+            if (!updateVendor) {
+                throw new Error("Vendor not found");
             }
             return updatedBooking;
         }
@@ -259,6 +267,44 @@ exports.default = {
             console.log(error);
         }
     }),
+    updateBooking: (bookingId, status) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield booking_1.Bookings.findByIdAndUpdate(bookingId, {
+                $set: {
+                    status: status,
+                },
+            });
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    billing: (datas, bookingId, totalAmount) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const booking = yield booking_1.Bookings.aggregate([
+                {
+                    $match: {
+                        _id: new mongoose_1.default.Types.ObjectId(bookingId),
+                        status: { $in: ["Completed", "Cancelled"] },
+                    },
+                },
+            ]);
+            if (!booking) {
+                return { success: false, message: "Booking not found" };
+            }
+            yield billing_1.default.create({
+                totalAmount,
+                bookingId,
+                items: datas,
+                userId: booking[0].userId,
+                vendorId: booking[0].vendorId,
+            });
+            return { success: true };
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
 };
 const fetchUsers = (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -268,14 +314,14 @@ const fetchUsers = (vendorId) => __awaiter(void 0, void 0, void 0, function* () 
             .filter(Boolean);
         const sortedVendorMessages = yield message_1.default.find({
             senderModel: "User",
-            sender: { $in: userId }
+            sender: { $in: userId },
         }).sort({ createdAt: -1 });
         const uniqueUserId = [
-            ...new Set(sortedVendorMessages.map((message) => message.sender.toString()))
+            ...new Set(sortedVendorMessages.map((message) => message.sender.toString())),
         ];
         const sortedUsers = yield user_1.Users.find({ _id: { $in: uniqueUserId } })
-            .select('_id userName profilePicture')
-            .then(users => uniqueUserId.map(id => users.find(user => user._id.toString() === id)));
+            .select("_id userName profilePicture")
+            .then((users) => uniqueUserId.map((id) => users.find((user) => user._id.toString() === id)));
         return sortedUsers;
     }
     catch (error) {

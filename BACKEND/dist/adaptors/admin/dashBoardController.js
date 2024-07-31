@@ -166,5 +166,14 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    bills: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield dashboard_1.default.bills();
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

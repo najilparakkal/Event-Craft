@@ -172,5 +172,28 @@ export default {
       console.log(error);
       
     }
+  },
+  updateBooking:async(req:Request, res:Response)=>{
+    try {
+       await requesIterator.updateBooking(req.params.bookingId,req.body)
+      res.status(200)
+    } catch (error) {
+      console.log(error);
+      
+    } 
+  },
+  billing:async(req:Request, res:Response)=>{
+    try {
+      const {datas,bookingId,totalAmount} = req.body
+        const response = await requesIterator.billing(datas,bookingId,totalAmount)      
+        if(response?.success){
+          res.status(201).json({status:200,message:"Billed successfully"})
+        }else{
+          res.status(203).json({staus:203,message:"Failed to process"})
+        }
+    } catch (error) {
+      console.log(error);
+       
+    }
   }
 };

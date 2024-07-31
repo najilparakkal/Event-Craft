@@ -33,4 +33,6 @@ vendorRouter.get("/api/vendor/profile/:vendorId", VendorMiddleware_1.default, Co
 vendorRouter.put("/api/vendor/updateProfile/:vendorId", VendorMiddleware_1.default, Controller_1.default.updateProfile);
 vendorRouter.get('/api/vendor/absentDates/:vendorId', VendorMiddleware_1.default, Controller_1.default.getDates);
 vendorRouter.patch('/api/vendor/updateDates/:vendorId', VendorMiddleware_1.default, Controller_1.default.updateDates);
+vendorRouter.put('/api/vendor/updateBooking/:bookingId', VendorMiddleware_1.default, Controller_1.default.updateBooking);
+vendorRouter.post('/api/vendor/billing', VendorMiddleware_1.default, Controller_1.default.billing);
 exports.default = vendorRouter;

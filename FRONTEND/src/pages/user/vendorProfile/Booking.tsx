@@ -77,9 +77,9 @@ const Booking: React.FC<BookingProps> = ({ vendorId }) => {
             key: import.meta.env.VITE_APP_REZORPAY_SECRET_KEY,
             amount: ((amount*10)*10),
             currency: 'INR',
-            name: 'AV Streams',
+            name: 'EVENT CRAFT',
             description: 'Test Payment',
-            image: 'https://s3.ap-south-1.amazonaws.com/assets.ynos.in/startup-logos/YNOS427860.jpg',
+            image: '/logo-no-background.png',
             notes: {
                 address: 'Razorpay Corporate Office',
             },

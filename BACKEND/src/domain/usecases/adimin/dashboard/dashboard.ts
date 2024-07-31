@@ -116,5 +116,14 @@ export default {
       console.log(error);
       
     }
+  },
+  bills:async()=>{
+    try {
+      return await dashRepositories.bills()
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
   }
 };

@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from '../../../../compounents/vendor/Navbar'
-import Section from './Section'
+import Section from '../Dashboard/Booking'
 
 const Bookings:React.FC = () => {
   return (

@@ -187,3 +187,7 @@ export interface MessageData {
   userId: string;
   content: string;
 }
+
+export interface IBookingStatus {
+  status: string;
+}

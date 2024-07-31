@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const awsConfig_1 = require("../../../config/awsConfig");
 const services_1 = require("../../../framworks/database/models/services");
@@ -16,6 +19,7 @@ const user_1 = require("../../../framworks/database/models/user");
 const vendor_1 = require("../../../framworks/database/models/vendor");
 const booking_1 = require("../../../framworks/database/models/booking");
 const cancelBooking_1 = require("../../../framworks/database/models/cancelBooking");
+const billing_1 = __importDefault(require("../../../framworks/database/models/billing"));
 exports.default = {
     listUsers: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -257,6 +261,14 @@ exports.default = {
             yield booking.save();
             yield cancelBooking_1.CancelBookings.deleteOne({ bookingId });
             return { success: true };
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    bills: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield billing_1.default.find();
         }
         catch (error) {
             console.log(error);

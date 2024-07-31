@@ -135,3 +135,13 @@ export const refundUser = async (amount: number, bookingId: string) => {
     console.log(error);
   }
 };
+
+
+export const bills = async()=>{
+  try {
+    const response = await authAxiosInstance.get('admin/bills');
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+}

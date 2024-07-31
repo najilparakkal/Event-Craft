@@ -59,12 +59,16 @@ const vendorSchema = new mongoose_1.Schema({
         },
     ],
     refreshToken: {
-        type: String
+        type: String,
+    },
+    wallet: {
+        type: Number,
+        default: 0,
     },
     availableDate: [
         {
             type: String,
-        }
+        },
     ],
     coverPicture: {
         type: String,

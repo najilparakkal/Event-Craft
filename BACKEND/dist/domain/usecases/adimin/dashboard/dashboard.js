@@ -128,5 +128,13 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    bills: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield dashRepositories_1.default.bills();
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

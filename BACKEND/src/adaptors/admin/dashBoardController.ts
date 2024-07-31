@@ -147,5 +147,14 @@ export default {
       console.log(error);
       
     }
+  },
+  bills:async(req:Request, res:Response)=>{
+    try {
+      const response = await dashboard.bills()
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error);
+      
+    }
   }
 };

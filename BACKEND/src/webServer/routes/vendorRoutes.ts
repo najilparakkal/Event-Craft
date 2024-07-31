@@ -30,5 +30,6 @@ vendorRouter.get("/api/vendor/profile/:vendorId",vendorAuth,Controller.getProfil
 vendorRouter.put("/api/vendor/updateProfile/:vendorId",vendorAuth,Controller.updateProfile)
 vendorRouter.get('/api/vendor/absentDates/:vendorId',vendorAuth,Controller.getDates)
 vendorRouter.patch('/api/vendor/updateDates/:vendorId',vendorAuth,Controller.updateDates)
-
+vendorRouter.put('/api/vendor/updateBooking/:bookingId',vendorAuth,Controller.updateBooking) 
+vendorRouter.post('/api/vendor/billing',vendorAuth,Controller.billing)   
 export default vendorRouter
