@@ -14,10 +14,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>
   <BrowserRouter>
     <Provider store={store}>
+
       <SocketProvider>
         <ToastContainer />
-        <App />
+          <App />
       </SocketProvider>
+
     </Provider>
   </BrowserRouter>
 

@@ -29,5 +29,9 @@ userRouter.post("/api/user/cancelBooking",userAuth,Controller.cancelBooking)
 userRouter.get('/api/user/profile/:userId',userAuth,Controller.getProfile)
 userRouter.put('/api/user/updateProfile/:userId',userAuth,Controller.updateProfile)
 userRouter.get('/api/user/vendorDates/:vendorId',userAuth,Controller.getDates)
-  
+userRouter.get('/api/user/posts/:userId',userAuth,Controller.getPosts)
+userRouter.put('/api/user/updateLike/:userId/:postId',userAuth,Controller.updateLike)
+userRouter.post('/api/user/comments',userAuth,Controller.getComments)
+userRouter.post('/api/user/newComment/:postId/:userId',userAuth,Controller.newComment)
+userRouter.post('/api/user/commentReply/:commentId',userAuth,Controller.replyComment)
 export default userRouter                   

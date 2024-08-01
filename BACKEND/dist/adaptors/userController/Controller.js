@@ -148,7 +148,6 @@ exports.default = {
     }),
     updateProfile: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            console.log("🍽️🍽️🍽️");
             const { files, fields } = yield (0, formidable_1.multipartFormSubmission)(req);
             const response = yield home_1.default.updateProfile(req.params.userId, fields, files);
             res.status(200).json(response);
@@ -166,4 +165,50 @@ exports.default = {
             console.log(error);
         }
     }),
+    getPosts: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.getPosts(req.params.userId);
+            console.log(response);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    updateLike: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield home_1.default.updteLike(req.params.userId, req.params.postId);
+            res.status(200);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    getComments: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.getComments(req.body.postId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    newComment: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield home_1.default.newComment(req.params.userId, req.params.postId, req.body.newComment);
+            res.status(200).json({ message: "comment added successfully" });
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    replyComment: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield home_1.default.newReply(req.params.commentId, req.body.reply);
+            res.status(200).json({ message: "reply added successfully" });
+        }
+        catch (error) {
+            console.log(error);
+        }
+    })
 };

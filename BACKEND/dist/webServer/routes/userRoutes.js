@@ -33,4 +33,9 @@ userRouter.post("/api/user/cancelBooking", UserMiddleware_1.default, Controller_
 userRouter.get('/api/user/profile/:userId', UserMiddleware_1.default, Controller_1.default.getProfile);
 userRouter.put('/api/user/updateProfile/:userId', UserMiddleware_1.default, Controller_1.default.updateProfile);
 userRouter.get('/api/user/vendorDates/:vendorId', UserMiddleware_1.default, Controller_1.default.getDates);
+userRouter.get('/api/user/posts/:userId', UserMiddleware_1.default, Controller_1.default.getPosts);
+userRouter.put('/api/user/updateLike/:userId/:postId', UserMiddleware_1.default, Controller_1.default.updateLike);
+userRouter.post('/api/user/comments', UserMiddleware_1.default, Controller_1.default.getComments);
+userRouter.post('/api/user/newComment/:postId/:userId', UserMiddleware_1.default, Controller_1.default.newComment);
+userRouter.post('/api/user/commentReply/:commentId', UserMiddleware_1.default, Controller_1.default.replyComment);
 exports.default = userRouter;

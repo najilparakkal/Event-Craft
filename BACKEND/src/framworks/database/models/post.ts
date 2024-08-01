@@ -7,6 +7,7 @@ export interface IPost extends Document {
   vendorId: string;
   is_blocked: boolean;
   category: string;
+  likes:string[]
   description: string;
 }
 const postSchema = new Schema<IPost>(
@@ -23,6 +24,10 @@ const postSchema = new Schema<IPost>(
     is_blocked: {
       type: Boolean,
       default: false,
+    },
+    likes: {
+      type: [String],
+      default: [],
     },
     category: {
       type: String,

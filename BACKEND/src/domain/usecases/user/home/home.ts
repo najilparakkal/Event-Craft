@@ -18,7 +18,12 @@ import {
   listAll,
   getProfile,
   updateUser,
-  getDatesOfVendor
+  getDatesOfVendor,
+  getPosts,
+  updateLike,
+  newComment,
+  getComments,
+  newReply,
 } from "../../../repositories/user/homeRepo";
 
 export default {
@@ -46,10 +51,9 @@ export default {
       console.log(error);
     }
   },
-  getVendorProfile: async (data:string,userId:string) => {
+  getVendorProfile: async (data: string, userId: string) => {
     try {
-      
-      const response = await getVendorProfile(data,userId);
+      const response = await getVendorProfile(data, userId);
       return response;
     } catch (error) {
       console.log(error);
@@ -118,9 +122,9 @@ export default {
       console.log(error);
     }
   },
-  getProfile:async(userId:string)=>{
-    try{
-      const response = await getProfile(userId)
+  getProfile: async (userId: string) => {
+    try {
+      const response = await getProfile(userId);
       const datas = {
         userName: response?.userName,
         phoneNum: response?.phoneNum,
@@ -129,30 +133,67 @@ export default {
         profilePicture: response?.profilePicture,
         wallet: response?.wallet,
       };
-      return datas
-    }catch(err){
-      console.log(err)
+      return datas;
+    } catch (err) {
+      console.log(err);
     }
   },
-  updateProfile:async(userId:string,obj:any ,files:any)=>{
+  updateProfile: async (userId: string, obj: any, files: any) => {
     try {
-
       const datas = {
         phoneNum: obj.phoneNum[0],
-        name:obj.name[0],
-      }
-      const response = await updateUser(userId,datas,files)
+        name: obj.name[0],
+      };
+      const response = await updateUser(userId, datas, files);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  getDates: async (vendorId: string) => {
+    try {
+      const response = await getDatesOfVendor(vendorId);
+      const dates = response?.availableDate;
+      return dates;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  getPosts: async (userId: string) => {
+    try {
+      const response = await getPosts(userId);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  updteLike: async (userId: string, postId: string) => {
+    try {
+      await updateLike(userId, postId);
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  newComment:async(userId:string,postId:string,comment:string)=>{
+    try {
+      return await newComment(userId,postId,comment);
+    } catch (error) {
+      console.log(error);
+      
+    }
+  },
+  getComments:async(postId:string)=>{
+    try {
+      const response = await getComments(postId);
       return response
     } catch (error) {
       console.log(error);
       
     }
   },
-  getDates:async(vendorId:string)=>{
+  newReply:async(commentId:string,reply:string)=>{
     try {
-      const response =  await getDatesOfVendor(vendorId)
-       const dates = response?.availableDate
-       return dates
+      return await newReply(commentId,reply);
     } catch (error) {
       console.log(error);
       
@@ -160,11 +201,11 @@ export default {
   }
 };
 
-export const fetchVendors= async (data: string) => {
+export const fetchVendors = async (data: string) => {
   try {
     const response = await listVendorsInUserChat(data);
     return response;
   } catch (error) {
     console.log(error);
   }
-}
+};

@@ -151,6 +151,48 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    getPosts: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield (0, homeRepo_1.getPosts)(userId);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    updteLike: (userId, postId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield (0, homeRepo_1.updateLike)(userId, postId);
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }),
+    newComment: (userId, postId, comment) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.newComment)(userId, postId, comment);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    getComments: (postId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield (0, homeRepo_1.getComments)(postId);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    newReply: (commentId, reply) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.newReply)(commentId, reply);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };
 const fetchVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {

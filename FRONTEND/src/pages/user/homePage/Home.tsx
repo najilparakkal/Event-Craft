@@ -7,6 +7,8 @@ import { fetchServices } from '../../../API/services/user/Services';
 import Header from '../../../compounents/user/Header';
 import Footer from '../../../compounents/user/Footer';
 import VendorsCard from '../../../compounents/user/VendorsCard';
+import Posts from './Posts';
+import { useAppSelector } from '../../../costumeHooks/costum';
 
 interface Service {
   _id: string;
@@ -41,7 +43,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const [services, setServices] = useState<Service[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
-
+  const {_id} = useAppSelector((state)=>state.user.userDetails)
   useEffect(() => {
     const getServices = async () => {
       const servicesList= await fetchServices();
@@ -139,7 +141,7 @@ const Home: React.FC = () => {
 
         <VendorsCard vendors={vendors} />
 
-
+          <Posts userId={_id+""}/>
 
         <div className="  text-center p-8">
           <h1 className="text-3xl font-bold mb-8 ">WHY CHOOSE US</h1>

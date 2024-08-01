@@ -2,8 +2,10 @@ import { uploadImage } from "../../../config/awsConfig";
 import { Bookings } from "../../../framworks/database/models/booking";
 import { CancelBookings } from "../../../framworks/database/models/cancelBooking";
 import ChatModel from "../../../framworks/database/models/chatModal";
+import { Comment, Reply } from "../../../framworks/database/models/comment";
 import { ILicence } from "../../../framworks/database/models/licence";
 import Message from "../../../framworks/database/models/message";
+import { Posts } from "../../../framworks/database/models/post";
 import { Request } from "../../../framworks/database/models/requests";
 import { Services } from "../../../framworks/database/models/services";
 import { Users } from "../../../framworks/database/models/user";
@@ -92,7 +94,7 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
       posts,
       availableDate,
     } = vendor;
-    const profilePicture = vendor.profilePicture
+    const profilePicture = vendor.profilePicture;
     const businessName = licence[0]?.businessName || "";
     const location = licence[0]?.location || "";
     const postsDetails = posts.map((post: any) => ({
@@ -106,11 +108,10 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
       is_accepted: true,
     });
 
-    const servicesArray = licence.map((item:any) => item.services).flat();
-    const services = servicesArray.flatMap((serviceList:any) =>
-      serviceList.split(",").map((service:any) => service.trim())
+    const servicesArray = licence.map((item: any) => item.services).flat();
+    const services = servicesArray.flatMap((serviceList: any) =>
+      serviceList.split(",").map((service: any) => service.trim())
     );
-
 
     const allServices = await Services.aggregate([
       {
@@ -131,7 +132,12 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
       posts: postsDetails,
       availableDate,
     };
-    return { response, bookings, chat: chat ? true : false, services:allServices };
+    return {
+      response,
+      bookings,
+      chat: chat ? true : false,
+      services: allServices,
+    };
   } catch (error) {
     console.log(error);
     return undefined;
@@ -220,25 +226,29 @@ export const listVendorsInUserChat = async (userId: string) => {
 
     const sortedVendorMessages = await Message.find({
       senderModel: "Vendor",
-      sender: { $in: vendorIds }
+      sender: { $in: vendorIds },
     }).sort({ createdAt: -1 });
- 
+
     const uniqueVendorIds = [
-      ...new Set(sortedVendorMessages.map((message) => message.sender.toString()))
+      ...new Set(
+        sortedVendorMessages.map((message) => message.sender.toString())
+      ),
     ];
 
     const sortedVendors = await Vendors.find({ _id: { $in: uniqueVendorIds } })
-      .select('_id vendorName profilePicture')
-      .then(vendors => uniqueVendorIds.map(id => vendors.find(vendor => vendor._id.toString() === id)));
+      .select("_id vendorName profilePicture")
+      .then((vendors) =>
+        uniqueVendorIds.map((id) =>
+          vendors.find((vendor) => vendor._id.toString() === id)
+        )
+      );
 
-                 
     return sortedVendors;
   } catch (error) {
     console.error("Error fetching vendors:", error);
     throw error;
   }
 };
-         
 
 export const chatId = async (userId: string, vendorId: string) => {
   try {
@@ -349,9 +359,8 @@ export const getProfile = async (userId: string) => {
 };
 
 export const updateUser = async (userId: string, datas: any, files: any) => {
-  try {    
+  try {
     if (files) {
-      
       const image = await uploadImage(files.profilePicture[0].filepath);
 
       const user = await Users.findByIdAndUpdate(userId, {
@@ -360,7 +369,7 @@ export const updateUser = async (userId: string, datas: any, files: any) => {
           phoneNum: datas.phoneNum,
           profilePicture: image,
         },
-      });      
+      });
       return { success: true, image };
     } else {
       return { success: true };
@@ -373,6 +382,111 @@ export const updateUser = async (userId: string, datas: any, files: any) => {
 export const getDatesOfVendor = async (vendorId: string) => {
   try {
     return await Vendors.findById(vendorId);
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const getPosts = async (userId: string) => {
+  try {
+    const posts = await Posts.aggregate([
+      {
+        $addFields: {
+          vendorId: { $toObjectId: "$vendorId" },
+        },
+      },
+      {
+        $lookup: {
+          from: "vendors",
+          localField: "vendorId",
+          foreignField: "_id",
+          as: "vendorInfo",
+        },
+      },
+      {
+        $unwind: "$vendorInfo",
+      },
+      {
+        $project: {
+          title: 1,
+          images: 1,
+          vendorId: 1,
+          is_blocked: 1,
+          category: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          description: 1,
+          likes: 1,
+          "vendorInfo.vendorName": 1,
+          "vendorInfo.profilePicture": 1,
+        },
+      },
+    ]);
+
+    return posts;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateLike = async (userId: string, postId: string) => {
+  try {
+    const post = await Posts.findById(postId);
+    if (!post) {
+      throw new Error("Post not found");
+    }
+    const userIndex = post.likes.indexOf(userId);
+    if (userIndex === -1) {
+      post.likes.push(userId);
+    } else {
+      post.likes.splice(userIndex, 1);
+    }
+    await post.save();
+    console.log("Post updated successfully");
+  } catch (err) {
+    console.error("Error updating post:", err);
+  }
+};
+
+export const newComment = async (
+  userId: string,
+  postId: string,
+  newComment: string
+) => {
+  try {
+    const newc = await Comment.create({
+      userId,
+      postId,
+      comment: newComment,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const getComments = async (postId: string) => {
+  try {
+    const comments = await Comment.find({ postId })
+      .populate({
+        path: "userId",
+        select: "profilePicture userName",
+      })
+      .populate({ path: "replies", select: "comment" });
+      
+    return comments;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const newReply = async (commentId: string, reply: string) => {
+  try {
+    const newReply = await Reply.create({
+      commentId,
+      comment: reply,
+    });
+    const push = await Comment.findByIdAndUpdate(commentId, {
+      $push: { replies: newReply._id },
+    });
   } catch (error) {
     console.log(error);
   }

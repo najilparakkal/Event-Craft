@@ -13,7 +13,7 @@ import { BillSection } from './BillSection';
 
 const Dashboard: React.FC = () => {
   return (
-    <div className="flex ">
+    <div className="flex bg-[#171E31]">
       <Sidebar />
       <div className="flex-1">
         <Header name='Payments' />

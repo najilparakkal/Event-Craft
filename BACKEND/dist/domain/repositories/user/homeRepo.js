@@ -12,12 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDatesOfVendor = exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
+exports.newReply = exports.getComments = exports.newComment = exports.updateLike = exports.getPosts = exports.getDatesOfVendor = exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
 const awsConfig_1 = require("../../../config/awsConfig");
 const booking_1 = require("../../../framworks/database/models/booking");
 const cancelBooking_1 = require("../../../framworks/database/models/cancelBooking");
 const chatModal_1 = __importDefault(require("../../../framworks/database/models/chatModal"));
+const comment_1 = require("../../../framworks/database/models/comment");
 const message_1 = __importDefault(require("../../../framworks/database/models/message"));
+const post_1 = require("../../../framworks/database/models/post");
 const requests_1 = require("../../../framworks/database/models/requests");
 const services_1 = require("../../../framworks/database/models/services");
 const user_1 = require("../../../framworks/database/models/user");
@@ -123,7 +125,12 @@ const getVendorProfile = (vendorId, userId) => __awaiter(void 0, void 0, void 0,
             posts: postsDetails,
             availableDate,
         };
-        return { response, bookings, chat: chat ? true : false, services: allServices };
+        return {
+            response,
+            bookings,
+            chat: chat ? true : false,
+            services: allServices,
+        };
     }
     catch (error) {
         console.log(error);
@@ -194,14 +201,14 @@ const listVendorsInUserChat = (userId) => __awaiter(void 0, void 0, void 0, func
             .filter(Boolean);
         const sortedVendorMessages = yield message_1.default.find({
             senderModel: "Vendor",
-            sender: { $in: vendorIds }
+            sender: { $in: vendorIds },
         }).sort({ createdAt: -1 });
         const uniqueVendorIds = [
-            ...new Set(sortedVendorMessages.map((message) => message.sender.toString()))
+            ...new Set(sortedVendorMessages.map((message) => message.sender.toString())),
         ];
         const sortedVendors = yield vendor_1.Vendors.find({ _id: { $in: uniqueVendorIds } })
-            .select('_id vendorName profilePicture')
-            .then(vendors => uniqueVendorIds.map(id => vendors.find(vendor => vendor._id.toString() === id)));
+            .select("_id vendorName profilePicture")
+            .then((vendors) => uniqueVendorIds.map((id) => vendors.find((vendor) => vendor._id.toString() === id)));
         return sortedVendors;
     }
     catch (error) {
@@ -347,3 +354,110 @@ const getDatesOfVendor = (vendorId) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.getDatesOfVendor = getDatesOfVendor;
+const getPosts = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const posts = yield post_1.Posts.aggregate([
+            {
+                $addFields: {
+                    vendorId: { $toObjectId: "$vendorId" },
+                },
+            },
+            {
+                $lookup: {
+                    from: "vendors",
+                    localField: "vendorId",
+                    foreignField: "_id",
+                    as: "vendorInfo",
+                },
+            },
+            {
+                $unwind: "$vendorInfo",
+            },
+            {
+                $project: {
+                    title: 1,
+                    images: 1,
+                    vendorId: 1,
+                    is_blocked: 1,
+                    category: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    description: 1,
+                    likes: 1,
+                    "vendorInfo.vendorName": 1,
+                    "vendorInfo.profilePicture": 1,
+                },
+            },
+        ]);
+        return posts;
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.getPosts = getPosts;
+const updateLike = (userId, postId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const post = yield post_1.Posts.findById(postId);
+        if (!post) {
+            throw new Error("Post not found");
+        }
+        const userIndex = post.likes.indexOf(userId);
+        if (userIndex === -1) {
+            post.likes.push(userId);
+        }
+        else {
+            post.likes.splice(userIndex, 1);
+        }
+        yield post.save();
+        console.log("Post updated successfully");
+    }
+    catch (err) {
+        console.error("Error updating post:", err);
+    }
+});
+exports.updateLike = updateLike;
+const newComment = (userId, postId, newComment) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const newc = yield comment_1.Comment.create({
+            userId,
+            postId,
+            comment: newComment,
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.newComment = newComment;
+const getComments = (postId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const comments = yield comment_1.Comment.find({ postId })
+            .populate({
+            path: "userId",
+            select: "profilePicture userName",
+        })
+            .populate({ path: "replies", select: "comment" });
+        return comments;
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+});
+exports.getComments = getComments;
+const newReply = (commentId, reply) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const newReply = yield comment_1.Reply.create({
+            commentId,
+            comment: reply,
+        });
+        const push = yield comment_1.Comment.findByIdAndUpdate(commentId, {
+            $push: { replies: newReply._id },
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.newReply = newReply;

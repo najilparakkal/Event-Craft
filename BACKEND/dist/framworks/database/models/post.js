@@ -16,6 +16,10 @@ const postSchema = new mongoose_1.Schema({
         type: Boolean,
         default: false,
     },
+    likes: {
+        type: [String],
+        default: [],
+    },
     category: {
         type: String,
     },
