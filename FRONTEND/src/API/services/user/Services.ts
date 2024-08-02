@@ -224,3 +224,36 @@ export const replySubmit = async(commentId:string,reply:string)=>{
     
   }
 }
+export const updateCommentLike = async(commentId:string,userId:string)=>{
+  try {
+    await authAxiosInstance.put('user/commentLike',{commentId,userId})
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const updateReplyLike = async(commentId:string, userId:string)=>{
+  try {
+    await authAxiosInstance.put('user/replyLike',{commentId,userId})
+  } catch (error) {
+    console.log(error)
+  }
+}
+export const fetchRatingReview = async(vendorId:string)=>{
+  try {
+    const response  = await authAxiosInstance.get(`user/ratingreview/${vendorId}`)
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
+}
+export const addRatingAndReview = async (userId: string, vendorId: string, star: number, review: string) => {
+  try {
+    await authAxiosInstance.put(`user/addReview/${userId}/${vendorId}`, {
+      star,
+      review
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};

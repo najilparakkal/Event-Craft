@@ -2,7 +2,8 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface IReply extends Document {
   commentId: string;
-  comment:string
+  comment: string;
+  likes: string[];
 }
 
 export interface IComment extends Document {
@@ -10,6 +11,7 @@ export interface IComment extends Document {
   userId: string;
   postId: string;
   replies: string[];
+  likes: string[];
 }
 
 const replySchema: Schema<IReply> = new Schema(
@@ -21,6 +23,10 @@ const replySchema: Schema<IReply> = new Schema(
     comment: {
       type: String,
       required: true,
+    },
+    likes: {
+      type: [String],
+      default: [],
     },
   },
   {
@@ -44,12 +50,16 @@ const commentSchema: Schema<IComment> = new Schema(
       ref: "Posts",
       required: true,
     },
+    likes: {
+      type: [String],
+      default: [],
+    },
     replies: [
       {
         type: String,
         ref: "Reply",
         default: [],
-      }
+      },
     ],
   },
   {

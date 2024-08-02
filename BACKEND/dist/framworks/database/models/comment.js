@@ -34,6 +34,10 @@ const replySchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    likes: {
+        type: [String],
+        default: [],
+    },
 }, {
     timestamps: true,
 });
@@ -52,12 +56,16 @@ const commentSchema = new mongoose_1.Schema({
         ref: "Posts",
         required: true,
     },
+    likes: {
+        type: [String],
+        default: [],
+    },
     replies: [
         {
             type: String,
             ref: "Reply",
             default: [],
-        }
+        },
     ],
 }, {
     timestamps: true,

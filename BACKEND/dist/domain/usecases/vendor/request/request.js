@@ -124,7 +124,8 @@ exports.default = {
                 blocked: response === null || response === void 0 ? void 0 : response.blocked,
                 posts: response === null || response === void 0 ? void 0 : response.posts,
                 licence: response === null || response === void 0 ? void 0 : response.licence,
-                registered: response === null || response === void 0 ? void 0 : response.registered
+                registered: response === null || response === void 0 ? void 0 : response.registered,
+                about: response === null || response === void 0 ? void 0 : response.about,
             };
             return datas;
         }
@@ -137,6 +138,7 @@ exports.default = {
             const datas = {
                 phoneNum: obj.phoneNum[0],
                 name: obj.name[0],
+                about: obj.about[0]
             };
             const response = yield requestRepo_1.default.updateVendor(userId, datas, files);
             return response;

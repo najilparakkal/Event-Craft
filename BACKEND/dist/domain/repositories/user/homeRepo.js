@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newReply = exports.getComments = exports.newComment = exports.updateLike = exports.getPosts = exports.getDatesOfVendor = exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
+exports.addReview = exports.ratingReview = exports.replyLike = exports.commentLike = exports.newReply = exports.getComments = exports.newComment = exports.updateLike = exports.getPosts = exports.getDatesOfVendor = exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
 const awsConfig_1 = require("../../../config/awsConfig");
 const booking_1 = require("../../../framworks/database/models/booking");
 const cancelBooking_1 = require("../../../framworks/database/models/cancelBooking");
@@ -91,7 +91,7 @@ const getVendorProfile = (vendorId, userId) => __awaiter(void 0, void 0, void 0,
         if (!vendor) {
             throw new Error("Vendor not found");
         }
-        const { vendorName, phoneNum, licence, coverPicture, posts, availableDate, } = vendor;
+        const { vendorName, phoneNum, licence, coverPicture, posts, availableDate, ratingAndReview } = vendor;
         const profilePicture = vendor.profilePicture;
         const businessName = ((_a = licence[0]) === null || _a === void 0 ? void 0 : _a.businessName) || "";
         const location = ((_b = licence[0]) === null || _b === void 0 ? void 0 : _b.location) || "";
@@ -115,6 +115,8 @@ const getVendorProfile = (vendorId, userId) => __awaiter(void 0, void 0, void 0,
             },
         ]);
         const bookings = yield booking_1.Bookings.find({ userId, vendorId });
+        const reviewCount = ratingAndReview.length;
+        const totalStars = ratingAndReview.reduce((acc, review) => acc + review.star, 0);
         const response = {
             vendorName,
             phoneNum,
@@ -124,6 +126,8 @@ const getVendorProfile = (vendorId, userId) => __awaiter(void 0, void 0, void 0,
             coverPicture,
             posts: postsDetails,
             availableDate,
+            reviewCount,
+            totalStars,
         };
         return {
             response,
@@ -437,7 +441,7 @@ const getComments = (postId) => __awaiter(void 0, void 0, void 0, function* () {
             path: "userId",
             select: "profilePicture userName",
         })
-            .populate({ path: "replies", select: "comment" });
+            .populate({ path: "replies", select: "comment likes" });
         return comments;
     }
     catch (error) {
@@ -461,3 +465,80 @@ const newReply = (commentId, reply) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.newReply = newReply;
+const commentLike = (commentId, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const comment = yield comment_1.Comment.findById(commentId);
+        if (!comment) {
+            return false;
+        }
+        const userIndex = comment.likes.indexOf(userId);
+        if (userIndex === -1) {
+            comment.likes.push(userId);
+        }
+        else {
+            comment.likes.splice(userIndex, 1);
+        }
+        yield comment.save();
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.commentLike = commentLike;
+const replyLike = (commentId, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const comment = yield comment_1.Reply.findById(commentId);
+        if (!comment) {
+            return false;
+        }
+        const userIndex = comment.likes.indexOf(userId);
+        if (userIndex === -1) {
+            comment.likes.push(userId);
+        }
+        else {
+            comment.likes.splice(userIndex, 1);
+        }
+        yield comment.save();
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.replyLike = replyLike;
+const ratingReview = (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const vendor = yield vendor_1.Vendors.findById(vendorId).populate({
+            path: 'ratingAndReview.userId',
+            select: 'userName profilePicture',
+        });
+        if (vendor) {
+            return vendor;
+        }
+        ;
+        return { vendorName: "", about: "", ratingAndReview: "", };
+    }
+    catch (error) {
+        console.log(error);
+        return { vendorName: "", about: "", ratingAndReview: "" };
+    }
+});
+exports.ratingReview = ratingReview;
+const addReview = (userId, vendorId, star, review) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log(star, "💕💕💕💕");
+        const vendor = yield vendor_1.Vendors.findById(vendorId);
+        if (!vendor) {
+            return { success: false, message: "Vendor not found" };
+        }
+        if (vendor.ratingAndReview) {
+            vendor.ratingAndReview.push({ userId, star, review });
+            yield vendor.save();
+            return { success: true, message: "Review added successfully", vendor };
+        }
+    }
+    catch (error) {
+        console.error("Error adding review:", error);
+        return { success: false, message: "Failed to add review" };
+    }
+});
+exports.addReview = addReview;

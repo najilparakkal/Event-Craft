@@ -191,3 +191,15 @@ export interface MessageData {
 export interface IBookingStatus {
   status: string;
 }
+export interface IRatingReviewResponse {
+  vendorName: string;
+  about: string;
+  ratingAndReview: {
+    userId: {
+      userName: string;
+      profilePicture: string;
+    };
+    star: number;
+    review: string;
+  }[];
+}

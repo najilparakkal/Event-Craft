@@ -127,7 +127,6 @@ export default {
   },
   updateProfile: async (req: Request, res: Response) => {
     try {
-
       const { files, fields } = await multipartFormSubmission(req);
       const response = await userIterator.updateProfile(
         req.params.userId,
@@ -157,40 +156,80 @@ export default {
     } catch (error) {
       console.log(error);
     }
-  }, 
-  updateLike:async(req:Request,res:Response)=>{
-    try {
-      await userIterator.updteLike(req.params.userId,req.params.postId)
-      res.status(200)
-    } catch (error) {
-      console.log(error)
-    }
   },
-  getComments:async(req:Request,res:Response)=>{
+  updateLike: async (req: Request, res: Response) => {
     try {
-      const response = await userIterator.getComments(req.body.postId)
-      res.status(200).json(response)
+      await userIterator.updteLike(req.params.userId, req.params.postId);
+      res.status(200);
     } catch (error) {
       console.log(error);
-      
     }
   },
-  newComment:async(req:Request, res:Response)=>{
+  getComments: async (req: Request, res: Response) => {
     try {
-       await userIterator.newComment(req.params.userId,req.params.postId,req.body.newComment)
-       res.status(200).json({message:"comment added successfully"})
+      const response = await userIterator.getComments(req.body.postId);
+      res.status(200).json(response);
     } catch (error) {
       console.log(error);
-      
     }
   },
-  replyComment:async(req:Request,res:Response)=>{
+  newComment: async (req: Request, res: Response) => {
     try {
-      await userIterator.newReply(req.params.commentId,req.body.reply)
-      res.status(200).json({message:"reply added successfully"})
+      await userIterator.newComment(
+        req.params.userId,
+        req.params.postId,
+        req.body.newComment
+      );
+      res.status(200).json({ message: "comment added successfully" });
     } catch (error) {
       console.log(error);
-      
     }
-  }
+  },
+  replyComment: async (req: Request, res: Response) => {
+    try {
+      await userIterator.newReply(req.params.commentId, req.body.reply);
+      res.status(200).json({ message: "reply added successfully" });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  commentLike: async (req: Request, res: Response) => {
+    try {
+      await userIterator.commentLike(req.body.commentId, req.body.userId);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  replyLike: async (req: Request, res: Response) => {
+    try {
+      await userIterator.replyLike(req.body.commentId, req.body.userId);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  ratingReview: async (req: Request, res: Response) => {
+    try {
+      const response = await userIterator.ratingReview(req.params.vendorId);
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  addReview: async (req: Request, res: Response) => {
+    try {
+      const response = await userIterator.addReview(
+        req.params.userId,
+        req.params.vendorId,
+        req.body.star,
+        req.body.review
+      );
+      if (response?.success) {
+        res.status(200).json({ message: "Review added successfully" });
+      } else {
+        res.status(400).json({ message: "Something went wrong" });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };

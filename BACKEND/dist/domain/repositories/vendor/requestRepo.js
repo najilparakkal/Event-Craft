@@ -227,6 +227,7 @@ exports.default = {
             const updateData = {
                 vendorName: datas.name,
                 phoneNum: datas.phoneNum,
+                about: datas.about,
             };
             if (profile) {
                 updateData.profilePicture = profile;
@@ -234,7 +235,7 @@ exports.default = {
             if (cover) {
                 updateData.coverPicture = cover;
             }
-            const vendor = yield vendor_1.Vendors.findByIdAndUpdate(vendorId, {
+            yield vendor_1.Vendors.findByIdAndUpdate(vendorId, {
                 $set: updateData,
             });
             return { success: true, profile };

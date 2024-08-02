@@ -261,8 +261,8 @@ export default {
       const updateData: any = {
         vendorName: datas.name,
         phoneNum: datas.phoneNum,
+        about: datas.about,
       };
-
       if (profile) {
         updateData.profilePicture = profile;
       }
@@ -271,7 +271,7 @@ export default {
         updateData.coverPicture = cover;
       }
 
-      const vendor = await Vendors.findByIdAndUpdate(vendorId, {
+      await Vendors.findByIdAndUpdate(vendorId, {
         $set: updateData,
       });
 

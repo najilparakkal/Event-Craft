@@ -116,7 +116,8 @@ export default{
         blocked: response?.blocked,
         posts: response?.posts,
         licence: response?.licence,
-        registered:response?.registered
+        registered:response?.registered,
+        about:response?.about,
       };      
       return datas
     } catch (error) {
@@ -130,6 +131,7 @@ export default{
       const datas = {
         phoneNum:obj.phoneNum[0],
         name:obj.name[0],
+        about:obj.about[0]
       }
       const response = await requestRepo.updateVendor(userId,datas,files)
       return response

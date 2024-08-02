@@ -210,5 +210,44 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
-    })
+    }),
+    commentLike: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield home_1.default.commentLike(req.body.commentId, req.body.userId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    replyLike: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield home_1.default.replyLike(req.body.commentId, req.body.userId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    ratingReview: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.ratingReview(req.params.vendorId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    addReview: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.addReview(req.params.userId, req.params.vendorId, req.body.star, req.body.review);
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                res.status(200).json({ message: "Review added successfully" });
+            }
+            else {
+                res.status(400).json({ message: "Something went wrong" });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
 };

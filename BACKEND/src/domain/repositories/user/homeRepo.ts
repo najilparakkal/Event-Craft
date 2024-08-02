@@ -93,6 +93,7 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
       coverPicture,
       posts,
       availableDate,
+      ratingAndReview
     } = vendor;
     const profilePicture = vendor.profilePicture;
     const businessName = licence[0]?.businessName || "";
@@ -122,6 +123,10 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
     ]);
 
     const bookings = await Bookings.find({ userId, vendorId });
+
+    const reviewCount = ratingAndReview.length;
+    const totalStars = ratingAndReview.reduce((acc: number, review: any) => acc + review.star, 0);
+
     const response: VendorProfile = {
       vendorName,
       phoneNum,
@@ -131,7 +136,10 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
       coverPicture,
       posts: postsDetails,
       availableDate,
+      reviewCount,
+      totalStars,
     };
+
     return {
       response,
       bookings,
@@ -239,7 +247,7 @@ export const listVendorsInUserChat = async (userId: string) => {
       .select("_id vendorName profilePicture")
       .then((vendors) =>
         uniqueVendorIds.map((id) =>
-          vendors.find((vendor) => vendor._id.toString() === id)
+          vendors.find((vendor: any) => vendor._id.toString() === id)
         )
       );
 
@@ -469,8 +477,7 @@ export const getComments = async (postId: string) => {
         path: "userId",
         select: "profilePicture userName",
       })
-      .populate({ path: "replies", select: "comment" });
-      
+      .populate({ path: "replies", select: "comment likes" });
     return comments;
   } catch (error) {
     console.log(error);
@@ -489,5 +496,82 @@ export const newReply = async (commentId: string, reply: string) => {
     });
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const commentLike = async (commentId: string, userId: string) => {
+  try {
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return false;
+    }
+    const userIndex = comment.likes.indexOf(userId);
+    if (userIndex === -1) {
+      comment.likes.push(userId);
+    } else {
+      comment.likes.splice(userIndex, 1);
+    }
+    await comment.save();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const replyLike = async (commentId: string, userId: string) => {
+  try {
+    const comment = await Reply.findById(commentId);
+    if (!comment) {
+      return false;
+    }
+    const userIndex = comment.likes.indexOf(userId);
+    if (userIndex === -1) {
+      comment.likes.push(userId);
+    } else {
+      comment.likes.splice(userIndex, 1);
+    }
+    await comment.save();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const ratingReview = async (vendorId: string) => {
+  try {
+    const vendor = await Vendors.findById(vendorId).populate({
+      path: 'ratingAndReview.userId',
+      select: 'userName profilePicture',
+    });
+    if (vendor) {
+      return vendor
+    };
+    return { vendorName: "", about: "", ratingAndReview: "", };
+  } catch (error) {
+    console.log(error);
+    return { vendorName: "", about: "", ratingAndReview: "" };
+  }
+};
+
+
+
+export const addReview = async (
+  userId: string,
+  vendorId: string,
+  star: number,
+  review: string
+) => {
+  try {
+    console.log(star,"💕💕💕💕")
+    const vendor = await Vendors.findById(vendorId);
+    if (!vendor) {
+      return { success: false, message: "Vendor not found" };
+    }
+    if (vendor.ratingAndReview) {
+      vendor.ratingAndReview.push({ userId, star, review });
+      await vendor.save();
+      return { success: true, message: "Review added successfully", vendor };
+    }
+  } catch (error) {
+    console.error("Error adding review:", error);
+    return { success: false, message: "Failed to add review" };
   }
 };

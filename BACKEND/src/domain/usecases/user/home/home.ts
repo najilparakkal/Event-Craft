@@ -3,6 +3,7 @@ import {
   IMessageRequest,
   cancelReq,
 } from "../../../entities/user/user";
+import { IRatingReviewResponse } from "../../../entities/vendor/vendor";
 import {
   listServices,
   listVendors,
@@ -24,6 +25,10 @@ import {
   newComment,
   getComments,
   newReply,
+  commentLike,
+  replyLike,
+  ratingReview,
+  addReview,
 } from "../../../repositories/user/homeRepo";
 
 export default {
@@ -174,29 +179,58 @@ export default {
       console.log(err);
     }
   },
-  newComment:async(userId:string,postId:string,comment:string)=>{
+  newComment: async (userId: string, postId: string, comment: string) => {
     try {
-      return await newComment(userId,postId,comment);
+      return await newComment(userId, postId, comment);
     } catch (error) {
       console.log(error);
-      
     }
   },
-  getComments:async(postId:string)=>{
+  getComments: async (postId: string) => {
     try {
       const response = await getComments(postId);
-      return response
+      return response;
     } catch (error) {
       console.log(error);
-      
     }
   },
-  newReply:async(commentId:string,reply:string)=>{
+  newReply: async (commentId: string, reply: string) => {
     try {
-      return await newReply(commentId,reply);
+      return await newReply(commentId, reply);
     } catch (error) {
       console.log(error);
-      
+    }
+  },
+  commentLike: async (commentId: string, userId: string) => {
+    try {
+      return await commentLike(commentId, userId);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  replyLike: async (commentId: string, userId: string) => {
+    try {
+      return await replyLike(commentId, userId);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+    ratingReview: async (
+    vendorId: string
+  ): Promise<IRatingReviewResponse | null> => {
+    try {
+      const { vendorName, about, ratingAndReview } = await ratingReview(vendorId) as unknown as IRatingReviewResponse
+      return { vendorName, about, ratingAndReview };
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+  },
+  addReview:async(userId:string,vendorId:string,star:number,review:string)=>{
+    try {
+      return await addReview(userId,vendorId,star,review)
+    } catch (error) {
+      console.log(error)
     }
   }
 };

@@ -48,6 +48,7 @@ interface VendorProfile {
     vendorName: string;
     verified: boolean;
     registered: string;
+    about: string;
 }
 
 const Profile: React.FC = () => {
@@ -63,6 +64,7 @@ const Profile: React.FC = () => {
         const fetchDetails = async () => {
             try {
                 const data = await vendorDetails(_id + "");
+                console.log(data,"🍽️🍽️🍽️")
                 setDetails(data);
                 setCoverImagePreview(data.coverPicture || '');
                 setProfileImagePreview(data.profilePicture || '');
@@ -101,11 +103,13 @@ const Profile: React.FC = () => {
     };
 
     const formik = useFormik({
+        enableReinitialize: true,
         initialValues: {
             name: name || '',
             phoneNum: phoneNum || '',
             profilePicture: profilePicture || '',
             coverPicture: details?.coverPicture || '',
+            about: details?.about || '',
         },
         validationSchema: vendorProfileValidation,
         onSubmit: async (values) => {
@@ -119,13 +123,13 @@ const Profile: React.FC = () => {
                     });
                     const updatedDatas = await vendorDetails(_id + "");
                     setDetails(updatedDatas);
-
                 }
             } catch (err) {
                 console.log(err);
             }
         },
     });
+    
 
     if (!details) return null;
 
@@ -136,9 +140,9 @@ const Profile: React.FC = () => {
                     <div className="relative">
                         <img
                             onClick={() => coverInputRef.current?.click()}
-                            src={coverImagePreview || "https://via.placeholder.com/1500x500"}
+                            src={coverImagePreview + "" || "https://via.placeholder.com/1500x500"}
                             alt="User Cover"
-                            className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem]"
+                            className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem] object-cover "
                         />
                         <input
                             type="file"
@@ -152,7 +156,7 @@ const Profile: React.FC = () => {
                         <div className="relative">
                             <img
                                 onClick={() => profileInputRef.current?.click()}
-                                src={profileImagePreview || "https://via.placeholder.com/150"}
+                                src={profileImagePreview + "" || "https://via.placeholder.com/150"}
                                 alt="User Profile"
                                 className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-blue-500 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
                             />
@@ -173,7 +177,7 @@ const Profile: React.FC = () => {
                         onSubmit={formik.handleSubmit}>
                         <div className="w-full my-auto py-6 flex flex-col justify-center gap-2">
                             <div className="w-full flex sm:flex-row xs:flex-col gap-4 justify-center">
-                                <div className="w-full sm:w-1/2">
+                                <div className="w-full sm:w-1/2 mt-3">
                                     <div className="flex flex-col pb-3">
                                         <dt className="mb-1 text-gray-600 md:text-lg">Name</dt>
                                         <dd className="text-lg font-semibold">
@@ -184,68 +188,71 @@ const Profile: React.FC = () => {
                                         </dd>
                                     </div>
                                     <div className="flex flex-col py-3">
-                                        <dt className="mb-1 text-gray-600 md:text-lg">Email</dt>
-                                        <dd className="text-lg font-semibold">
-                                            <input name="email" value={email} readOnly type="email" className="input-field w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-800" />
-                                        </dd>
-                                    </div>
-                                    <div className="flex flex-col py-3">
-                                        <dt className="mb-1 text-gray-600 md:text-lg">Phone Number</dt>
-                                        <dd className="text-lg font-semibold">
-                                            <input {...formik.getFieldProps('phoneNum')} id="phoneNum" type="text" className="input-field w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-800" />
-                                            {formik.touched.phoneNum && formik.errors.phoneNum ? (
-                                                <div className="text-red-500 text-sm">{formik.errors.phoneNum}</div>
-                                            ) : null}
-                                        </dd>
+                                       <div className="flex gap-4">
+                                       <div className="w-1/2">
+                                            <dt className="mb-1 text-gray-600 md:text-lg">Email</dt>
+                                            <dd className="text-lg font-semibold">
+                                                <input name="email" value={email} readOnly type="email" className="input-field w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-800" />
+                                            </dd>
+                                        </div>
+                                        <div className="w-1/2">
+                                            <dt className="mb-1 text-gray-600 md:text-lg">Phone Number</dt>
+                                            <dd className="text-lg font-semibold">
+                                                <input {...formik.getFieldProps('phoneNum')} id="phoneNum" type="text" className="input-field w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-800" />
+                                                {formik.touched.phoneNum && formik.errors.phoneNum ? (
+                                                    <div className="text-red-500 text-sm">{formik.errors.phoneNum}</div>
+                                                ) : null}
+                                            </dd>
+                                        </div>
+                                       </div>
                                     </div>
                                 </div>
-                                <div className="w-full sm:w-1/2">
+                                <div className="w-full sm:w-1/2 ">
                                     <div className="flex flex-col py-3">
                                         <dt className="mb-1 text-gray-600 md:text-lg">Location </dt>
                                         <dd className="text-lg font-semibold">
-                                            <input
-                                                readOnly
-                                                value={details.licence[0]?.location}
-                                                name="location"
-                                                type="text"
-                                                className="input-field w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-800"
-                                            />
+                                            <input value={details.licence[0]?.location} readOnly type="text" className="input-field w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-800" />
                                         </dd>
                                     </div>
                                     <div className="flex flex-col py-3">
-                                        <dt className="mb-1 text-gray-600 md:text-lg">Business Name </dt>
+                                        <dt className="mb-1 text-gray-600 md:text-lg">Account Number</dt>
                                         <dd className="text-lg font-semibold">
-                                            <input
-                                                readOnly
-                                                value={details.licence[0]?.businessName}
-                                                name="businessName"
-                                                type="text"
-                                                className="input-field w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-800"
-                                            />
+                                            <input value={details.licence[0]?.accountNumber} readOnly type="text" className="input-field w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-800" />
                                         </dd>
                                     </div>
                                 </div>
                             </div>
+                            <div className="w-full flex flex-col py-3">
+                                <dt className="mb-1 text-gray-600 md:text-lg">About</dt>
+                                <dd className="text-lg font-semibold ">
+                                    <textarea id="about" {...formik.getFieldProps('about')} rows={3} className="scrollNoDiv  overflow-y-auto input-field w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-800" />
+                                    {formik.touched.about && formik.errors.about ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.about}</div>
+                                    ) : null}
+                                </dd> 
+                            </div>
                         </div>
-
-                        <button type="submit" className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
-                            Update Profile
-                        </button>
+                        <div className="flex justify-center  w-full mt-4">
+                            <button
+                                type="submit"
+                                className="px-6 py-2 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                                Save
+                            </button>
+                        </div>
                     </form>
-                    <div className="bg-gray-100 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        {details?.posts.map((post) => (
-                            <PostComponent
-                                key={post._id}
-                                post={post}
-                                
-                            />
-                        ))}
-                    </div>
+                </div>
+            </section>
 
+            <section className="p-10 w-full">
+                <h2 className="text-2xl font-bold mb-4">Posts</h2>
+                <div className="grid gap-8 lg:grid-cols-3 md:grid-cols-2">
+                    {details.posts?.map((post) => (
+                        <PostComponent key={post._id} post={post} />
+                    ))}
                 </div>
             </section>
         </div>
     );
-};
+}
 
 export default Profile;

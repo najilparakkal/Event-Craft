@@ -193,6 +193,40 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    commentLike: (commentId, userId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.commentLike)(commentId, userId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    replyLike: (commentId, userId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.replyLike)(commentId, userId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    ratingReview: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { vendorName, about, ratingAndReview } = yield (0, homeRepo_1.ratingReview)(vendorId);
+            return { vendorName, about, ratingAndReview };
+        }
+        catch (error) {
+            console.log(error);
+            return null;
+        }
+    }),
+    addReview: (userId, vendorId, star, review) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.addReview)(userId, vendorId, star, review);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };
 const fetchVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {

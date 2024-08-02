@@ -38,4 +38,8 @@ userRouter.put('/api/user/updateLike/:userId/:postId', UserMiddleware_1.default,
 userRouter.post('/api/user/comments', UserMiddleware_1.default, Controller_1.default.getComments);
 userRouter.post('/api/user/newComment/:postId/:userId', UserMiddleware_1.default, Controller_1.default.newComment);
 userRouter.post('/api/user/commentReply/:commentId', UserMiddleware_1.default, Controller_1.default.replyComment);
+userRouter.put('/api/user/commentLike', UserMiddleware_1.default, Controller_1.default.commentLike);
+userRouter.put('/api/user/replyLike', UserMiddleware_1.default, Controller_1.default.replyLike);
+userRouter.get('/api/user/ratingreview/:vendorId', UserMiddleware_1.default, Controller_1.default.ratingReview);
+userRouter.put('/api/user/addReview/:userId/:vendorId', UserMiddleware_1.default, Controller_1.default.addReview);
 exports.default = userRouter;

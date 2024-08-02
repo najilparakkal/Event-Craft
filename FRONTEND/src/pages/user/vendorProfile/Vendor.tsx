@@ -6,6 +6,7 @@ import Slider from 'react-slick';
 import Booking from './Booking';
 import { useAppSelector } from '../../../costumeHooks/costum';
 import Header from '../../../compounents/user/Header';
+import RatingReview from './RatingReview';
 
 interface VendorDetails {
     vendorName: string;
@@ -13,6 +14,8 @@ interface VendorDetails {
     profilePicture: string;
     businessName: string;
     location: string;
+    reviewCount: number
+    totalStars: number
     coverPicture: string;
     posts: { title: string; images: string[]; description: string; category: string }[];
 }
@@ -31,12 +34,14 @@ const Vendor: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredPosts, setFilteredPosts] = useState<VendorDetails['posts']>([]);
     const [filteredServices, setFilteredServices] = useState<VendorDetails['posts']>([]);
-
+    const [rating, setRating] = useState(0)
     const [bookedVendors, setBookedVendors] = useState<string[]>([]);
     const [chat, setChat] = useState(false)
     const [services, setServices] = useState([])
 
     const navigate = useNavigate()
+
+
     useEffect(() => {
         const fetch = async () => {
             const details = await fetchVendorDetails(id + "", _id + "");
@@ -44,9 +49,27 @@ const Vendor: React.FC = () => {
             setBookedVendors(details.bookings || []);
             setChat(details.chat)
             setServices(details.services)
+            rate(details)
+            
         };
-        fetch();
+        fetch()
+
     }, []);
+
+    const rate =(details:any) => {
+        if (details.response?.reviewCount && details.response?.totalStars) {
+            const value = details.response?.totalStars / details.response?.reviewCount
+            const average = value % 1
+            if (value > 0 && value <= 0.5) {
+                setRating(Math.floor(average) + 0.5)
+            } else if (value > 0.5) {
+                setRating(Math.ceil(average))
+            } else {
+                setRating(Math.floor(average));
+            }
+
+        }
+    }
 
     useEffect(() => {
         if (searchTerm) {
@@ -73,6 +96,7 @@ const Vendor: React.FC = () => {
             setFilteredPosts(vendorDetails.posts);
         }
     }, [searchTerm, vendorDetails]);
+ 
 
     const handleFavoriteClick = () => {
         setIsFavorite(!isFavorite);
@@ -113,7 +137,6 @@ const Vendor: React.FC = () => {
     const handleCloseBookingMessage = () => {
         setShowBookingMessage(false);
     };
-    console.log(services, "🍽️🍽️🍽️🍽️");
 
     if (!vendorDetails) {
         return <div>Loading...</div>;
@@ -176,8 +199,8 @@ const Vendor: React.FC = () => {
                             <p className="text-white text-sm">{vendorDetails.businessName}</p>
                         </div>
                         <div className="flex flex-col items-end text-white">
-                            <span className="text-sm font-semibold">RATING: 4.5</span>
-                            <p className='text-sm'>(12 REVIEWS)</p>
+                            <span className="text-sm font-semibold">RATING: {rating}</span>
+                            <p className='text-sm'>({vendorDetails.reviewCount} REVIEWS)</p>
                         </div>
                     </div>
                     <div className="flex justify-between space-x-2 mt-2">
@@ -241,6 +264,7 @@ const Vendor: React.FC = () => {
                     </div>
                 )}
                 <Booking vendorId={id + ""} />
+                <RatingReview vendorId={id + ""} vendorServices={services} />
             </div>
 
 

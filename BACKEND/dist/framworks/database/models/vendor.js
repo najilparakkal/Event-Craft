@@ -65,6 +65,9 @@ const vendorSchema = new mongoose_1.Schema({
         type: Number,
         default: 0,
     },
+    about: {
+        type: String,
+    },
     availableDate: [
         {
             type: String,
@@ -74,5 +77,18 @@ const vendorSchema = new mongoose_1.Schema({
         type: String,
         default: "https://thingscareerrelated.com/wp-content/uploads/2021/10/default-background-image.png",
     },
-});
+    ratingAndReview: {
+        default: [],
+        type: [
+            {
+                userId: {
+                    type: mongoose_1.Schema.Types.ObjectId,
+                    ref: "Users",
+                },
+                star: Number,
+                review: String,
+            },
+        ],
+    },
+}, { timestamps: true });
 exports.Vendors = (0, mongoose_1.model)("Vendors", vendorSchema);
