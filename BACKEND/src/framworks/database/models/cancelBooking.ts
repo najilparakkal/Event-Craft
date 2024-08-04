@@ -6,7 +6,7 @@ interface ICancelBooking {
   bookingId: string;
   percentage: Number;
   advance:Number;
-
+  paymentId:string
 }
 
 const cancelBookingSchema = new Schema<ICancelBooking>({
@@ -27,6 +27,9 @@ const cancelBookingSchema = new Schema<ICancelBooking>({
   },
   advance:{
     type:Number
+  },
+  paymentId:{
+    type:String
   },
 },
   { timestamps: true }

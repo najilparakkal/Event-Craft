@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
-import { addRequest, fetchVendorDetails } from '../../../API/services/user/Services';
+import { addRequest, addVendorLike, fetchVendorDetails } from '../../../API/services/user/Services';
 import Slider from 'react-slick';
 import Booking from './Booking';
 import { useAppSelector } from '../../../costumeHooks/costum';
 import Header from '../../../compounents/user/Header';
 import RatingReview from './RatingReview';
+import { Button, Popover, Typography } from '@mui/material';
+import { string } from 'yup';
 
 interface VendorDetails {
+    _id:string
     vendorName: string;
     phoneNum: string;
     profilePicture: string;
@@ -18,6 +21,7 @@ interface VendorDetails {
     totalStars: number
     coverPicture: string;
     posts: { title: string; images: string[]; description: string; category: string }[];
+    likes:string[]
 }
 
 
@@ -38,7 +42,8 @@ const Vendor: React.FC = () => {
     const [bookedVendors, setBookedVendors] = useState<string[]>([]);
     const [chat, setChat] = useState(false)
     const [services, setServices] = useState([])
-
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const [vendoLike,setVendorLike]= useState<string[]>([])
     const navigate = useNavigate()
 
 
@@ -50,13 +55,13 @@ const Vendor: React.FC = () => {
             setChat(details.chat)
             setServices(details.services)
             rate(details)
-            
+            setVendorLike(details.response.likes || []);
+
         };
         fetch()
 
     }, []);
-
-    const rate =(details:any) => {
+    const rate = (details: any) => {
         if (details.response?.reviewCount && details.response?.totalStars) {
             const value = details.response?.totalStars / details.response?.reviewCount
             const average = value % 1
@@ -96,10 +101,16 @@ const Vendor: React.FC = () => {
             setFilteredPosts(vendorDetails.posts);
         }
     }, [searchTerm, vendorDetails]);
- 
 
-    const handleFavoriteClick = () => {
-        setIsFavorite(!isFavorite);
+
+    const handleFavoriteClick = async (vendorId: string) => {
+        await addVendorLike(_id + "", vendorId);
+        setVendorLike((prevLikedVendor) =>
+            prevLikedVendor.includes(_id + "")
+                ? prevLikedVendor.filter((id) => id !== _id + "")
+                : [...prevLikedVendor, _id + ""]
+        );
+        console.log(vendoLike,vendorDetails)
     };
 
     const toggleModal = () => {
@@ -181,6 +192,15 @@ const Vendor: React.FC = () => {
             },
         ],
     };
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+    const open = Boolean(anchorEl);
+    const popId = open ? 'simple-popover' : undefined;
 
     return (
         <div className="bg-black min-h-screen flex flex-col items-center">
@@ -204,13 +224,31 @@ const Vendor: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex justify-between space-x-2 mt-2">
-                        <button className="bg-gray-800 text-white py-1 px-2 rounded-md">CONTACT US</button>
+                        <Button aria-describedby={id} variant="outlined" sx={{ backgroundColor: '#1F2937', color: 'white',border:"none" }} onClick={handleClick}>
+                            CONTACT US
+                        </Button>
+                        <Popover
+                            id={popId}
+                            open={open}
+                            anchorEl={anchorEl}
+                            onClose={handleClose}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                            }}
+                        >
+                            <Typography sx={{ p: 1 }}>{vendorDetails.phoneNum}</Typography>
+                        </Popover>
                         <button className="bg-gray-800 text-white py-1 px-2 rounded-md" onClick={() => chat ? navigate('/messages') : toggleModal()}>CHAT WITH ME</button>
                         <button className="bg-gray-800 text-white py-1 px-2 rounded-md" onClick={() => window.scrollTo(0, window.screen.height)}>BOOKING</button>
                     </div>
                     <div className="flex justify-between ">
-                        <a className="text-white px-2 rounded-md flex items-center" onClick={handleFavoriteClick}>
-                            ADD TO <svg xmlns="http://www.w3.org/2000/svg" fill={isFavorite ? "red" : "currentColor"} viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6 ml-2">
+                        <a className="text-white px-2 rounded-md flex items-center" onClick={(e)=>
+                        {
+                            e.stopPropagation()
+                            handleFavoriteClick(vendorDetails._id)
+                        }}>
+                            ADD TO <svg xmlns="http://www.w3.org/2000/svg" fill={vendoLike.includes(_id+"") ? "red" : "currentColor"} viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6 ml-2">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                             </svg>
                         </a>

@@ -42,4 +42,7 @@ userRouter.put('/api/user/commentLike', UserMiddleware_1.default, Controller_1.d
 userRouter.put('/api/user/replyLike', UserMiddleware_1.default, Controller_1.default.replyLike);
 userRouter.get('/api/user/ratingreview/:vendorId', UserMiddleware_1.default, Controller_1.default.ratingReview);
 userRouter.put('/api/user/addReview/:userId/:vendorId', UserMiddleware_1.default, Controller_1.default.addReview);
+userRouter.put('/api/user/vendorLike/:userId/:vendorId', UserMiddleware_1.default, Controller_1.default.vendorLike);
+userRouter.get('/api/user/likedPosts/:userId', UserMiddleware_1.default, Controller_1.default.likedPosts);
+userRouter.get('/api/user/likedVendors/:userId', UserMiddleware_1.default, Controller_1.default.likedVendors);
 exports.default = userRouter;

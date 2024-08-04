@@ -83,6 +83,7 @@ export interface AddBookingParams {
   userId?: string;
   vendorId?: string;
   amount?: number;
+  paymentDetails:{paymentId:string}
 }
 
 export interface IAddBooking {

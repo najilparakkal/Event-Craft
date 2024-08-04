@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useNavigate } from 'react-router-dom';
+import { addVendorLike } from '../../API/services/user/Services';
+import { useAppSelector } from '../../costumeHooks/costum';
 
 interface Post {
   images: string;
@@ -24,19 +26,19 @@ interface Vendor {
   registered: string;
   verified?: boolean;
   licence?: Licence[];
+  likes?: string[];
 }
-
-
 
 interface VendorsProps {
   vendors: Vendor[];
 }
 
 const VendorsCard: React.FC<VendorsProps> = ({ vendors }) => {
-
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [visibleCount, setVisibleCount] = useState<number>(6);
   const navigate = useNavigate();
+  const [vendorLike, setVendorLike] = useState<string[]>([]);
+  const { _id } = useAppSelector((state) => state.user.userDetails);
 
   const postSettings = {
     dots: false,
@@ -49,6 +51,16 @@ const VendorsCard: React.FC<VendorsProps> = ({ vendors }) => {
     arrows: false,
   };
 
+  useEffect(() => {
+    const likedVendors = vendors.reduce((acc, vendor) => {
+      if (vendor.likes?.includes(_id+"")) {
+        acc.push(vendor._id);
+      }
+      return acc;
+    }, [] as string[]);
+    setVendorLike(likedVendors);
+  }, [vendors, _id]);
+
   const filteredVendors = vendors.filter((vendor) =>
     vendor.vendorName.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -59,6 +71,15 @@ const VendorsCard: React.FC<VendorsProps> = ({ vendors }) => {
 
   const handleShowLess = () => {
     setVisibleCount(6);
+  };
+
+  const handleFavoriteClick = async (vendorId: string) => {
+    await addVendorLike(_id+"", vendorId);
+    setVendorLike((prevLikedVendors) =>
+      prevLikedVendors.includes(vendorId)
+        ? prevLikedVendors.filter((id) => id !== vendorId)
+        : [...prevLikedVendors, vendorId]
+    );
   };
 
   return (
@@ -131,6 +152,14 @@ const VendorsCard: React.FC<VendorsProps> = ({ vendors }) => {
                   </a>
                   <div className="flex flex-col justify-between ml-4 text-sm">
                     <p className="text-gray-800 dark:text-white">{vendor.vendorName}</p>
+                    <a className="text-white px-2 rounded-md flex items-center" onClick={(e) => {
+                      e.stopPropagation();
+                      handleFavoriteClick(vendor._id);
+                    }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill={vendorLike.includes(vendor._id) ? "red" : "currentColor"} viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6 ml-2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                      </svg>
+                    </a>
                   </div>
                 </div>
               </div>

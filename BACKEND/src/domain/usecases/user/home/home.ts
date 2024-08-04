@@ -29,6 +29,9 @@ import {
   replyLike,
   ratingReview,
   addReview,
+  vendorLike,
+  likedPosts,
+  likedVendors,
 } from "../../../repositories/user/homeRepo";
 
 export default {
@@ -229,6 +232,27 @@ export default {
   addReview:async(userId:string,vendorId:string,star:number,review:string)=>{
     try {
       return await addReview(userId,vendorId,star,review)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  vendorLike:async(userId:string,vendorId:string)=>{
+    try {
+      return await vendorLike(userId,vendorId)
+    } catch (error) {   
+      console.log(error)
+    }
+  },
+  likedPosts:async(userId:string)=>{
+    try{
+     return await likedPosts(userId)
+    }catch(err){
+      console.log(err)
+    }
+  },
+  likedVendors:async(userId:string)=>{
+    try {
+      return await likedVendors(userId)
     } catch (error) {
       console.log(error)
     }

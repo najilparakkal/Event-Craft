@@ -1,6 +1,7 @@
 import  express  from "express";
 import authController from "../../adaptors/admin/authController";
 import dashBoardController from "../../adaptors/admin/dashBoardController";
+import refund from "../middlewares/AdminMiddleware";
 const adminRouter = express.Router()
 
 adminRouter.post("/api/admin/login",authController.adminChecking)
@@ -16,7 +17,7 @@ adminRouter.post("/api/admin/rejectVendor",dashBoardController.reject)
 adminRouter.post("/api/admin/acceptVendor",dashBoardController.accept)
 adminRouter.get('/api/admin/dashboard',dashBoardController.getDashboard)
 adminRouter.get('/api/admin/cancelBookings',dashBoardController.getBookings)
-adminRouter.patch('/api/admin/refund/:bookingId',dashBoardController.refundBooking)
+adminRouter.patch('/api/admin/refund/:bookingId',refund,dashBoardController.refundBooking)
 adminRouter.get('/api/admin/bills',dashBoardController.bills)
 
 export default adminRouter  

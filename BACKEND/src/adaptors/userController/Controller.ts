@@ -232,4 +232,28 @@ export default {
       console.log(error);
     }
   },
+  vendorLike:async(req:Request,res:Response)=>{
+    try {
+       await userIterator.vendorLike(req.params.userId,req.params.vendorId)
+       res.status(200).json({message:"Vendor like added successfully"})
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  likedPosts:async(req:Request,res:Response)=>{
+    try {
+      const response = await userIterator.likedPosts(req.params.userId)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  likedVendors:async(req:Request,res:Response)=>{
+    try {
+      const response = await userIterator.likedVendors(req.params.userId)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 };

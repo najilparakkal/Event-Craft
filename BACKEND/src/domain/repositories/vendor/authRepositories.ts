@@ -36,6 +36,7 @@ export const RegisterVendor = async (data: any, hashedPassword: string) => {
         name: newVendor.vendorName + "",
         email: newVendor.email + "",
         phoneNum: newVendor.phoneNum + "",
+        profilePicture: newVendor.profilePicture+"",
       };
       return {
         success: true,
@@ -126,14 +127,13 @@ export const logingVendor = async (
       const vendorWithLicence = await Vendors.findById(vendor._id).populate<{
         licence: ILicence[];
       }>("licence");
-      const profilePicture = vendorWithLicence?.licence[0]?.profilePicture;
 
       const vendorDetails: IVendorDetails = {
         email: vendor.email + "",
         phoneNum: vendor.phoneNum + "",
         vendorName: vendor.vendorName + "",
         id: vendor._id+'',
-        profilePicture,
+        profilePicture:vendor.profilePicture + "",
       };
       const { refreshToken, accessToken } = await CreateToken({
         id: vendor._id + "",

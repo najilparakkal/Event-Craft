@@ -18,9 +18,9 @@ const DatePicker: React.FC<Prop> = ({ vendorId }) => {
             console.log(err);
         });
     }, [vendorId]);
-
+    console.log(absentDates,"🧠🧠🧠🧠")
     const handleDateClick = (date: Date) => {
-        if (isBefore(date, new Date())) return; // Prevent selection of past dates
+        if (isBefore(date, new Date())) return;
         if (absentDates.some(absentDate => isSameDay(absentDate, date))) {
             setAbsentDates(absentDates.filter(absentDate => !isSameDay(absentDate, date)));
         } else {

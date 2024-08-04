@@ -103,7 +103,8 @@ export const addBooking = async (
   datas: BookingData,
   userId: string,
   vendorId: string,
-  amount: number
+  amount: number,
+  paymentDetails:{paymentId:string}
 ) => {
   try {
     const response = await authAxiosInstance.post("user/addBooking", {
@@ -111,6 +112,7 @@ export const addBooking = async (
       userId,
       vendorId,
       amount,
+      paymentDetails
     });
     return response.data;
   } catch (error) {
@@ -127,10 +129,9 @@ export const vendorBookings = async (userId: string) => {
   }
 };
 
-export const cancelBooking = async (percentage: number, bookingId: string) => {
+export const cancelBooking = async ( bookingId: string) => {
   try {
     const response = await authAxiosInstance.post("user/cancelBooking", {
-      percentage,
       bookingId,
     });
     return response.data;
@@ -257,3 +258,30 @@ export const addRatingAndReview = async (userId: string, vendorId: string, star:
     console.log(error);
   }
 };
+
+export const addVendorLike = async(userId:string, vendorId:string)=>{
+  try {
+    await authAxiosInstance.put(`user/vendorLike/${userId}/${vendorId}`)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const fetchLikedPosts = async(userId:string)=>{
+  try {
+    const response = await authAxiosInstance.get(`user/likedPosts/${userId}`)
+    return response.data;
+  } catch (error) {
+     console.log(error)
+  }
+}
+
+export const fetchLikedVendors = async(userId:string)=>{
+  try {
+    const response = await authAxiosInstance.get(`user/likedVendors/${userId}`)
+    return response.data;
+    
+  } catch (error) {
+    console.log(error)
+  }
+}

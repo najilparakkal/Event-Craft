@@ -65,6 +65,10 @@ const vendorSchema = new mongoose_1.Schema({
         type: Number,
         default: 0,
     },
+    likes: {
+        type: [String],
+        default: [],
+    },
     about: {
         type: String,
     },

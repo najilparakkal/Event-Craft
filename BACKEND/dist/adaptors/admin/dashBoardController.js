@@ -153,9 +153,8 @@ exports.default = {
     }),
     refundBooking: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const { amount } = req.body;
             const { bookingId } = req.params;
-            const response = yield dashboard_1.default.refundBooking(amount, bookingId);
+            const response = yield dashboard_1.default.refundBooking(bookingId);
             if (response === null || response === void 0 ? void 0 : response.success) {
                 res.status(200).json(response);
             }

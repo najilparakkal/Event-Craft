@@ -134,10 +134,8 @@ export default {
 
   refundBooking:async(req:Request, res:Response) => {
     try {
-      const { amount } = req.body;
       const { bookingId } = req.params;
-            
-      const response = await dashboard.refundBooking(amount,bookingId)
+                  const response = await dashboard.refundBooking(bookingId)
       if(response?.success){
         res.status(200).json(response)
       }else{

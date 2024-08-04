@@ -1,27 +1,24 @@
-import React from 'react'
-import DatePicker from './DatePicker'
+import React from 'react';
+import DatePicker from './DatePicker';
 import { useAppSelector } from '../../../../costumeHooks/costum';
 import Booking from './Booking';
 import { Wallet } from './Wallet';
 import Billing from './Billing';
 
 const Section: React.FC = () => {
-
   const { _id } = useAppSelector((state) => state.vendor.vendorDetails);
 
   return (
-    <div className='flex w-full'>
-
-      <div className='w-1/4 mt-5'>
+    <div className="flex flex-col md:flex-row w-full mt-5">
+      <div className="w-full md:w-1/4 p-4">
         <DatePicker vendorId={_id} />
-        <Wallet/>
+        <Wallet />
       </div>
-      <div className='w-3/4'>
+      <div className="w-full md:w-3/4 p-4">
         <Booking />
-        <Billing/>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default React.memo(Section)
+export default React.memo(Section);

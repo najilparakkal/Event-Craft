@@ -7,11 +7,11 @@ import User from "../routeAuth/User";
 import Home from "../pages/user/homePage/Home";
 import Vendors from "../pages/user/vendorsPage/Vendors";
 import Vendor from "../pages/user/vendorProfile/Vendor";
-import ProfileHome from "../pages/user/profileSection/wishlist/WishlistSection";
 import MessageSection from "../pages/user/profileSection/messages/MessageSection";
 import BookingSection from "../pages/user/profileSection/bookings/BookingSection";
 import { useAppSelector } from "../costumeHooks/costum";
 import ProfileSection from "../pages/user/profileSection/profile/ProfileSection";
+import WishlistSection from "../pages/user/profileSection/wishlist/WishlistSection";
 
 
 
@@ -29,7 +29,7 @@ const UserRouter: React.FC = () => {
                 <Route path="/home" element={<Home />} />
                 <Route path="/vendors/:service" element={<Vendors />} />
                 <Route path="/vendorProfile/:id" element={<Vendor />} />
-                <Route path="/wishlist" element={<ProfileHome />} />
+                <Route path="/wishlist" element={<WishlistSection />} />
                 <Route path="/messages" element={<MessageSection />} />
                 <Route path="/bookings" element={<BookingSection />} />
                 <Route path="/profile" element={<ProfileSection />} />

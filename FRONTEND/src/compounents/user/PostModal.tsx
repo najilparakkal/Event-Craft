@@ -4,12 +4,12 @@ import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import { fetchComments, postComment, replySubmit, updateCommentLike, updateReplyLike } from '../../../API/services/user/Services';
-import { useAppSelector } from '../../../costumeHooks/costum';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { IoMdPaperPlane } from "react-icons/io";
 import EmojiPicker from 'emoji-picker-react';
 import { BsFillEmojiSmileFill } from "react-icons/bs";
+import { useAppSelector } from '../../costumeHooks/costum';
+import { fetchComments, postComment, replySubmit, updateCommentLike, updateReplyLike } from '../../API/services/user/Services';
 
 interface VendorInfo {
     vendorName: string;

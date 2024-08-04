@@ -11,12 +11,12 @@ const database_1 = require("./database");
 const corsOptions = {
     origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    credentials: true, // Add this line to allow credentials
+    credentials: true,
 };
 function configureExpress(app) {
     app.use(express_1.default.urlencoded({ extended: true }));
     app.use(express_1.default.json());
-    app.use(cors(corsOptions)); // Apply CORS middleware with the updated options
+    app.use(cors(corsOptions));
     app.use((0, express_session_1.default)({
         secret: "secret",
         resave: false,

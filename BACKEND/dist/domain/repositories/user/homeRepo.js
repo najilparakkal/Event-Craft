@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addReview = exports.ratingReview = exports.replyLike = exports.commentLike = exports.newReply = exports.getComments = exports.newComment = exports.updateLike = exports.getPosts = exports.getDatesOfVendor = exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
+exports.likedVendors = exports.likedPosts = exports.vendorLike = exports.addReview = exports.ratingReview = exports.replyLike = exports.commentLike = exports.newReply = exports.getComments = exports.newComment = exports.updateLike = exports.getPosts = exports.getDatesOfVendor = exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
 const awsConfig_1 = require("../../../config/awsConfig");
 const booking_1 = require("../../../framworks/database/models/booking");
 const cancelBooking_1 = require("../../../framworks/database/models/cancelBooking");
@@ -24,6 +24,7 @@ const requests_1 = require("../../../framworks/database/models/requests");
 const services_1 = require("../../../framworks/database/models/services");
 const user_1 = require("../../../framworks/database/models/user");
 const vendor_1 = require("../../../framworks/database/models/vendor");
+const date_fns_1 = require("date-fns");
 const listVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const vendors = yield vendor_1.Vendors.find({ vendor: true })
@@ -91,7 +92,7 @@ const getVendorProfile = (vendorId, userId) => __awaiter(void 0, void 0, void 0,
         if (!vendor) {
             throw new Error("Vendor not found");
         }
-        const { vendorName, phoneNum, licence, coverPicture, posts, availableDate, ratingAndReview } = vendor;
+        const { _id, vendorName, phoneNum, licence, coverPicture, posts, availableDate, ratingAndReview, likes, } = vendor;
         const profilePicture = vendor.profilePicture;
         const businessName = ((_a = licence[0]) === null || _a === void 0 ? void 0 : _a.businessName) || "";
         const location = ((_b = licence[0]) === null || _b === void 0 ? void 0 : _b.location) || "";
@@ -118,6 +119,7 @@ const getVendorProfile = (vendorId, userId) => __awaiter(void 0, void 0, void 0,
         const reviewCount = ratingAndReview.length;
         const totalStars = ratingAndReview.reduce((acc, review) => acc + review.star, 0);
         const response = {
+            _id,
             vendorName,
             phoneNum,
             profilePicture,
@@ -128,6 +130,7 @@ const getVendorProfile = (vendorId, userId) => __awaiter(void 0, void 0, void 0,
             availableDate,
             reviewCount,
             totalStars,
+            likes
         };
         return {
             response,
@@ -240,7 +243,7 @@ const chatId = (userId, vendorId) => __awaiter(void 0, void 0, void 0, function*
 exports.chatId = chatId;
 const addBooking = (datas) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const newBooking = new booking_1.Bookings({
+        const newBooking = yield booking_1.Bookings.create({
             clientName: datas.datas.clientName,
             email: datas.datas.email,
             phoneNumber: datas.datas.phoneNumber,
@@ -254,8 +257,12 @@ const addBooking = (datas) => __awaiter(void 0, void 0, void 0, function* () {
             userId: datas.userId,
             vendorId: datas.vendorId,
             advance: datas.amount,
+            paymentId: datas.paymentDetails.paymentId
         });
-        yield newBooking.save();
+        console.log(newBooking);
+        const value = (0, date_fns_1.parseISO)(datas.datas.eventDate);
+        const date = (0, date_fns_1.format)(value, 'yyyy-MM-dd');
+        yield vendor_1.Vendors.findByIdAndUpdate(datas.vendorId, { $push: { availableDate: date } });
         return { success: true };
     }
     catch (error) {
@@ -293,6 +300,7 @@ const cancelBooking = (percentage, bookingId) => __awaiter(void 0, void 0, void 
             percentage,
             advance: booking.advance,
             bookingId,
+            paymentId: booking.paymentId
         });
         const bookings = yield booking_1.Bookings.findByIdAndUpdate(bookingId, {
             $set: { status: "requested to cancel" },
@@ -525,7 +533,6 @@ const ratingReview = (vendorId) => __awaiter(void 0, void 0, void 0, function* (
 exports.ratingReview = ratingReview;
 const addReview = (userId, vendorId, star, review) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(star, "💕💕💕💕");
         const vendor = yield vendor_1.Vendors.findById(vendorId);
         if (!vendor) {
             return { success: false, message: "Vendor not found" };
@@ -542,3 +549,79 @@ const addReview = (userId, vendorId, star, review) => __awaiter(void 0, void 0, 
     }
 });
 exports.addReview = addReview;
+const vendorLike = (userId, vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const vendor = yield vendor_1.Vendors.findById(vendorId);
+        if (!vendor) {
+            throw new Error("vendor not found");
+        }
+        const userIndex = vendor.likes.indexOf(userId);
+        if (userIndex === -1) {
+            vendor.likes.push(userId);
+        }
+        else {
+            vendor.likes.splice(userIndex, 1);
+        }
+        yield vendor.save();
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.vendorLike = vendorLike;
+const likedPosts = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const likedPosts = yield post_1.Posts.aggregate([
+            {
+                $match: {
+                    likes: userId,
+                },
+            },
+            {
+                $addFields: {
+                    vendorId: { $toObjectId: "$vendorId" },
+                },
+            },
+            {
+                $lookup: {
+                    from: "vendors",
+                    localField: "vendorId",
+                    foreignField: "_id",
+                    as: "vendorInfo",
+                },
+            },
+            {
+                $unwind: "$vendorInfo",
+            },
+            {
+                $project: {
+                    title: 1,
+                    images: 1,
+                    vendorId: 1,
+                    is_blocked: 1,
+                    category: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    description: 1,
+                    likes: 1,
+                    "vendorInfo.vendorName": 1,
+                    "vendorInfo.profilePicture": 1,
+                },
+            },
+        ]);
+        return likedPosts;
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.likedPosts = likedPosts;
+const likedVendors = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        return yield vendor_1.Vendors.find({ likes: userId });
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.likedVendors = likedVendors;

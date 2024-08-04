@@ -249,14 +249,12 @@ exports.default = {
             console.log(error);
         }
     }),
-    refund: (amount, bookingId) => __awaiter(void 0, void 0, void 0, function* () {
+    refund: (bookingId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const booking = yield booking_1.Bookings.findById(bookingId);
             if (!booking) {
                 throw new Error("Booking not found");
             }
-            const user = yield user_1.Users.findById(booking === null || booking === void 0 ? void 0 : booking.userId);
-            yield user_1.Users.findByIdAndUpdate(booking.userId, { $inc: { wallet: amount } }, { new: true }).exec();
             booking.status = "cancelled";
             yield booking.save();
             yield cancelBooking_1.CancelBookings.deleteOne({ bookingId });

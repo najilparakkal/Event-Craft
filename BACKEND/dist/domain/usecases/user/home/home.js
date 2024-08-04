@@ -227,6 +227,30 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    vendorLike: (userId, vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.vendorLike)(userId, vendorId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    likedPosts: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.likedPosts)(userId);
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }),
+    likedVendors: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.likedVendors)(userId);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };
 const fetchVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {

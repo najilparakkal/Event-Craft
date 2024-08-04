@@ -3,6 +3,7 @@ import { useAppSelector } from '../../../../costumeHooks/costum';
 import { userBookings, cancelBooking, acceptBooking, updateBooking } from '../../../../API/services/vendor/services';
 import { useNavigate } from 'react-router-dom';
 import Billing from './Billing';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface Booking {
     _id: string;
@@ -28,25 +29,28 @@ const Booking: React.FC = () => {
     const { _id } = useAppSelector((state) => state.vendor.vendorDetails);
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [acceptedBookings, setAcceptedBookings] = useState<Booking[]>([]);
-    const [showCancelModal, setShowCancelModal] = useState(false);
-    const [showAcceptModal, setShowAcceptModal] = useState(false);
-    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [showCancelModal, setShowCancelModal] = useState<boolean>(false);
+    const [showAcceptModal, setShowAcceptModal] = useState<boolean>(false);
+    const [showDetailsModal, setShowDetailsModal] = useState<boolean>(false);
     const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-    const [showSubmitBillModal, setShowSubmitBillModal] = useState(false);
-    const [selectedBillBooking, setSelectedBillBooking] = useState(null);
+    const [showSubmitBillModal, setShowSubmitBillModal] = useState<boolean>(false);
+    const [dropdownOpen, setDropdownOpen] = useState<{ [key: string]: boolean }>({});
+    const [selectedBillBooking, setSelectedBillBooking] = useState<Booking | null>(null);
+
     const navigate = useNavigate();
+
     useEffect(() => {
         const fetchBookings = async () => {
-            const datas = await userBookings(_id + "");
-            const accepted = [];
-            const pending = [];
-            for (const item of datas) {
+            const datas: Booking[] = await userBookings(_id + "");
+            const accepted: Booking[] = [];
+            const pending: Booking[] = [];
+            datas.forEach(item => {
                 if (item.accepted) {
                     accepted.push(item);
                 } else {
                     pending.push(item);
                 }
-            }
+            });
             setAcceptedBookings(accepted);
             setBookings(pending);
         };
@@ -88,7 +92,7 @@ const Booking: React.FC = () => {
     const handleConfirmCancel = async () => {
         if (selectedBooking) {
             await cancelBooking(selectedBooking._id);
-            setBookings((prevBookings) => prevBookings.filter(booking => booking._id !== selectedBooking._id));
+            setBookings(prev => prev.filter(booking => booking._id !== selectedBooking._id));
             handleCloseModal();
         }
     };
@@ -96,41 +100,55 @@ const Booking: React.FC = () => {
     const handleConfirmAccept = async () => {
         if (selectedBooking) {
             const acceptedBooking = await acceptBooking(selectedBooking._id);
-            setAcceptedBookings((prevAccepted) => [...prevAccepted, acceptedBooking]);
-            setBookings((prevBookings) => prevBookings.filter(booking => booking._id !== selectedBooking._id));
+            setAcceptedBookings(prev => [...prev, acceptedBooking]);
+            setBookings(prev => prev.filter(booking => booking._id !== selectedBooking._id));
             handleCloseModal();
         }
     };
 
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedOption, setSelectedOption] = useState('Status');
-
-    const toggleMenu = () => setIsOpen(!isOpen);
+    const toggleMenu = (id: string, bookedDate: string) => {
+        const currentDate = new Date();
+        const eventDate = new Date(bookedDate);
+    
+        if (currentDate > eventDate) {
+            setDropdownOpen(prevState => ({
+                ...prevState,
+                [id]: !prevState[id]
+            }));
+        } else {
+            toast.error("You can update after the booked date");
+        }
+    };
 
     const handleSelectOption = async (option: string, bookingId: string) => {
         const updatedBooking = await updateBooking(bookingId, option);
-        setSelectedOption(option);
-        setIsOpen(false);
+        setDropdownOpen(prevState => ({
+            ...prevState,
+            [bookingId]: false
+        }));
 
         if (option === 'Completed' || option === 'Cancelled') {
-            setBookings((prevBookings) => prevBookings.filter(booking => booking._id !== bookingId));
-            setAcceptedBookings((prevAccepted: any) => [...prevAccepted, updatedBooking]);
+            setBookings(prev => prev.filter(booking => booking._id !== bookingId));
+            setAcceptedBookings((prev:any) => [...prev, updatedBooking]);
         } else if (option === 'Pending') {
-            setAcceptedBookings((prevAccepted) => prevAccepted.filter(booking => booking._id !== bookingId));
-            setBookings((prevBookings: any) => [...prevBookings, updatedBooking]);
+            setAcceptedBookings(prev => prev.filter(booking => booking._id !== bookingId));
+            setBookings((prev:any) => [...prev, updatedBooking]);
         }
     };
-    const handleOpenBilling = () => {
+
+    const handleOpenBilling = (booking: Booking) => {
+        setSelectedBillBooking(booking);
         setShowSubmitBillModal(true);
     };
 
     const handleCloseBilling = () => {
+        setSelectedBillBooking(null);
         setShowSubmitBillModal(false);
     };
 
-
     return (
         <div>
+            <Toaster position='top-center'/>
             {acceptedBookings.length > 0 && (
                 <div className="p-4">
                     <h1 className="text-2xl font-bold mb-4">Accepted Bookings</h1>
@@ -143,7 +161,7 @@ const Booking: React.FC = () => {
                                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Client Name</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Action</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">More Info</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Submit Bill</th> {/* New Field */}
+                                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Submit Bill</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-gray-600 divide-y divide-gray-500">
@@ -153,12 +171,11 @@ const Booking: React.FC = () => {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{new Date(booking.eventDate).toLocaleDateString()}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{booking.clientName}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            {booking.status === 'Pending' ? (
+                                            {booking.status !== 'Completed' && booking.status !== 'Pending' ? (
                                                 <div className="relative inline-block text-left">
                                                     <button
-                                                        onClick={toggleMenu}
-                                                        id="dropdownDefaultButton"
-                                                        className="text-white  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
+                                                        onClick={() => toggleMenu(booking._id, new Date(booking.eventDate).toLocaleDateString())}
+                                                        className="text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
                                                         type="button"
                                                     >
                                                         {booking.status}
@@ -167,14 +184,14 @@ const Booking: React.FC = () => {
                                                         </svg>
                                                     </button>
 
-                                                    {isOpen && (
-                                                        <div id="dropdown" className="absolute bottom-full right-0 mb-2 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow flex">
-                                                            <ul className="flex space-x-2 py-2 text-sm text-gray-700  dark:text-gray-200">
+                                                    {dropdownOpen[booking._id] && (
+                                                        <div className="absolute bottom-full right-0 mb-2 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow flex">
+                                                            <ul className="flex space-x-2 py-2 text-sm text-gray-700 dark:text-gray-200">
                                                                 <li>
                                                                     <a
                                                                         href="#"
                                                                         onClick={() => handleSelectOption('Completed', booking._id)}
-                                                                        className="block px-4 py-2   text-green-600 "
+                                                                        className="block px-4 py-2 text-green-600"
                                                                     >
                                                                         Completed
                                                                     </a>
@@ -183,7 +200,7 @@ const Booking: React.FC = () => {
                                                                     <a
                                                                         href="#"
                                                                         onClick={() => handleSelectOption('Cancelled', booking._id)}
-                                                                        className="block px-4 py-2 text-red-700   "
+                                                                        className="block px-4 py-2 text-red-700"
                                                                     >
                                                                         Cancelled
                                                                     </a>
@@ -193,20 +210,20 @@ const Booking: React.FC = () => {
                                                     )}
                                                 </div>
                                             ) : (
-                                                <span>{booking.status}</span>
+                                                <span className="text-gray-400">{booking.status}</span>
                                             )}
                                         </td>
+
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            <button className="text-blue-500 hover:text-blue-700" onClick={() => handleDetailsClick(booking)}>View</button>
+                                            <button className="text-blue-500 hover:text-blue-700" onClick={() => handleDetailsClick(booking)}>View Details</button>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            <button className="text-green-500 hover:text-green-700" onClick={handleOpenBilling}>Submit Bill</button>
+                                            <button className="text-green-500 hover:text-green-700" onClick={() => handleOpenBilling(booking)}>Submit Bill</button>
                                         </td>
                                         {showSubmitBillModal && (
                                             <Billing isOpen={showSubmitBillModal} bookingId={booking._id} onClose={handleCloseBilling} />
                                         )}
                                     </tr>
-
                                 ))}
                             </tbody>
                         </table>
@@ -216,7 +233,7 @@ const Booking: React.FC = () => {
 
             {bookings.length > 0 && (
                 <div className="p-4">
-                    <h1 className="text-2xl font-bold mb-4">Bookings</h1>
+                    <h1 className="text-2xl font-bold mb-4">Pending Bookings</h1>
                     <div className="overflow-x-auto bg-gray-700 text-white rounded-lg shadow-md">
                         <table className="min-w-full divide-y divide-gray-600">
                             <thead className="bg-gray-800">
@@ -226,6 +243,7 @@ const Booking: React.FC = () => {
                                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Client Name</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Action</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">More Info</th>
+
                                 </tr>
                             </thead>
                             <tbody className="bg-gray-600 divide-y divide-gray-500">
@@ -235,10 +253,8 @@ const Booking: React.FC = () => {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{new Date(booking.eventDate).toLocaleDateString()}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{booking.clientName}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            <div className="flex space-x-2">
-                                                <button className="text-blue-500 hover:text-blue-300" onClick={() => handleAcceptClick(booking)}>Accept</button>
-                                                <button className="text-red-500 hover:text-red-300" onClick={() => handleCancelClick(booking)}>Cancel</button>
-                                            </div>
+                                            <button className="text-green-500 hover:text-green-700" onClick={() => handleAcceptClick(booking)}>Accept</button>
+                                            <button className="text-red-500 hover:text-red-700 ms-2" onClick={() => handleCancelClick(booking)}>Cancel</button>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                                             <button className="text-blue-500 hover:text-blue-300" onClick={() => handleDetailsClick(booking)}>More..</button>
@@ -262,12 +278,12 @@ const Booking: React.FC = () => {
                                 <span className="sr-only">Close modal</span>
                             </button>
                             <div className="p-6 text-center">
-                                <svg className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11v2m0-8v2m9-1a9 9 0 11-18 0 9 9 0 0118 0Z" />
-                                </svg>
-                                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to cancel this booking?</h3>
-                                <button type="button" className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2" onClick={handleConfirmCancel}>Yes, I'm sure</button>
-                                <button type="button" className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600" onClick={handleCloseModal}>No, cancel</button>
+                                <h3 className="text-lg font-medium text-gray-900 dark:text-white">Cancel Booking</h3>
+                                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Are you sure you want to cancel this booking? The refund amount will be based on the cancellation policy.</p>
+                                <div className="flex gap-4 mt-4">
+                                    <button type="button" className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" onClick={handleConfirmCancel}>Confirm</button>
+                                    <button type="button" className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600" onClick={handleCloseModal}>Cancel</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -285,12 +301,12 @@ const Booking: React.FC = () => {
                                 <span className="sr-only">Close modal</span>
                             </button>
                             <div className="p-6 text-center">
-                                <svg className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11v2m0-8v2m9-1a9 9 0 11-18 0 9 9 0 0118 0Z" />
-                                </svg>
-                                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to accept this booking?</h3>
-                                <button type="button" className="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2" onClick={handleConfirmAccept}>Yes, I'm sure</button>
-                                <button type="button" className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600" onClick={handleCloseModal}>No, cancel</button>
+                                <h3 className="text-lg font-medium text-gray-900 dark:text-white">Accept Booking</h3>
+                                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Are you sure you want to accept this booking?</p>
+                                <div className="flex gap-4 mt-4">
+                                    <button type="button" className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={handleConfirmAccept}>Confirm</button>
+                                    <button type="button" className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600" onClick={handleCloseModal}>Cancel</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -308,9 +324,9 @@ const Booking: React.FC = () => {
                                 <span className="sr-only">Close modal</span>
                             </button>
                             <div className="p-6 text-center">
-                                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Booking Details</h3>
-                                <div className="text-left text-gray-500 dark:text-gray-400">
-                                    <p><strong>Client Name:</strong> {selectedBooking.clientName}</p>
+                                <h3 className="text-lg font-medium text-gray-900 dark:text-white">Booking Details</h3>
+                                <div className="mt-4 text-left">
+                                <p><strong>Client Name:</strong> {selectedBooking.clientName}</p>
                                     <p><strong>Event Date:</strong> {new Date(selectedBooking.eventDate).toLocaleDateString()}</p>
                                     <p><strong>Event:</strong> {selectedBooking.event}</p>
                                     <p><strong>Advance:</strong> {selectedBooking.advance}</p>
@@ -322,11 +338,9 @@ const Booking: React.FC = () => {
                                     <p><strong>Phone Number:</strong> {selectedBooking.phoneNumber}</p>
                                     <p><strong>Pincode:</strong> {selectedBooking.pincode}</p>
                                 </div>
-                                <button type="button" className="mt-4 text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600" onClick={() => {
-                                    navigate('/vendor/messages')
-                                    handleCloseModal
-                                }
-                                }>Connect Client</button>
+                                <div className="flex gap-4 mt-4">
+                                    <button type="button" className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600" onClick={handleCloseModal}>Close</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -334,6 +348,6 @@ const Booking: React.FC = () => {
             )}
         </div>
     );
-};
+}
 
 export default Booking;

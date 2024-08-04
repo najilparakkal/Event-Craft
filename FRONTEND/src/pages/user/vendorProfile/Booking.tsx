@@ -37,7 +37,7 @@ const Booking: React.FC<BookingProps> = ({ vendorId }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formValues, setFormValues] = useState<FormData | null>(null);
     const [guest, setGuest] = useState<number | undefined>(0);
-    const [absentDates, setAbsentDates] = useState<Date[]>([]);
+    const [absentDates, setAbsentDates] = useState<[]>([]);
     const [amount, setAmount] = useState<number>(1)
     useEffect(() => {
         vendorAbsend(vendorId)
@@ -47,50 +47,49 @@ const Booking: React.FC<BookingProps> = ({ vendorId }) => {
             .catch((err) => {
                 console.log(err);
             });
-
+      
+    }, [vendorId]);
+    useEffect(()=>{
         const script = document.createElement('script');
         script.src = 'https://checkout.razorpay.com/v1/checkout.js';
         script.onload = () => setIsRazorpayLoaded(true);
         script.onerror = () => setIsRazorpayLoaded(false);
         document.body.appendChild(script);
-    }, [vendorId]);
-
+    },[])
     const formik = useFormik<FormData>({
         initialValues: bookingInitialValue,
         validationSchema: bookingValidation,
         onSubmit: (values) => {
             setFormValues(values);
-            if (guest) setAmount(guest *7)
+            if (guest) setAmount(guest * 7)
 
             setIsModalOpen(true);
         },
     });
 
-    const handleModalSubmit = async () => 
-        {
+    const handleModalSubmit = async () => {
         if (!isRazorpayLoaded) {
             alert('Razorpay SDK is still loading or failed to load. Please try again later.');
             return;
         }
-        
+
         const options = {
-            key: import.meta.env.VITE_APP_REZORPAY_SECRET_KEY,
-            amount: ((amount*10)*10),
+            key: import.meta.env.VITE_APP_RAZORPAY_KEYID,
+            amount: ((amount * 10) * 10),
             currency: 'INR',
             name: 'EVENT CRAFT',
             description: 'Test Payment',
             image: '/logo-no-background.png',
-            notes: {
-                address: 'Razorpay Corporate Office',
-            },
-            theme: {
-                color: '#3399cc',
-            },
-            handler: async function () {
+            notes: { address: 'Razorpay Corporate Office' },
+            theme: { color: '#3399cc'},
+
+            handler: async function (response: any) {
                 try {
                     if (amount) {
-
-                        const res = await addBooking(formValues as any, _id + "", vendorId, amount);
+                        const paymentDetails = {
+                            paymentId: response.razorpay_payment_id,
+                        };                       
+                        const res = await addBooking(formValues as any, _id + "", vendorId, amount, paymentDetails);
                         if (res) {
                             toast.success("Vendor booked successfully");
                             formik.resetForm();
@@ -110,12 +109,12 @@ const Booking: React.FC<BookingProps> = ({ vendorId }) => {
                 },
             },
         };
-        const rzp = new window.Razorpay(options);        
+        const rzp = new window.Razorpay(options);
         rzp.open();
     };
 
     const dayClassName = (date: Date) => {
-        return absentDates.some(absentDate => absentDate.getTime() === date.getTime())
+        return absentDates.some((absentDate:Date) => absentDate.getTime() === date.getTime())
             ? 'react-datepicker__day--highlighted-custom-absent-date'
             : '';
     };
@@ -180,7 +179,7 @@ const Booking: React.FC<BookingProps> = ({ vendorId }) => {
                             onChange={handleDateChange}
                             minDate={new Date()}
                             highlightDates={absentDates}
-                            filterDate={date => !absentDates.some(absentDate => absentDate.getTime() === date.getTime())}
+                            filterDate={date => !absentDates.some((absentDate:Date) => absentDate.getTime() === date.getTime())}
                             dayClassName={dayClassName}
                             className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
                             placeholderText="Select event date"
@@ -310,42 +309,42 @@ const Booking: React.FC<BookingProps> = ({ vendorId }) => {
             </form>
 
             {isModalOpen && (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-        <div className="bg-white p-6 rounded-lg">
-            <h2 className="text-lg font-bold mb-4">Confirm Payment</h2>
-            <p className="mb-4">Are you sure you want to proceed with the payment?</p>
-            <p className="mb-4 text-sm text-gray-700">
-                <strong>Terms and Conditions:</strong>
-                <ul className="list-disc list-inside">
-                    <li>All payments must be made through this site.</li>
-                    <li>If you cancel the booking within 3 days, you will receive a full refund.</li>
-                    <li>If you cancel after 3 days, you will receive 70% of the total amount paid.</li>
-                    <li>The event date cannot be changed once the payment is confirmed.</li>
-                    <li>In case of any discrepancies, please contact our support team within 24 hours of booking.</li>
-                    <li>Refunds will be processed within 7-10 business days.</li>
-                    <li>By confirming this payment, you agree to our <a href="/terms" className="text-blue-500 underline">terms and conditions</a>.</li>
-                </ul>
-            </p>
-            <div className="flex justify-between items-center">
-                <p className="text-lg font-semibold">Advance Amount: {amount}</p>
-                <div className="flex">
-                    <button
-                        onClick={() => setIsModalOpen(false)}
-                        className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 mr-2"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleModalSubmit}
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                    >
-                        Confirm
-                    </button>
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white p-6 rounded-lg">
+                        <h2 className="text-lg font-bold mb-4">Confirm Payment</h2>
+                        <p className="mb-4">Are you sure you want to proceed with the payment?</p>
+                        <p className="mb-4 text-sm text-gray-700">
+                            <strong>Terms and Conditions:</strong>
+                            <ul className="list-disc list-inside">
+                                <li>All payments must be made through this site.</li>
+                                <li>If you cancel the booking within 3 days, you will receive a full refund.</li>
+                                <li>If you cancel after 3 days, you will receive 70% of the total amount paid.</li>
+                                <li>The event date cannot be changed once the payment is confirmed.</li>
+                                <li>In case of any discrepancies, please contact our support team within 24 hours of booking.</li>
+                                <li>Refunds will be processed within 7-10 business days.</li>
+                                <li>By confirming this payment, you agree to our <a href="/terms" className="text-blue-500 underline">terms and conditions</a>.</li>
+                            </ul>
+                        </p>
+                        <div className="flex justify-between items-center">
+                            <p className="text-lg font-semibold">Advance Amount: {amount}</p>
+                            <div className="flex">
+                                <button
+                                    onClick={() => setIsModalOpen(false)}
+                                    className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 mr-2"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleModalSubmit}
+                                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                                >
+                                    Confirm
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-)}
+            )}
 
         </>
     );

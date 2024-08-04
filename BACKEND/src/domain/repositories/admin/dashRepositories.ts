@@ -255,19 +255,12 @@ export default {
       console.log(error);
     }
   },
-  refund: async (amount: number, bookingId: string) => {
+  refund: async (bookingId: string) => {
     try {
       const booking = await Bookings.findById(bookingId);
       if (!booking) {
         throw new Error("Booking not found");
       }
-      const user = await Users.findById(booking?.userId);
-
-      await Users.findByIdAndUpdate(
-        booking.userId,
-        { $inc: { wallet: amount } },
-        { new: true }
-      ).exec();
       booking.status = "cancelled";
       await booking.save();
       await CancelBookings.deleteOne({ bookingId });

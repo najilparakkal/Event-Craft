@@ -16,6 +16,7 @@ export interface IBooking extends Document {
   event:string;
   accepted:boolean;
   status:string;
+  paymentId:string;
 }
 
 const bookingSchema = new Schema<IBooking>({
@@ -74,6 +75,9 @@ const bookingSchema = new Schema<IBooking>({
   status:{
     type:String,
     default:"pending"
+  },
+  paymentId:{
+    type:String
   }
 
 });

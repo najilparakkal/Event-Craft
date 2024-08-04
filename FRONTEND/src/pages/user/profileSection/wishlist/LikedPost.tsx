@@ -1,3 +1,4 @@
+import { fetchLikedPosts, updateLike } from '../../../../API/services/user/Services'
 import React, { useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
@@ -9,8 +10,10 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import CommentIcon from '@mui/icons-material/Comment';
 import { Typography } from '@mui/material';
-import { fetchPosts, updateLike } from '../../../API/services/user/Services';
-import PostModal from '../../../compounents/user/PostModal';
+import PostModal from '../../../../compounents/user/PostModal';
+// import PostModal from './PostModal';
+
+interface prop { userId: string }
 
 interface VendorInfo {
     vendorName: string;
@@ -28,29 +31,23 @@ interface Post {
     likes: string[];
 }
 
-interface PostProps {
-    userId: string;
-}
 
 
 
-const Posts: React.FC<PostProps> = ({ userId }) => {
+const LikedPost: React.FC<prop> = ({ userId }) => {
     const [datas, setDatas] = useState<Post[]>([]);
     const [likedPosts, setLikedPosts] = useState<string[]>([]);
-    const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-
-    useEffect(() => {
-        fetchPosts(userId + "")
-            .then((data) => {
-                setDatas(data);
-                const initialLikedPosts = data.filter((post: Post) => post.likes.includes(userId)).map((post: Post) => post._id);
-                setLikedPosts(initialLikedPosts);
-            })
-            .catch((error: Error) => console.log(error));
-    }, [userId]);
-
-    const handleLike = async(postId: string) => {
-       await updateLike(postId, userId);
+    const [selectedPost, setSelectedPost] = useState<Post | null>(null); useEffect(() => {
+        fetchLikedPosts(userId).then((data) => {
+            setDatas(data)
+            const initialLikedPosts = data.filter((post: Post) => post.likes.includes(userId)).map((post: Post) => post._id);
+            setLikedPosts(initialLikedPosts);
+        }).catch((err) => {
+            console.log(err)
+        })
+    }, [])
+    const handleLike = async (postId: string) => {
+        await updateLike(postId, userId);
         setLikedPosts((prevLikedPosts) =>
             prevLikedPosts.includes(postId)
                 ? prevLikedPosts.filter((id) => id !== postId)
@@ -81,9 +78,9 @@ const Posts: React.FC<PostProps> = ({ userId }) => {
                         onClick={() => handleCardClick(post)}
                     />
                     <CardActions className="flex justify-between p-2 bg-gray-800">
-                        <IconButton 
-                            aria-label="add to favorites" 
-                            sx={{ padding: '8px' }} 
+                        <IconButton
+                            aria-label="add to favorites"
+                            sx={{ padding: '8px' }}
                             onClick={(e) => { e.stopPropagation(); handleLike(post._id); }}
                         >
                             <FavoriteIcon fontSize="small" color={likedPosts.includes(post._id) ? "error" : "inherit"} />
@@ -124,7 +121,7 @@ const Posts: React.FC<PostProps> = ({ userId }) => {
                 <PostModal open={!!selectedPost} onClose={handleCloseModal} post={selectedPost} />
             )}
         </div>
-    );
+    )
 }
 
-export default Posts;
+export default LikedPost

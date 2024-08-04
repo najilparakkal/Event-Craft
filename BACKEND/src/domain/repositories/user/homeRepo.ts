@@ -11,6 +11,8 @@ import { Services } from "../../../framworks/database/models/services";
 import { Users } from "../../../framworks/database/models/user";
 import { Vendors } from "../../../framworks/database/models/vendor";
 import { AddBookingParams, IAddBooking } from "../../entities/user/user";
+import { format, parseISO } from 'date-fns';
+
 import {
   IReqVendor,
   IRequest,
@@ -87,13 +89,15 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
     }
 
     const {
+      _id,
       vendorName,
       phoneNum,
       licence,
       coverPicture,
       posts,
       availableDate,
-      ratingAndReview
+      ratingAndReview,
+      likes,
     } = vendor;
     const profilePicture = vendor.profilePicture;
     const businessName = licence[0]?.businessName || "";
@@ -124,10 +128,11 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
 
     const bookings = await Bookings.find({ userId, vendorId });
 
-    const reviewCount = ratingAndReview.length;
+    const reviewCount  = ratingAndReview.length;
     const totalStars = ratingAndReview.reduce((acc: number, review: any) => acc + review.star, 0);
 
     const response: VendorProfile = {
+      _id,
       vendorName,
       phoneNum,
       profilePicture,
@@ -138,6 +143,7 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
       availableDate,
       reviewCount,
       totalStars,
+      likes
     };
 
     return {
@@ -276,7 +282,7 @@ export const chatId = async (userId: string, vendorId: string) => {
 
 export const addBooking = async (datas: any) => {
   try {
-    const newBooking = new Bookings({
+    const newBooking = await Bookings.create({
       clientName: datas.datas.clientName,
       email: datas.datas.email,
       phoneNumber: datas.datas.phoneNumber,
@@ -290,8 +296,13 @@ export const addBooking = async (datas: any) => {
       userId: datas.userId,
       vendorId: datas.vendorId,
       advance: datas.amount,
+      paymentId:datas.paymentDetails.paymentId
     });
-    await newBooking.save();
+    console.log(newBooking)
+
+    const value  = parseISO(datas.datas.eventDate);
+    const date = format(value,'yyyy-MM-dd')
+    await Vendors.findByIdAndUpdate(datas.vendorId,{$push:{availableDate:date}})
     return { success: true };
   } catch (error) {
     console.error("Error adding booking:", error);
@@ -330,6 +341,7 @@ export const cancelBooking = async (percentage: number, bookingId: string) => {
       percentage,
       advance: booking.advance,
       bookingId,
+      paymentId: booking.paymentId
     });
     const bookings = await Bookings.findByIdAndUpdate(bookingId, {
       $set: { status: "requested to cancel" },
@@ -560,7 +572,6 @@ export const addReview = async (
   review: string
 ) => {
   try {
-    console.log(star,"💕💕💕💕")
     const vendor = await Vendors.findById(vendorId);
     if (!vendor) {
       return { success: false, message: "Vendor not found" };
@@ -575,3 +586,77 @@ export const addReview = async (
     return { success: false, message: "Failed to add review" };
   }
 };
+
+export const vendorLike = async(userId:string,vendorId:string)=>{
+  try {
+    const vendor = await Vendors.findById(vendorId);
+    if (!vendor) {
+      throw new Error("vendor not found");
+    }
+    const userIndex = vendor.likes.indexOf(userId);
+    if (userIndex === -1) {   
+      vendor.likes.push(userId);
+    } else {
+      vendor.likes.splice(userIndex, 1);
+    }
+    await vendor.save();
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const likedPosts = async (userId: string) => {
+  try {
+    const likedPosts = await Posts.aggregate([
+      {
+        $match: {
+          likes: userId,
+        },
+      },
+      {
+        $addFields: {
+          vendorId: { $toObjectId: "$vendorId" },
+        },
+      },
+      {
+        $lookup: {
+          from: "vendors",
+          localField: "vendorId",
+          foreignField: "_id",
+          as: "vendorInfo",
+        },
+      },
+      {
+        $unwind: "$vendorInfo",
+      },
+      {
+        $project: {
+          title: 1,
+          images: 1,
+          vendorId: 1,
+          is_blocked: 1,
+          category: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          description: 1,
+          likes: 1,
+          "vendorInfo.vendorName": 1,
+          "vendorInfo.profilePicture": 1,
+        },
+      },
+    ]);
+
+    return likedPosts;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+export const likedVendors =async (userId:string)=>{
+  try {
+    return await Vendors.find({likes:userId})
+  } catch (error) {
+    console.log(error)
+  }
+}

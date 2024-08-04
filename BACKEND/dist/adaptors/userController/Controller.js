@@ -250,4 +250,31 @@ exports.default = {
             console.log(error);
         }
     }),
+    vendorLike: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield home_1.default.vendorLike(req.params.userId, req.params.vendorId);
+            res.status(200).json({ message: "Vendor like added successfully" });
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    likedPosts: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.likedPosts(req.params.userId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    likedVendors: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.likedVendors(req.params.userId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    })
 };

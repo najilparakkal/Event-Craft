@@ -7,7 +7,7 @@ export interface IvendorDetails {
   email: string;
   phoneNum: string;
   name: string;
-  profileImage?: string;
+  profilePicture?: string;
 }
 
 export interface IotpVeri {
@@ -106,6 +106,8 @@ interface PostDetails {
   category: string;
 }
 export interface VendorProfile {
+  likes: string[];
+  _id:string
   vendorName: string;
   phoneNum: string;
   profilePicture: string;
@@ -114,6 +116,8 @@ export interface VendorProfile {
   coverPicture: string;
   posts: PostDetails[];
   availableDate?: string;
+  reviewCount:number
+  totalStars:number
   response?: {
     vendorName: string;
     phoneNum: string;

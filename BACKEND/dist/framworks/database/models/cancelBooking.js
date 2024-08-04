@@ -21,5 +21,8 @@ const cancelBookingSchema = new mongoose_1.Schema({
     advance: {
         type: Number
     },
+    paymentId: {
+        type: String
+    },
 }, { timestamps: true });
 exports.CancelBookings = (0, mongoose_1.model)("CancelBookings", cancelBookingSchema);

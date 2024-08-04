@@ -38,4 +38,7 @@ userRouter.put('/api/user/commentLike',userAuth,Controller.commentLike)
 userRouter.put('/api/user/replyLike',userAuth,Controller.replyLike)
 userRouter.get('/api/user/ratingreview/:vendorId',userAuth,Controller.ratingReview)
 userRouter.put('/api/user/addReview/:userId/:vendorId',userAuth,Controller.addReview)
+userRouter.put('/api/user/vendorLike/:userId/:vendorId',userAuth,Controller.vendorLike)
+userRouter.get('/api/user/likedPosts/:userId',userAuth,Controller.likedPosts)
+userRouter.get('/api/user/likedVendors/:userId',userAuth,Controller.likedVendors)
 export default userRouter                   

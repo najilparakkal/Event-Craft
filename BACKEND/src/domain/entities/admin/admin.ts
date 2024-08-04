@@ -26,3 +26,23 @@ export interface rejectingVendor{
   id:string;
   reason:string;
 }
+
+export interface IAdminBooking {
+  _id: string;
+  clientName: string;
+  email: string;
+  phoneNumber: string;
+  eventDate: Date;
+  event: string;
+  arrivalTime: string;
+  endingTime: string;
+  guests: number;
+  location: string;
+  advance: number;
+  pincode: string;
+  accepted: boolean;
+  userId: string;
+  vendorId: string;
+  status: string;
+  paymentId: string;
+}

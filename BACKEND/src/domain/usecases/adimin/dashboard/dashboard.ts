@@ -108,9 +108,9 @@ export default {
       console.log(error);
     }
   },
-  refundBooking:async(refund:number,bookingId:string)=>{
+  refundBooking:async(bookingId:string)=>{
     try {
-      return await dashRepositories.refund(refund,bookingId)
+      return await dashRepositories.refund(bookingId)
       
     } catch (error) {
       console.log(error);

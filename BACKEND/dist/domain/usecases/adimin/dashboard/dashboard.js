@@ -121,9 +121,9 @@ exports.default = {
             console.log(error);
         }
     }),
-    refundBooking: (refund, bookingId) => __awaiter(void 0, void 0, void 0, function* () {
+    refundBooking: (bookingId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return yield dashRepositories_1.default.refund(refund, bookingId);
+            return yield dashRepositories_1.default.refund(bookingId);
         }
         catch (error) {
             console.log(error);

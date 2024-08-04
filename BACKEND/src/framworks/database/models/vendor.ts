@@ -69,6 +69,10 @@ const vendorSchema = new Schema<IVendors>(
       type: Number,
       default: 0,
     },
+     likes: {
+      type: [String],
+      default: [],
+    },
     about: {
       type: String,
     },
@@ -125,4 +129,5 @@ export interface IVendors extends Document {
     star: number;
     review: string;
   }[];
+  likes:string[];
 }

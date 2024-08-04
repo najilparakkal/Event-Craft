@@ -124,11 +124,11 @@ export const fetchCanelldBookings = async () => {
     console.log(error);
   }
 };
-export const refundUser = async (amount: number, bookingId: string) => {
+export const refundUser = async ( bookingId: string,paymentId:string) => {
   try {
     const response = await authAxiosInstance.patch(
       `admin/refund/${bookingId}`,
-      { amount }
+      { paymentId }
     );
     return response.status === 200;
   } catch (error) {

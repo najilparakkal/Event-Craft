@@ -58,6 +58,9 @@ const bookingSchema = new mongoose_1.Schema({
     status: {
         type: String,
         default: "pending"
+    },
+    paymentId: {
+        type: String
     }
 });
 exports.Bookings = (0, mongoose_1.model)("Bookings", bookingSchema);

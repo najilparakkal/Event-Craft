@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const authController_1 = __importDefault(require("../../adaptors/admin/authController"));
 const dashBoardController_1 = __importDefault(require("../../adaptors/admin/dashBoardController"));
+const AdminMiddleware_1 = __importDefault(require("../middlewares/AdminMiddleware"));
 const adminRouter = express_1.default.Router();
 adminRouter.post("/api/admin/login", authController_1.default.adminChecking);
 adminRouter.post("/api/admin/Users", dashBoardController_1.default.usersListing);
@@ -20,6 +21,6 @@ adminRouter.post("/api/admin/rejectVendor", dashBoardController_1.default.reject
 adminRouter.post("/api/admin/acceptVendor", dashBoardController_1.default.accept);
 adminRouter.get('/api/admin/dashboard', dashBoardController_1.default.getDashboard);
 adminRouter.get('/api/admin/cancelBookings', dashBoardController_1.default.getBookings);
-adminRouter.patch('/api/admin/refund/:bookingId', dashBoardController_1.default.refundBooking);
+adminRouter.patch('/api/admin/refund/:bookingId', AdminMiddleware_1.default, dashBoardController_1.default.refundBooking);
 adminRouter.get('/api/admin/bills', dashBoardController_1.default.bills);
 exports.default = adminRouter;

@@ -43,10 +43,10 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const [services, setServices] = useState<Service[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
-  const {_id} = useAppSelector((state)=>state.user.userDetails)
+  const { _id } = useAppSelector((state) => state.user.userDetails)
   useEffect(() => {
     const getServices = async () => {
-      const servicesList= await fetchServices();
+      const servicesList = await fetchServices();
       setServices(servicesList.services);
       setVendors(servicesList.vendors);
     };
@@ -141,7 +141,7 @@ const Home: React.FC = () => {
 
         <VendorsCard vendors={vendors} />
 
-          <Posts userId={_id+""}/>
+        <Posts userId={_id + ""} />
 
         <div className="  text-center p-8">
           <h1 className="text-3xl font-bold mb-8 ">WHY CHOOSE US</h1>
@@ -192,7 +192,7 @@ const Home: React.FC = () => {
 
 
 
-        
+
         <div className="relative max-w-screen-xl p-4 px-4 mx-auto   sm:px-6 lg:px-8 py-26 lg:mt-20">
           <div className="relative">
             <div className="lg:grid lg:grid-flow-row-dense lg:grid-cols-2 lg:gap-8 lg:items-center">
@@ -279,25 +279,25 @@ const Home: React.FC = () => {
 
 
         <div className="mt-10  p-8">
-            <h2 className="text-2xl text-gray-500 mb-2">Didn't Get Your Vendor .?</h2>
-            <p className="mb-6 text-gray-500">Our executives will call you to understand your requirements to find suitable vendors</p>
-            <div className="flex space-x-4">
-              <input
-                type="text"
-                placeholder="Enter Your Name"
-                className="px-2 py-1 border-b-2 border-gray-300 bg-transparent text-black placeholder-gray-500 w-full"
-              />
-              <input
-                type="text"
-                placeholder="Enter Mobile Number"
-                className="px-2 py-1 border-b-2 border-gray-300 bg-transparent text-black placeholder-gray-500 w-full"
-              />
+          <h2 className="text-2xl text-gray-500 mb-2">Didn't Get Your Vendor .?</h2>
+          <p className="mb-6 text-gray-500">Our executives will call you to understand your requirements to find suitable vendors</p>
+          <div className="flex space-x-4">
+            <input
+              type="text"
+              placeholder="Enter Your Name"
+              className="px-2 py-1 border-b-2 border-gray-300 bg-transparent text-black placeholder-gray-500 w-full"
+            />
+            <input
+              type="text"
+              placeholder="Enter Mobile Number"
+              className="px-2 py-1 border-b-2 border-gray-300 bg-transparent text-black placeholder-gray-500 w-full"
+            />
 
-              <button className="bg-blue-600 text-white px-6 py-2 rounded-md">Submit</button>
-            </div>
+            <button className="bg-blue-600 text-white px-6 py-2 rounded-md">Submit</button>
           </div>
+        </div>
       </main>
-      <Footer/>
+      <Footer />
     </div>
   );
 };
