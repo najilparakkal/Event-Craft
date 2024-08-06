@@ -9,6 +9,7 @@ import { TabPanel as BaseTabPanel } from '@mui/base/TabPanel';
 import { Tab as BaseTab, tabClasses } from '@mui/base/Tab';
 import { buttonClasses } from '@mui/base/Button';
 import ProfileHeader from '../../../../compounents/user/ProfileHeader';
+import Notification from '../../../../compounents/user/Notification';
 
 const WishlistSection: React.FC = () => {
   const { _id } = useAppSelector((state) => state.user.userDetails);
@@ -16,6 +17,8 @@ const WishlistSection: React.FC = () => {
   return (
     <div className="w-full">
       <ProfileHeader />
+      <Notification/>
+
       <div className="flex width-full flex-col">
         <Tabs defaultValue={1}>
           <TabsList>

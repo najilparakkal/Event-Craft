@@ -174,5 +174,46 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    reports: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield dashboard_1.default.report();
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    blockVenodr: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield dashboard_1.default.blockVendor(req.params.reportId, req.params.vendorId);
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                res.status(200).json({ message: "vendor Blocked successfully" });
+            }
+            else {
+                res.status(404).json({ message: "Somthing Failed to Block" });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    readReport: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield dashboard_1.default.readReport(req.params.reportId);
+            res.status(200).json({ message: "vendor Read Report successfully" });
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    booking: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield dashboard_1.default.bookingCount();
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

@@ -3,12 +3,11 @@ import mongoose, { Schema } from "mongoose";
 export interface IChatModel extends Document {
   users: mongoose.Types.ObjectId[];
   latestMessage: mongoose.Types.ObjectId;
-  createdAt: Date;
+  createdAt: Date;  
   updatedAt: Date;
   _id?: mongoose.Types.ObjectId;
   is_blocked: boolean;
   is_accepted: boolean;
-  request: string;
 }
 const ChatSchema: Schema = new Schema<IChatModel>(
   {
@@ -26,10 +25,7 @@ const ChatSchema: Schema = new Schema<IChatModel>(
       type: Schema.Types.ObjectId,
       ref: "Message",
     },
-    request: {
-      type: String,
-    },
-    is_blocked: {
+     is_blocked: {
       type: Boolean,
       default: false, 
     },

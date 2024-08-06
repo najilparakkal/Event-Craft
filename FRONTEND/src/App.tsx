@@ -16,12 +16,9 @@ function App() {
 
       <Routes>
         <Route path="/" element={< OuterPage />} />
-
         <Route path="/*" element={< UserRouter />} />
         <Route path="/vendor/*" element={< VendorRouter />} />
         <Route path="/admin/*" element={< AdminRouter />} />
-
-
       </Routes>
 
     </>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect,  useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAppSelector } from '../../../../costumeHooks/costum';
 import { acceptRequest, cancelRequest, fetchChatId } from '../../../../API/services/vendor/services';
 import { useSocket } from '../../../../API/services/outer/SocketProvider';
@@ -16,7 +16,7 @@ interface Message {
   sender: string;
   content: Blob | string;
   type: 'text' | 'audio' | 'video' | 'document' | 'image';
-  createdAt:string
+  createdAt: string
   read: boolean;
 }
 
@@ -78,7 +78,7 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
   useEffect(() => {
     if (roomId) {
       socket.emit('join room', roomId);
-      socket.emit('read_message',roomId,_id)
+      socket.emit('read_message', roomId, _id)
       const receiveMessageHandler = (message: Message) => {
         setMessages((prevMessages) => [...prevMessages, message]);
       };
@@ -87,7 +87,6 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
         setReq(fetchedMessages.chat);
         setMessages(fetchedMessages.messages);
       });
-
       socket.on('new message', receiveMessageHandler);
 
       return () => {
@@ -95,11 +94,11 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
         socket.off('room messages');
       };
     }
-  }, [roomId, socket,messages]);
+  }, [roomId, socket, messages]);
 
   const sendAudio = async () => {
     if (stream) {
-      stream?.getTracks().forEach((track:any) => track.stop());
+      stream?.getTracks().forEach((track: any) => track.stop());
       const mergedBlob = new Blob(audioBlob, { type: 'audio/webm;codecs=opus' });
       const messageToSend = {
         senderId: _id,
@@ -129,7 +128,7 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
           type: 'text',
           senderModel: 'Vendor'
         };
-
+alert(roomId)
         socket.emit('send message', messageToSend);
         setNewMessage('');
       }
@@ -149,7 +148,7 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
 
   const rejectUser = async (id: string) => {
     try {
-      
+
       const response = await cancelRequest(roomId + "");
       if (response) {
         setIsRejected(true);
@@ -273,18 +272,21 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
         </h1>
       </div>
       <div className="p-2 space-y-4 overflow-y-auto flex-1 bg-[#EFE8DE]" ref={divRef}>
-        {messages.length === 0 && req?.is_accepted === false ? (
+        {req?.is_accepted === false ? (
           <div className="flex justify-center items-center h-full">
             <div id="alert-additional-content-1" className="p-4 mb-4 border rounded-lg bg-transparent dark:text-blue-400 w-1/2" role="alert">
-              <div className="flex items-center">
-                <svg className="flex-shrink-0 w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+              <div className="flex items-start space-x-2">
+                <svg className="flex-shrink-0 w-4 h-4 mt-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 1 1 1 1v4h1a1 1 0 0 1 0 2Z" />
                 </svg>
-                <span className="sr-only">Info</span>
-                <h3 className={`text-lg font-medium ${isRejected ? 'text-red-500' : 'text-blue-800'}`}>
-                  {isRejected ? 'Request Rejected' : 'Connection Request'}
-                </h3>
+                <div className='grid'>
+                  <h3 className={`text-lg font-medium ${isRejected ? 'text-red-500' : 'text-blue-800'}`}>
+                    {isRejected ? 'Request Rejected' : 'Connection Request'}
+                  </h3>
+                  <p className='text-sm text-gray-600'>{messages[0].content+""}</p>
+                </div>
               </div>
+
               {!isRejected && (
                 <>
                   <div className="mt-2 mb-4 text-sm">
@@ -322,8 +324,8 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
             const isImageMessage = message.type === 'image';
             const messageTime = formatDistanceToNow(parseISO(message?.createdAt), { addSuffix: true });
             const readIndicator = message.read
-            ? '✔✔' 
-            : '✔'; 
+              ? '✔✔'
+              : '✔';
             return (
               <div
                 key={index}
@@ -332,7 +334,7 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
                 <div className={`relative p-2 rounded-lg max-w-md ${!isAudioMessage && (isCurrentUser ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black')}`}>
                   {isTextMessage && (
                     <div className="ml-1">
-                      <p>{message.content+""}</p>
+                      <p>{message.content + ""}</p>
                     </div>
                   )}
                   {isAudioMessage && (
@@ -356,7 +358,7 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
                   {isVideoMessage && (
                     <div className="relative small-line-border">
                       <video controls className="rounded-lg w-full max-w-xs">
-                        <source src={message.content+""} type="video/mp4" />
+                        <source src={message.content + ""} type="video/mp4" />
                         Your browser does not support the video element.
                       </video>
                       <div className="absolute bottom-1 right-1 flex items-center text-xs text-white bg-black bg-opacity-50 rounded px-1">
@@ -371,7 +373,7 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
                   )}
                   {isDocumentMessage && (
                     <div className="mt-2">
-                      <a href={message.content+""} download className="underline text-blue-500">
+                      <a href={message.content + ""} download className="underline text-blue-500">
                         Download Document
                       </a>
                       <div className="flex justify-end mt-1">
@@ -388,7 +390,7 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
                   )}
                   {isImageMessage && (
                     <div className="relative">
-                      <img src={message.content+""} alt="Image" className="max-w-full h-auto rounded-lg" />
+                      <img src={message.content + ""} alt="Image" className="max-w-full h-auto rounded-lg" />
                       <div className="absolute bottom-1 right-1 flex items-center text-xs text-white bg-black bg-opacity-50 rounded px-1">
                         <span>{messageTime}</span>
                         {isCurrentUser && (
@@ -418,7 +420,7 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
         )}
       </div>
       {selectedUser && req?.is_accepted && (
-        <div  className="p-2 bg-[#EFE8DE] flex">
+        <div className="p-2 bg-[#EFE8DE] flex">
           <input
             type="file"
             ref={fileInputRef}
@@ -442,7 +444,7 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
             className="flex-1 p-2 rounded-lg outline-none"
             placeholder="Type your message..."
           />
-          <button type="submit" onClick={handleSubmit}  className="ml-2 p-2 bg-green-500 text-white rounded-lg">
+          <button type="submit" onClick={handleSubmit} className="ml-2 p-2 bg-green-500 text-white rounded-lg">
             Send
           </button>
         </div>

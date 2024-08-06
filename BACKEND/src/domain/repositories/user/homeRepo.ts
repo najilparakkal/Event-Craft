@@ -11,7 +11,7 @@ import { Services } from "../../../framworks/database/models/services";
 import { Users } from "../../../framworks/database/models/user";
 import { Vendors } from "../../../framworks/database/models/vendor";
 import { AddBookingParams, IAddBooking } from "../../entities/user/user";
-import { format, parseISO } from 'date-fns';
+import { format, parseISO } from "date-fns";
 
 import {
   IReqVendor,
@@ -19,6 +19,9 @@ import {
   Vendor,
   VendorProfile,
 } from "../../entities/vendor/vendor";
+import { Socket } from "socket.io-client";
+import mongoose from "mongoose";
+import { Report } from "../../../framworks/database/models/Reports";
 
 export const listVendors = async (data: string) => {
   try {
@@ -87,7 +90,6 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
     if (!vendor) {
       throw new Error("Vendor not found");
     }
-
     const {
       _id,
       vendorName,
@@ -109,10 +111,14 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
       category: post.category,
     }));
     const chat = await ChatModel.findOne({
-      users: { $in: [userId, vendorId] },
-      is_accepted: true,
+      users: {
+        $all: [
+          new mongoose.Types.ObjectId(userId),
+          new mongoose.Types.ObjectId(vendorId),
+        ],
+      },
     });
-
+    console.log(userId, vendorId);
     const servicesArray = licence.map((item: any) => item.services).flat();
     const services = servicesArray.flatMap((serviceList: any) =>
       serviceList.split(",").map((service: any) => service.trim())
@@ -128,8 +134,11 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
 
     const bookings = await Bookings.find({ userId, vendorId });
 
-    const reviewCount  = ratingAndReview.length;
-    const totalStars = ratingAndReview.reduce((acc: number, review: any) => acc + review.star, 0);
+    const reviewCount = ratingAndReview.length;
+    const totalStars = ratingAndReview.reduce(
+      (acc: number, review: any) => acc + review.star,
+      0
+    );
 
     const response: VendorProfile = {
       _id,
@@ -143,7 +152,7 @@ export const getVendorProfile = async (vendorId: string, userId: string) => {
       availableDate,
       reviewCount,
       totalStars,
-      likes
+      likes,
     };
 
     return {
@@ -170,9 +179,16 @@ export const addRequest = async (
     if (!chat) {
       chat = new ChatModel({
         users: [userId, vendorId],
-        request: message,
       });
       await chat.save();
+      await Message.create({
+        sender: userId,
+        content: message,
+        chat: chat._id,
+        type: "text",
+        senderModel: "User",
+      });
+
       return { success: true };
     } else {
       return { success: false };
@@ -233,11 +249,9 @@ export const cancelRequest = async (_id: string) => {
 export const listVendorsInUserChat = async (userId: string) => {
   try {
     const chats = await ChatModel.find({ users: userId });
-
     const vendorIds = chats
       .map((chat) => chat.users.find((user) => user.toString() !== userId))
       .filter(Boolean);
-
     const sortedVendorMessages = await Message.find({
       senderModel: "Vendor",
       sender: { $in: vendorIds },
@@ -248,7 +262,6 @@ export const listVendorsInUserChat = async (userId: string) => {
         sortedVendorMessages.map((message) => message.sender.toString())
       ),
     ];
-
     const sortedVendors = await Vendors.find({ _id: { $in: uniqueVendorIds } })
       .select("_id vendorName profilePicture")
       .then((vendors) =>
@@ -256,7 +269,6 @@ export const listVendorsInUserChat = async (userId: string) => {
           vendors.find((vendor: any) => vendor._id.toString() === id)
         )
       );
-
     return sortedVendors;
   } catch (error) {
     console.error("Error fetching vendors:", error);
@@ -296,13 +308,13 @@ export const addBooking = async (datas: any) => {
       userId: datas.userId,
       vendorId: datas.vendorId,
       advance: datas.amount,
-      paymentId:datas.paymentDetails.paymentId
+      paymentId: datas.paymentDetails.paymentId,
     });
-    console.log(newBooking)
-
-    const value  = parseISO(datas.datas.eventDate);
-    const date = format(value,'yyyy-MM-dd')
-    await Vendors.findByIdAndUpdate(datas.vendorId,{$push:{availableDate:date}})
+    const value = parseISO(datas.datas.eventDate);
+    const date = format(value, "yyyy-MM-dd");
+    await Vendors.findByIdAndUpdate(datas.vendorId, {
+      $push: { availableDate: date },
+    });
     return { success: true };
   } catch (error) {
     console.error("Error adding booking:", error);
@@ -341,7 +353,7 @@ export const cancelBooking = async (percentage: number, bookingId: string) => {
       percentage,
       advance: booking.advance,
       bookingId,
-      paymentId: booking.paymentId
+      paymentId: booking.paymentId,
     });
     const bookings = await Bookings.findByIdAndUpdate(bookingId, {
       $set: { status: "requested to cancel" },
@@ -550,20 +562,18 @@ export const replyLike = async (commentId: string, userId: string) => {
 export const ratingReview = async (vendorId: string) => {
   try {
     const vendor = await Vendors.findById(vendorId).populate({
-      path: 'ratingAndReview.userId',
-      select: 'userName profilePicture',
+      path: "ratingAndReview.userId",
+      select: "userName profilePicture",
     });
     if (vendor) {
-      return vendor
-    };
-    return { vendorName: "", about: "", ratingAndReview: "", };
+      return vendor;
+    }
+    return { vendorName: "", about: "", ratingAndReview: "" };
   } catch (error) {
     console.log(error);
     return { vendorName: "", about: "", ratingAndReview: "" };
   }
 };
-
-
 
 export const addReview = async (
   userId: string,
@@ -587,23 +597,23 @@ export const addReview = async (
   }
 };
 
-export const vendorLike = async(userId:string,vendorId:string)=>{
+export const vendorLike = async (userId: string, vendorId: string) => {
   try {
     const vendor = await Vendors.findById(vendorId);
     if (!vendor) {
       throw new Error("vendor not found");
     }
     const userIndex = vendor.likes.indexOf(userId);
-    if (userIndex === -1) {   
+    if (userIndex === -1) {
       vendor.likes.push(userId);
     } else {
       vendor.likes.splice(userIndex, 1);
     }
     await vendor.save();
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 export const likedPosts = async (userId: string) => {
   try {
@@ -652,10 +662,81 @@ export const likedPosts = async (userId: string) => {
   }
 };
 
-
-export const likedVendors =async (userId:string)=>{
+export const likedVendors = async (userId: string) => {
   try {
-    return await Vendors.find({likes:userId})
+    return await Vendors.find({ likes: userId });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const userBooked = async (userId: string) => {
+  try {
+    const bookedOrNot = await Bookings.find({ userId });
+    if (bookedOrNot.length > 0) {
+      return { success: true };
+    } else {
+      return { success: false };
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const requestCheck = async (userId: string, vendorId: string) => {
+  try {
+    const request = await ChatModel.find({
+      users: {
+        $all: [
+          new mongoose.Types.ObjectId(userId),
+          new mongoose.Types.ObjectId(vendorId),
+        ],
+      },
+    });
+    if (request?.is_accepted) {
+      return { success: true };
+    } else {
+      return { success: false };
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const submitReport = async (
+  userId: string,
+  vendorId: string,
+  boxReason: string,
+  reason: string
+) => {
+  try {
+   const value = await Report.create({
+      userId,
+      vendorId,
+      reason:boxReason,
+      reasonExplained:reason,
+    });
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const notification = async(vendorId:string)=>{
+  try {
+    const data = await Vendors.findById(vendorId);
+    return {vendorName:data?.vendorName,profilePicture:data?.profilePicture}
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const roomIds = async(userId:string)=>{
+  try {
+    const data = await ChatModel.find({users:userId})
+    const ids = data.map((item)=>item._id+"")    
+    return ids
   } catch (error) {
     console.log(error)
   }

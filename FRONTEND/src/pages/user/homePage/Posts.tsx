@@ -49,13 +49,9 @@ const Posts: React.FC<PostProps> = ({ userId }) => {
             .catch((error: Error) => console.log(error));
     }, [userId]);
 
-    const handleLike = async(postId: string) => {
-       await updateLike(postId, userId);
-        setLikedPosts((prevLikedPosts) =>
-            prevLikedPosts.includes(postId)
-                ? prevLikedPosts.filter((id) => id !== postId)
-                : [...prevLikedPosts, postId]
-        );
+    const handleLike = async(postId: string) => { 
+        setLikedPosts(likedPosts.includes(postId) ? [...likedPosts].filter((item)=>item !== postId) :[...likedPosts, postId] );
+        await updateLike(postId, userId); 
     };
 
     const handleCardClick = (post: Post) => {

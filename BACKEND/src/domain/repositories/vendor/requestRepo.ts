@@ -107,7 +107,7 @@ export default {
       return { success: true };
     } catch (error) {
       console.error(error);
-    }
+    } 
   },
   rejectRequest: async (_id: string) => {
     try {
@@ -343,6 +343,34 @@ export default {
       console.log(error);
     }
   },
+  notification:async(userId:string)=>{
+    try {
+      const response =  await Users.findById(userId)
+      return {userName:response?.userName,profilePicture:response?.profilePicture}
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  room:async(venorId:string)=>{
+    try {
+      const data = await ChatModel.find({users:venorId})
+      const ids = data.map((item)=>item._id+"")    
+      return ids
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  review:async(vendorId:string)=>{
+    try {
+       const vendor = await Vendors.findById(vendorId).populate({
+        path: "ratingAndReview.userId",
+        select: "userName profilePicture",
+      });
+      return vendor?.ratingAndReview
+    } catch (error) {
+      console.log(error)
+    }
+  }
 };
 
 export const fetchUsers = async (vendorId: string) => {

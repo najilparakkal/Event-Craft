@@ -62,5 +62,7 @@ const bookingSchema = new mongoose_1.Schema({
     paymentId: {
         type: String
     }
+}, {
+    timestamps: true,
 });
 exports.Bookings = (0, mongoose_1.model)("Bookings", bookingSchema);

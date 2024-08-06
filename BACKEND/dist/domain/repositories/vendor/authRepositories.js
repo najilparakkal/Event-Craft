@@ -115,21 +115,31 @@ const logingVendor = (email, password) => __awaiter(void 0, void 0, void 0, func
         }
         const isMatch = yield bcrypt_1.default.compare(password, vendor.password);
         if (isMatch) {
-            const vendorWithLicence = yield vendor_1.Vendors.findById(vendor._id).populate("licence");
-            const vendorDetails = {
-                email: vendor.email + "",
-                phoneNum: vendor.phoneNum + "",
-                vendorName: vendor.vendorName + "",
-                id: vendor._id + '',
-                profilePicture: vendor.profilePicture + "",
-            };
-            const { refreshToken, accessToken } = yield (0, jwtGenarate_1.CreateToken)({
-                id: vendor._id + "",
-                email: vendor.email + "",
-            });
-            vendor.refreshToken = refreshToken;
-            vendor.save();
-            return { success: true, token: accessToken, vendorDetails, isVendor: vendor.vendor };
+            if (vendor.blocked) {
+                return { success: false, message: "Vendor is blocked" };
+            }
+            else {
+                const vendorWithLicence = yield vendor_1.Vendors.findById(vendor._id).populate("licence");
+                const vendorDetails = {
+                    email: vendor.email + "",
+                    phoneNum: vendor.phoneNum + "",
+                    vendorName: vendor.vendorName + "",
+                    id: vendor._id + "",
+                    profilePicture: vendor.profilePicture + "",
+                };
+                const { refreshToken, accessToken } = yield (0, jwtGenarate_1.CreateToken)({
+                    id: vendor._id + "",
+                    email: vendor.email + "",
+                });
+                vendor.refreshToken = refreshToken;
+                vendor.save();
+                return {
+                    success: true,
+                    token: accessToken,
+                    vendorDetails,
+                    isVendor: vendor.vendor,
+                };
+            }
         }
         else {
             console.log("Password does not match");

@@ -1,5 +1,6 @@
 import { authAxiosInstance } from "./axios/AxiosInstance";
 import { outerAxios } from "../outer/axios";
+import { string } from "yup";
 
 export const fetchVendors = async (data: string) => {
   try {
@@ -283,5 +284,53 @@ export const fetchLikedVendors = async(userId:string)=>{
     
   } catch (error) {
     console.log(error)
+  }
+}
+
+export const checkUserBooked = async(userId:string)=>{
+  try {
+    const response = await authAxiosInstance.get(`user/userBooked/${userId}`)
+    console.log(response)
+    return response.status === 200
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const checkRequest = async(userId:string,vendorId:string)=>{
+  try {
+     const response =  await authAxiosInstance.get(`user/requestcheck/${userId}/${vendorId}`)
+     return response.status === 200
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const submitReport = async(boxReason:string,reason:string,userId:string,vendorId:string)=>{
+  try {
+    const response = await authAxiosInstance.post(`user/submitReport/${userId}/${vendorId}`,{boxReason,reason})
+    return response.status === 200
+  } catch (error) {
+    console.log(error)
+  }
+}
+ 
+
+
+export const fetchVendorNotification= async(vendorId:string)=>{
+  try{
+    const response = await authAxiosInstance.get(`user/notifications/${vendorId}`);
+    return response.data;
+  }catch(err){
+    console.log(err)
+  }
+}
+
+export const fetchUserRoomIds = async(userId:string)=>{
+  try{
+    const response = await authAxiosInstance.get(`user/roomIds/${userId}`);
+    return response.data;
+  }catch(err){
+    console.log(err)
   }
 }

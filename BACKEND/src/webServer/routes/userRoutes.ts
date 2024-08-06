@@ -41,4 +41,9 @@ userRouter.put('/api/user/addReview/:userId/:vendorId',userAuth,Controller.addRe
 userRouter.put('/api/user/vendorLike/:userId/:vendorId',userAuth,Controller.vendorLike)
 userRouter.get('/api/user/likedPosts/:userId',userAuth,Controller.likedPosts)
 userRouter.get('/api/user/likedVendors/:userId',userAuth,Controller.likedVendors)
+userRouter.get('/api/user/userBooked/:userId',userAuth,Controller.userBooked)
+userRouter.get('/api/user/requestcheck/:userId/:vendorId',userAuth,Controller.requestcheck)
+userRouter.post('/api/user/submitReport/:userId/:vendorId',userAuth,Controller.submitReport)
+userRouter.get('/api/user/notifications/:vendorId',userAuth,Controller.notification)
+userRouter.get("/api/user/roomIds/:userId",userAuth,Controller.roomIds)
 export default userRouter                   

@@ -124,7 +124,7 @@ export const fetchCanelldBookings = async () => {
     console.log(error);
   }
 };
-export const refundUser = async ( bookingId: string,paymentId:string) => {
+export const refundUser = async (bookingId: string, paymentId: string) => {
   try {
     const response = await authAxiosInstance.patch(
       `admin/refund/${bookingId}`,
@@ -136,12 +136,48 @@ export const refundUser = async ( bookingId: string,paymentId:string) => {
   }
 };
 
-
-export const bills = async()=>{
+export const bills = async () => {
   try {
-    const response = await authAxiosInstance.get('admin/bills');
+    const response = await authAxiosInstance.get("admin/bills");
     return response.data;
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const fetchReports = async () => {
+  try {
+    const response = await authAxiosInstance.get("admin/reports");
+    return response.status === 200 ? response.data : null;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const blockVendor = async (reportId: string, vendorId: string) => {
+  try {
+    const response = await authAxiosInstance.put(
+      `admin/blockVendor/${reportId}/${vendorId}`
+    );
+    return response.status === 200;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const readReport = async (reportId: string) => {
+  try {
+    await authAxiosInstance.put(`admin/readReport/${reportId}`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchBookingsCount = async()=>{
+  try {
+    const response = await authAxiosInstance.get('admin/bookingCount')
+    return response.data;
+  } catch (error) {
+    console.log(error)
   }
 }

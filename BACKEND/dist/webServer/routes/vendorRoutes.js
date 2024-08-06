@@ -35,4 +35,7 @@ vendorRouter.get('/api/vendor/absentDates/:vendorId', VendorMiddleware_1.default
 vendorRouter.patch('/api/vendor/updateDates/:vendorId', VendorMiddleware_1.default, Controller_1.default.updateDates);
 vendorRouter.put('/api/vendor/updateBooking/:bookingId', VendorMiddleware_1.default, Controller_1.default.updateBooking);
 vendorRouter.post('/api/vendor/billing', VendorMiddleware_1.default, Controller_1.default.billing);
+vendorRouter.get('/api/vendor/notifications/:userId', VendorMiddleware_1.default, Controller_1.default.notification);
+vendorRouter.get('/api/vendor/roomIds/:vendorId', VendorMiddleware_1.default, Controller_1.default.room);
+vendorRouter.get('/api/vendor/reviews/:vendorId', VendorMiddleware_1.default, Controller_1.default.review);
 exports.default = vendorRouter;

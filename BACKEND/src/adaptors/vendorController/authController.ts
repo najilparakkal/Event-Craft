@@ -74,6 +74,8 @@ export default {
         res.status(200).json({status:200,message:"vendor logged in successfully",response})
       }else if(response?.success === false &&  response?.message=== "dose not exist"){
         res.status(201).json({status:201,message:response.message})
+      }else if(response?.success === false &&  response?.message=== "Vendor is blocked"){
+        res.status(203).json({status:203,message:response.message})
       }else if(response?.success===false){
         res.status(202).json({status:202,message:response.message})
       }else {

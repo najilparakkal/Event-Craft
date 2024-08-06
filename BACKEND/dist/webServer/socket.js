@@ -21,8 +21,13 @@ const requestRepo_1 = require("../domain/repositories/vendor/requestRepo");
 const socketHandler = (io) => {
     io.on("connection", (socket) => {
         console.log(`Socket connected: ${socket.id}`);
+        socket.on("join_home", (idArray) => __awaiter(void 0, void 0, void 0, function* () {
+            for (const id of idArray) {
+                console.log(id, "this is the main join 🏫🏫🏫🏫");
+                socket.join(id);
+            }
+        }));
         socket.on("join room", (room) => __awaiter(void 0, void 0, void 0, function* () {
-            console.log(`Socket ${socket.id} joined room: ${room}`);
             socket.join(room);
             if (!mongoose_1.default.Types.ObjectId.isValid(room)) {
                 console.error(`Invalid chat ID: ${room}`);

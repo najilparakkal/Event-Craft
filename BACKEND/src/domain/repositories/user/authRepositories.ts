@@ -41,8 +41,10 @@ export const createUser = async (
         otp: otp,
       });
 
-      const { accessToken, refreshToken } = await CreateToken(
-        { id: newUser._id + "", email: newUser.email });
+      const { accessToken, refreshToken } = await CreateToken({
+        id: newUser._id + "",
+        email: newUser.email,
+      });
       newUser.refreshToken = refreshToken;
       await newUser.save();
 
@@ -137,7 +139,6 @@ export const updateOtp = async (
 export const logingUser = async (email: string, password: string) => {
   try {
     const user = await Users.findOne({ email: email, verified: true });
-
     if (!user) {
       console.log("User not found");
       return false;
@@ -154,8 +155,10 @@ export const logingUser = async (email: string, password: string) => {
         profilePicture: user.profilePicture,
       };
 
-      const { accessToken, refreshToken } = await CreateToken(
-        { id: user._id + "", email: user.email });
+      const { accessToken, refreshToken } = await CreateToken({
+        id: user._id + "",
+        email: user.email,
+      });
       user.refreshToken = refreshToken;
       await user.save();
       return { token: accessToken, userDetails };
@@ -241,11 +244,12 @@ export const RegisterWithGoogle = async (
         userName: userData.name,
         email: userData.email,
         password: hashedPassword,
+        verified: true,
       });
       const userDatas: userDatas = {
         id: newUser._id + "",
         email: newUser.email,
-        phoneNum: newUser.phoneNum,
+        phoneNum: newUser.phoneNum,                   
         name: newUser.userName,
         profilePicture: newUser.profilePicture,
       };

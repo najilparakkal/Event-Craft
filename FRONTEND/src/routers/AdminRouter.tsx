@@ -6,6 +6,7 @@ import Vendor from "../pages/admin/home/vendor/Vendor";
 import Categories from "../pages/admin/home/categories/Categories";
 import Requtes from "../pages/admin/home/Requstes/Requests";
 import Dashboard from "../pages/admin/home/payments/Dashboard";
+import Reports from "../pages/admin/home/reports/Reports";
 
 const UserRouter: React.FC = () => {
     return (
@@ -17,7 +18,7 @@ const UserRouter: React.FC = () => {
             <Route path="/Categories" element={< Categories />} />
             <Route path="/Payments" element={< Dashboard />} />
             <Route path="/Requests" element={<Requtes />} />
-
+            <Route path='/Reports' element={<Reports />} />
         </Routes>
     )
 }

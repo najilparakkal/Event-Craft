@@ -4,6 +4,7 @@ import { Licence } from "../../../framworks/database/models/licence";
 import { Users } from "../../../framworks/database/models/user";
 import { Vendors } from "../../../framworks/database/models/vendor";
 import {
+  IStatusCount,
   listUsers,
   listVendors,
   vendorBlock,
@@ -11,6 +12,7 @@ import {
 import { Bookings } from "../../../framworks/database/models/booking";
 import { CancelBookings } from "../../../framworks/database/models/cancelBooking";
 import BillModel from "../../../framworks/database/models/billing";
+import { Report } from "../../../framworks/database/models/Reports";
 export default {
   listUsers: async (data: listUsers) => {
     try {
@@ -276,4 +278,90 @@ export default {
       console.log(error);
     }
   },
+  report: async () => {
+    try {
+      return await Report.find({ isReaded: false })
+        .populate({ path: "userId", select: "userName profilePicture" })
+        .populate({ path: "vendorId", select: "vendorName profilePicture" });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  blockVendor: async (reportId: string, vendorId: string) => {
+    try {
+      const updateVendor = await Vendors.findByIdAndUpdate(vendorId, {
+        $set: {
+          blocked: true,
+        },
+      });
+      const updateReport = await Report.findByIdAndUpdate(reportId, {
+        $set: {
+          isReaded: true,
+        },
+      });
+      if (updateReport && updateVendor) {
+        return { success: true };
+      } else {
+        return {
+          success: false,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  readReport: async (reportId: string) => {
+    try {
+      await Report.findByIdAndUpdate(reportId, {
+        $set: {
+          isReaded: true,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+   bookingCount : async () => {
+    try {
+      // Aggregating the bookings data
+      const statusCounts: IStatusCount[] = await Bookings.aggregate([
+        {
+          $group: {
+            _id: "$status",
+            count: { $sum: 1 },
+            createdAt: { $push: "$createdAt" },
+          },
+        },
+      ]);
+  
+      // Initialize counts for each status and each month
+      const counts: Record<string, number[]> = {
+        pending: Array(12).fill(0),
+        completed: Array(12).fill(0),
+        cancelled: Array(12).fill(0),
+      };
+  
+      // Function to extract month from date
+      const getMonthIndex = (date: Date): number => {
+        return new Date(date).getMonth();
+      };
+  
+      // Processing the status counts
+      statusCounts.forEach((statusCount) => {
+        const status = statusCount._id;
+        statusCount.createdAt.forEach((date) => {
+          const monthIndex = getMonthIndex(date);
+          counts[status][monthIndex] += 1; // Increment count for the corresponding month
+        });
+      });
+  
+      console.log(counts, "🎶🎶");
+      return counts;
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to fetch booking counts");
+    }
+  }
+  
 };

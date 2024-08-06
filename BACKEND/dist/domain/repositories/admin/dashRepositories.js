@@ -20,6 +20,7 @@ const vendor_1 = require("../../../framworks/database/models/vendor");
 const booking_1 = require("../../../framworks/database/models/booking");
 const cancelBooking_1 = require("../../../framworks/database/models/cancelBooking");
 const billing_1 = __importDefault(require("../../../framworks/database/models/billing"));
+const Reports_1 = require("../../../framworks/database/models/Reports");
 exports.default = {
     listUsers: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -272,4 +273,89 @@ exports.default = {
             console.log(error);
         }
     }),
+    report: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield Reports_1.Report.find({ isReaded: false })
+                .populate({ path: "userId", select: "userName profilePicture" })
+                .populate({ path: "vendorId", select: "vendorName profilePicture" });
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    blockVendor: (reportId, vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const updateVendor = yield vendor_1.Vendors.findByIdAndUpdate(vendorId, {
+                $set: {
+                    blocked: true,
+                },
+            });
+            const updateReport = yield Reports_1.Report.findByIdAndUpdate(reportId, {
+                $set: {
+                    isReaded: true,
+                },
+            });
+            if (updateReport && updateVendor) {
+                return { success: true };
+            }
+            else {
+                return {
+                    success: false,
+                };
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    readReport: (reportId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield Reports_1.Report.findByIdAndUpdate(reportId, {
+                $set: {
+                    isReaded: true,
+                },
+            });
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    bookingCount: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            // Aggregating the bookings data
+            const statusCounts = yield booking_1.Bookings.aggregate([
+                {
+                    $group: {
+                        _id: "$status",
+                        count: { $sum: 1 },
+                        createdAt: { $push: "$createdAt" },
+                    },
+                },
+            ]);
+            // Initialize counts for each status and each month
+            const counts = {
+                pending: Array(12).fill(0),
+                completed: Array(12).fill(0),
+                cancelled: Array(12).fill(0),
+            };
+            // Function to extract month from date
+            const getMonthIndex = (date) => {
+                return new Date(date).getMonth();
+            };
+            // Processing the status counts
+            statusCounts.forEach((statusCount) => {
+                const status = statusCount._id;
+                statusCount.createdAt.forEach((date) => {
+                    const monthIndex = getMonthIndex(date);
+                    counts[status][monthIndex] += 1; // Increment count for the corresponding month
+                });
+            });
+            console.log(counts, "🎶🎶");
+            return counts;
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error("Failed to fetch booking counts");
+        }
+    })
 };

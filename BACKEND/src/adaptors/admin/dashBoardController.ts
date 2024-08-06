@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, response } from "express";
 import dashboard from "../../domain/usecases/adimin/dashboard/dashboard";
 import { multipartFormSubmission } from "../../domain/helpers/formidable";
 
@@ -153,6 +153,42 @@ export default {
     } catch (error) {
       console.log(error);
       
+    }
+  },
+  reports:async(req:Request, res:Response)=>{
+    try {
+      const response = await dashboard.report()
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  blockVenodr:async(req:Request,res:Response)=>{
+    try {
+      const response = await dashboard.blockVendor(req.params.reportId,req.params.vendorId)
+      if(response?.success){
+        res.status(200).json({message:"vendor Blocked successfully"})
+      }else{
+        res.status(404).json({message:"Somthing Failed to Block"})
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  readReport:async(req:Request,res:Response)=>{
+    try {
+      const response = await dashboard.readReport(req.params.reportId)
+      res.status(200).json({message:"vendor Read Report successfully"})
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  booking:async(req:Request, res:Response)=>{
+    try {
+      const response = await dashboard.bookingCount()
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
     }
   }
 };

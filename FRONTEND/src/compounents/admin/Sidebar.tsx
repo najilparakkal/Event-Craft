@@ -1,8 +1,8 @@
 import React from 'react';
-import { FaTachometerAlt, FaFileInvoiceDollar, FaEnvelopeOpenText, FaStore, FaThList, FaUser } from 'react-icons/fa';
+import { FaTachometerAlt, FaFileInvoiceDollar, FaEnvelopeOpenText, FaStore, FaThList, FaUser, FaFileAlt } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const Sidebar: React.FC = ( ) => {
+const Sidebar: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -13,6 +13,7 @@ const Sidebar: React.FC = ( ) => {
         { name: 'Categories', icon: FaThList, path: '/admin/Categories' },
         { name: 'Requests', icon: FaEnvelopeOpenText, path: '/admin/Requests' },
         { name: 'Payments', icon: FaFileInvoiceDollar, path: '/admin/Payments' },
+        { name: 'Reports', icon: FaFileAlt, path: '/admin/Reports' },
     ];
 
     return (

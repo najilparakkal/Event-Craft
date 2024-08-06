@@ -1,4 +1,4 @@
-import {   Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Signup from "../pages/user/authentications/Signup";
 import Otp from "../pages/user/authentications/Otp";
 import Login from "../pages/user/authentications/Login";
@@ -12,12 +12,14 @@ import BookingSection from "../pages/user/profileSection/bookings/BookingSection
 import { useAppSelector } from "../costumeHooks/costum";
 import ProfileSection from "../pages/user/profileSection/profile/ProfileSection";
 import WishlistSection from "../pages/user/profileSection/wishlist/WishlistSection";
-
-
-
+import { useEffect, useState } from "react";
+import { useSocket } from "../API/services/outer/SocketProvider";
+import { fetchUserRoomIds, fetchVendorNotification } from "../API/services/user/Services";
+import toast from "react-hot-toast";
 
 const UserRouter: React.FC = () => {
     const userDetails = useAppSelector((state) => state.user.userDetails._id);
+   
 
     return (
         <Routes>
@@ -35,7 +37,7 @@ const UserRouter: React.FC = () => {
                 <Route path="/profile" element={<ProfileSection />} />
             </Route>
         </Routes>
-    )  
-}
+    );
+};
 
-export default UserRouter
+export default UserRouter;

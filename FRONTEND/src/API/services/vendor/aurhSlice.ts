@@ -22,7 +22,6 @@ export const signupVendor = createAsyncThunk(
   async (vendorData: any, { rejectWithValue }) => {
     try {
       const response = await vendorRegister("/vendor/signup", vendorData);
-
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -35,7 +34,6 @@ export const vendorLogin = createAsyncThunk(
   async (vendorData: any, { rejectWithValue }) => {
     try {
       const response = await login("/vendor/login", vendorData);
-
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message);

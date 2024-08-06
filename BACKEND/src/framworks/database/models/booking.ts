@@ -80,6 +80,9 @@ const bookingSchema = new Schema<IBooking>({
     type:String
   }
 
+},{
+  timestamps: true,
+ 
 });
 
 export const Bookings = model<IBooking>("Bookings", bookingSchema);

@@ -32,4 +32,7 @@ vendorRouter.get('/api/vendor/absentDates/:vendorId',vendorAuth,Controller.getDa
 vendorRouter.patch('/api/vendor/updateDates/:vendorId',vendorAuth,Controller.updateDates)
 vendorRouter.put('/api/vendor/updateBooking/:bookingId',vendorAuth,Controller.updateBooking) 
 vendorRouter.post('/api/vendor/billing',vendorAuth,Controller.billing)   
+vendorRouter.get('/api/vendor/notifications/:userId',vendorAuth,Controller.notification)
+vendorRouter.get('/api/vendor/roomIds/:vendorId',vendorAuth,Controller.room)
+vendorRouter.get('/api/vendor/reviews/:vendorId',vendorAuth,Controller.review)
 export default vendorRouter

@@ -235,3 +235,31 @@ export const billRequest = async (
     console.log(error);
   }
 };
+
+
+export const fetchUserNotification= async(userId:string)=>{
+  try{
+
+    const response = await authAxiosInstance.get(`/vendor/notifications/${userId}`);
+    return response.data;
+  }catch(err){
+    console.log(err)
+  }
+}
+
+export const fetchRoomIds = async(vendorId:string)=>{
+  try {
+    const response = await authAxiosInstance.get(`/vendor/roomIds/${vendorId}`);
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
+}
+export const fetchReviews = async(vendorId:string)=>{
+  try {
+    const response = await authAxiosInstance.get(`/vendor/reviews/${vendorId}`)
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
+}

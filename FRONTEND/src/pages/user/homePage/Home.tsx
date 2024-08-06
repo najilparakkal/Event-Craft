@@ -9,6 +9,7 @@ import Footer from '../../../compounents/user/Footer';
 import VendorsCard from '../../../compounents/user/VendorsCard';
 import Posts from './Posts';
 import { useAppSelector } from '../../../costumeHooks/costum';
+import Notification from '../../../compounents/user/Notification';
 
 interface Service {
   _id: string;
@@ -101,7 +102,7 @@ const Home: React.FC = () => {
   return (
     <div className="min-h-screen bg-black">
       <Header />
-
+      <Notification/>
       <main>
         <section className="relative">
           <img src="/user/pexels-emma-bauso-1183828-3585806.jpg" alt="Wedding" className="w-full h-screen object-cover" />
@@ -210,7 +211,7 @@ const Home: React.FC = () => {
                     <div className="flex">
                       <span className="flex items-center justify-center flex-shrink-0 w-6 h-6 text-green-800 bg-green-100 rounded-full dark:text-green-500 drark:bg-transparent">
                         <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd">
                           </path>
                         </svg>
                       </span>
@@ -223,7 +224,7 @@ const Home: React.FC = () => {
                     <div className="flex">
                       <span className="flex items-center justify-center flex-shrink-0 w-6 h-6 text-green-800 bg-green-100 rounded-full dark:text-green-500 drark:bg-transparent">
                         <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd">
                           </path>
                         </svg>
                       </span>
@@ -236,7 +237,7 @@ const Home: React.FC = () => {
                     <div className="flex">
                       <span className="flex items-center justify-center flex-shrink-0 w-6 h-6 text-green-800 bg-green-100 rounded-full dark:text-green-500 drark:bg-transparent">
                         <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd">
                           </path>
                         </svg>
                       </span>
@@ -249,7 +250,7 @@ const Home: React.FC = () => {
                     <div className="flex">
                       <span className="flex items-center justify-center flex-shrink-0 w-6 h-6 text-green-800 bg-green-100 rounded-full dark:text-green-500 drark:bg-transparent">
                         <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd">
                           </path>
                         </svg>
                       </span>

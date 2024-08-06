@@ -168,7 +168,6 @@ exports.default = {
     getPosts: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield home_1.default.getPosts(req.params.userId);
-            console.log(response);
             res.status(200).json(response);
         }
         catch (error) {
@@ -271,6 +270,66 @@ exports.default = {
     likedVendors: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield home_1.default.likedVendors(req.params.userId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    userBooked: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.userBooked(req.params.userId);
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                res.status(200).json({ message: "user booked" });
+            }
+            else {
+                res.status(201).json({ message: "user not booked the vendor" });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    requestcheck: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const reponse = yield home_1.default.requestcheck(req.params.userId, req.params.vendorId);
+            if (reponse === null || reponse === void 0 ? void 0 : reponse.success) {
+                res.status(200).json({ message: "request accepted" });
+            }
+            else {
+                res.status(201).json({ message: "request not accepted" });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    submitReport: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.submitReport(req.params.userId, req.params.vendorId, req.body.boxReason, req.body.reason);
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                res.status(200).json({ message: "report submitted successfully" });
+            }
+            else {
+                res.status(201).json({ message: "report not submitted" });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    notification: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.notification(req.params.vendorId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    roomIds: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.roomIds(req.params.userId);
             res.status(200).json(response);
         }
         catch (error) {

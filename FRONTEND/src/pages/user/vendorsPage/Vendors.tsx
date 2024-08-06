@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import Header from '../../../compounents/user/Header';
 import VendorsCard from '../../../compounents/user/VendorsCard';
 import Footer from '../../../compounents/user/Footer';
+import Notification from '../../../compounents/user/Notification';
 
 interface Post {
   images: string;
@@ -55,6 +56,8 @@ const Vendors: React.FC = () => {
       <main>
         <section className="relative">
           <Header />
+          <Notification/>
+
           <img src="/user/pexels-mastercowley-1128782.jpg" alt="Wedding" className="w-full h-screen object-cover" />
           <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white px-8">
             <h3 className="text-3xl sm:text-5xl font-bold mb-4 text-center">We’re here for you from will you to I do.</h3>

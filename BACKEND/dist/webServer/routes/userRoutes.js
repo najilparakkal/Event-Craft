@@ -45,4 +45,9 @@ userRouter.put('/api/user/addReview/:userId/:vendorId', UserMiddleware_1.default
 userRouter.put('/api/user/vendorLike/:userId/:vendorId', UserMiddleware_1.default, Controller_1.default.vendorLike);
 userRouter.get('/api/user/likedPosts/:userId', UserMiddleware_1.default, Controller_1.default.likedPosts);
 userRouter.get('/api/user/likedVendors/:userId', UserMiddleware_1.default, Controller_1.default.likedVendors);
+userRouter.get('/api/user/userBooked/:userId', UserMiddleware_1.default, Controller_1.default.userBooked);
+userRouter.get('/api/user/requestcheck/:userId/:vendorId', UserMiddleware_1.default, Controller_1.default.requestcheck);
+userRouter.post('/api/user/submitReport/:userId/:vendorId', UserMiddleware_1.default, Controller_1.default.submitReport);
+userRouter.get('/api/user/notifications/:vendorId', UserMiddleware_1.default, Controller_1.default.notification);
+userRouter.get("/api/user/roomIds/:userId", UserMiddleware_1.default, Controller_1.default.roomIds);
 exports.default = userRouter;

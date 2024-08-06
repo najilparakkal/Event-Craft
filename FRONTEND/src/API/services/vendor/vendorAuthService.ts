@@ -1,10 +1,8 @@
-import  {  AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { authAxiosInstance } from "./axios/AxiosInstance";
 import { useDispatch } from "react-redux";
 import { logout } from "./aurhSlice";
-import Cookies from 'js-cookie';
-
-
+import Cookies from "js-cookie";
 
 export const vendorRegister = async (
   endpoint: string,
@@ -70,19 +68,20 @@ export const login = async (
     const response: AxiosResponse<AuthResponse> = await authAxiosInstance.post(
       endpoint,
       vendorDetails
-    ); 
+    );
     if (response.status === 200) {
-      
       return response.data.response;
-    } else if (response.status === 201) {
-      throw new Error(" vendor Not Found");
+    } else if (response.status === 203) {
+      throw new Error("You Are Blocked");
     } else if (response.status === 202) {
       throw new Error("Password is not correct");
+    } else if (response.status === 201) {
+      throw new Error(" vendor Not Found");
     } else {
       throw new Error("Vendor login failed");
     }
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || "vendor Not Found");
+    throw new Error(error.message || "vendor Not Found");
   }
 };
 
@@ -120,11 +119,8 @@ export const forgotVerifyOtp = async (
   }
 };
 
-
-
-export const changePassword = async(password:string,email:string)=>{
+export const changePassword = async (password: string, email: string) => {
   try {
-    
     const response = await authAxiosInstance.put("/vendor/forgotPassword", {
       password,
       email,
@@ -134,14 +130,14 @@ export const changePassword = async(password:string,email:string)=>{
     console.error("Error verifying OTP:", error);
     return false;
   }
-}
+};
 
 export const vendorLogout = () => {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    localStorage.removeItem('vendorDetails');
-    Cookies.remove('jwt');
+    localStorage.removeItem("vendorDetails");
+    Cookies.remove("jwt");
     dispatch(logout());
   };
   return handleLogout;

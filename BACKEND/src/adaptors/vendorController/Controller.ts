@@ -195,5 +195,29 @@ export default {
       console.log(error);
        
     }
+  },
+  notification:async(req:Request,res:Response)=>{
+    try {
+      const response = await requesIterator.notification(req.params.userId)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  room:async(req:Request,res:Response)=>{
+    try {
+      const response = await requesIterator.room(req.params.vendorId)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  review:async(req:Request,res:Response)=>{
+    try {
+      const response = await requesIterator.review(req.params.vendorId)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
+    }
   }
 };

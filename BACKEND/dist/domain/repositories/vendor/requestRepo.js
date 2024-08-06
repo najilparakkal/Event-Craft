@@ -306,6 +306,37 @@ exports.default = {
             console.log(error);
         }
     }),
+    notification: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield user_1.Users.findById(userId);
+            return { userName: response === null || response === void 0 ? void 0 : response.userName, profilePicture: response === null || response === void 0 ? void 0 : response.profilePicture };
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    room: (venorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const data = yield chatModal_1.default.find({ users: venorId });
+            const ids = data.map((item) => item._id + "");
+            return ids;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    review: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const vendor = yield vendor_1.Vendors.findById(vendorId).populate({
+                path: "ratingAndReview.userId",
+                select: "userName profilePicture",
+            });
+            return vendor === null || vendor === void 0 ? void 0 : vendor.ratingAndReview;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    })
 };
 const fetchUsers = (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
     try {

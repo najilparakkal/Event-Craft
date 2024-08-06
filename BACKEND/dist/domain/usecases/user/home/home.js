@@ -121,7 +121,7 @@ exports.default = {
                 email: response === null || response === void 0 ? void 0 : response.email,
                 registered: response === null || response === void 0 ? void 0 : response.registered,
                 profilePicture: response === null || response === void 0 ? void 0 : response.profilePicture,
-                wallet: response === null || response === void 0 ? void 0 : response.wallet,
+                wallet: "",
             };
             return datas;
         }
@@ -247,6 +247,46 @@ exports.default = {
     likedVendors: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             return yield (0, homeRepo_1.likedVendors)(userId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    userBooked: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.userBooked)(userId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    requestcheck: (userId, vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.requestCheck)(userId, vendorId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    submitReport: (userId, vendorId, boxReason, reason) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.submitReport)(userId, vendorId, boxReason, reason);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    notification: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.notification)(vendorId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    roomIds: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.roomIds)(userId);
         }
         catch (error) {
             console.log(error);

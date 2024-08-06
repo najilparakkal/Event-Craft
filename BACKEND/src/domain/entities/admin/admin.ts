@@ -46,3 +46,10 @@ export interface IAdminBooking {
   status: string;
   paymentId: string;
 }
+
+export interface IStatusCount {
+  _id: string;
+  count: number;
+  createdAt: Date[];
+
+}

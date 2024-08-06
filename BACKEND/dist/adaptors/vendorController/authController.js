@@ -89,6 +89,9 @@ exports.default = {
             else if ((response === null || response === void 0 ? void 0 : response.success) === false && (response === null || response === void 0 ? void 0 : response.message) === "dose not exist") {
                 res.status(201).json({ status: 201, message: response.message });
             }
+            else if ((response === null || response === void 0 ? void 0 : response.success) === false && (response === null || response === void 0 ? void 0 : response.message) === "Vendor is blocked") {
+                res.status(203).json({ status: 203, message: response.message });
+            }
             else if ((response === null || response === void 0 ? void 0 : response.success) === false) {
                 res.status(202).json({ status: 202, message: response.message });
             }

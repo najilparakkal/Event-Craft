@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.likedVendors = exports.likedPosts = exports.vendorLike = exports.addReview = exports.ratingReview = exports.replyLike = exports.commentLike = exports.newReply = exports.getComments = exports.newComment = exports.updateLike = exports.getPosts = exports.getDatesOfVendor = exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
+exports.roomIds = exports.notification = exports.submitReport = exports.requestCheck = exports.userBooked = exports.likedVendors = exports.likedPosts = exports.vendorLike = exports.addReview = exports.ratingReview = exports.replyLike = exports.commentLike = exports.newReply = exports.getComments = exports.newComment = exports.updateLike = exports.getPosts = exports.getDatesOfVendor = exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
 const awsConfig_1 = require("../../../config/awsConfig");
 const booking_1 = require("../../../framworks/database/models/booking");
 const cancelBooking_1 = require("../../../framworks/database/models/cancelBooking");
@@ -25,6 +25,8 @@ const services_1 = require("../../../framworks/database/models/services");
 const user_1 = require("../../../framworks/database/models/user");
 const vendor_1 = require("../../../framworks/database/models/vendor");
 const date_fns_1 = require("date-fns");
+const mongoose_1 = __importDefault(require("mongoose"));
+const Reports_1 = require("../../../framworks/database/models/Reports");
 const listVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const vendors = yield vendor_1.Vendors.find({ vendor: true })
@@ -103,9 +105,14 @@ const getVendorProfile = (vendorId, userId) => __awaiter(void 0, void 0, void 0,
             category: post.category,
         }));
         const chat = yield chatModal_1.default.findOne({
-            users: { $in: [userId, vendorId] },
-            is_accepted: true,
+            users: {
+                $all: [
+                    new mongoose_1.default.Types.ObjectId(userId),
+                    new mongoose_1.default.Types.ObjectId(vendorId),
+                ],
+            },
         });
+        console.log(userId, vendorId);
         const servicesArray = licence.map((item) => item.services).flat();
         const services = servicesArray.flatMap((serviceList) => serviceList.split(",").map((service) => service.trim()));
         const allServices = yield services_1.Services.aggregate([
@@ -130,7 +137,7 @@ const getVendorProfile = (vendorId, userId) => __awaiter(void 0, void 0, void 0,
             availableDate,
             reviewCount,
             totalStars,
-            likes
+            likes,
         };
         return {
             response,
@@ -153,9 +160,15 @@ const addRequest = (userId, message, vendorId) => __awaiter(void 0, void 0, void
         if (!chat) {
             chat = new chatModal_1.default({
                 users: [userId, vendorId],
-                request: message,
             });
             yield chat.save();
+            yield message_1.default.create({
+                sender: userId,
+                content: message,
+                chat: chat._id,
+                type: "text",
+                senderModel: "User",
+            });
             return { success: true };
         }
         else {
@@ -257,12 +270,13 @@ const addBooking = (datas) => __awaiter(void 0, void 0, void 0, function* () {
             userId: datas.userId,
             vendorId: datas.vendorId,
             advance: datas.amount,
-            paymentId: datas.paymentDetails.paymentId
+            paymentId: datas.paymentDetails.paymentId,
         });
-        console.log(newBooking);
         const value = (0, date_fns_1.parseISO)(datas.datas.eventDate);
-        const date = (0, date_fns_1.format)(value, 'yyyy-MM-dd');
-        yield vendor_1.Vendors.findByIdAndUpdate(datas.vendorId, { $push: { availableDate: date } });
+        const date = (0, date_fns_1.format)(value, "yyyy-MM-dd");
+        yield vendor_1.Vendors.findByIdAndUpdate(datas.vendorId, {
+            $push: { availableDate: date },
+        });
         return { success: true };
     }
     catch (error) {
@@ -300,7 +314,7 @@ const cancelBooking = (percentage, bookingId) => __awaiter(void 0, void 0, void 
             percentage,
             advance: booking.advance,
             bookingId,
-            paymentId: booking.paymentId
+            paymentId: booking.paymentId,
         });
         const bookings = yield booking_1.Bookings.findByIdAndUpdate(bookingId, {
             $set: { status: "requested to cancel" },
@@ -516,14 +530,13 @@ exports.replyLike = replyLike;
 const ratingReview = (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const vendor = yield vendor_1.Vendors.findById(vendorId).populate({
-            path: 'ratingAndReview.userId',
-            select: 'userName profilePicture',
+            path: "ratingAndReview.userId",
+            select: "userName profilePicture",
         });
         if (vendor) {
             return vendor;
         }
-        ;
-        return { vendorName: "", about: "", ratingAndReview: "", };
+        return { vendorName: "", about: "", ratingAndReview: "" };
     }
     catch (error) {
         console.log(error);
@@ -625,3 +638,77 @@ const likedVendors = (userId) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.likedVendors = likedVendors;
+const userBooked = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const bookedOrNot = yield booking_1.Bookings.find({ userId });
+        if (bookedOrNot.length > 0) {
+            return { success: true };
+        }
+        else {
+            return { success: false };
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.userBooked = userBooked;
+const requestCheck = (userId, vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const request = yield chatModal_1.default.find({
+            users: {
+                $all: [
+                    new mongoose_1.default.Types.ObjectId(userId),
+                    new mongoose_1.default.Types.ObjectId(vendorId),
+                ],
+            },
+        });
+        if (request === null || request === void 0 ? void 0 : request.is_accepted) {
+            return { success: true };
+        }
+        else {
+            return { success: false };
+        }
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+});
+exports.requestCheck = requestCheck;
+const submitReport = (userId, vendorId, boxReason, reason) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const value = yield Reports_1.Report.create({
+            userId,
+            vendorId,
+            reason: boxReason,
+            reasonExplained: reason,
+        });
+        return { success: true };
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.submitReport = submitReport;
+const notification = (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = yield vendor_1.Vendors.findById(vendorId);
+        return { vendorName: data === null || data === void 0 ? void 0 : data.vendorName, profilePicture: data === null || data === void 0 ? void 0 : data.profilePicture };
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.notification = notification;
+const roomIds = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = yield chatModal_1.default.find({ users: userId });
+        const ids = data.map((item) => item._id + "");
+        return ids;
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.roomIds = roomIds;

@@ -1,21 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
+import { fetchBookingsCount } from '../../../../API/services/admin/Dashboard';
 
-interface ApexChartProps {}
 
-const ApexChart: React.FC<ApexChartProps> = () => {
+interface BookingData {
+    cancelled: { count: number; createdAt: string }[];
+    completed: { count: number; createdAt: string }[];
+    pending: { count: number; createdAt: string }[];
+}
+
+const ApexChart: React.FC = () => {
+    const [pendingCounts, setPendingCounts] = useState<number[]>(Array(12).fill(0));
+    const [completedCounts, setCompletedCounts] = useState<number[]>(Array(12).fill(0));
+    const [cancelledCounts, setCancelledCounts] = useState<number[]>(Array(12).fill(0));
+
+    useEffect(() => {
+        fetchBookingsCount()
+            .then((data: BookingData) => {
+                setPendingCounts(data.pending);
+                setCompletedCounts(data.completed);
+                setCancelledCounts(data.cancelled);
+            })
+            .catch((error) => {
+                console.error('Fetch error:', error);
+            });
+    }, []);
+
     const series = [
         {
             name: 'Completed Bookings',
-            data: [30, 40, 35, 50, 49, 60, 70, 91, 125, 100, 110, 120], // Added values for Oct, Nov, Dec
+            data: completedCounts,
         },
         {
             name: 'Pending Bookings',
-            data: [20, 30, 25, 40, 45, 50, 60, 70, 85, 75, 80, 90], // Added values for Oct, Nov, Dec
+            data: pendingCounts,
         },
         {
             name: 'Cancelled Bookings',
-            data: [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65], // Added values for Oct, Nov, Dec
+            data: cancelledCounts,
         },
     ];
 
@@ -67,7 +89,6 @@ const ApexChart: React.FC<ApexChartProps> = () => {
                     height={420}
                 />
             </div>
-            <div id="html-dist"></div>
         </div>
     );
 };

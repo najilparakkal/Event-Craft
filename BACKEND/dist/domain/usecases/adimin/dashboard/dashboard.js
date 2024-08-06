@@ -136,5 +136,37 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    report: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield dashRepositories_1.default.report();
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    blockVendor: (reportId, vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield dashRepositories_1.default.blockVendor(reportId, vendorId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    readReport: (reportId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield dashRepositories_1.default.readReport(reportId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    bookingCount: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield dashRepositories_1.default.bookingCount();
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

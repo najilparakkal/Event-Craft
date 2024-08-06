@@ -32,6 +32,11 @@ import {
   vendorLike,
   likedPosts,
   likedVendors,
+  userBooked,
+  requestCheck,
+  submitReport,
+  notification,
+  roomIds,
 } from "../../../repositories/user/homeRepo";
 
 export default {
@@ -139,7 +144,7 @@ export default {
         email: response?.email,
         registered: response?.registered,
         profilePicture: response?.profilePicture,
-        wallet: response?.wallet,
+        wallet: "",
       };
       return datas;
     } catch (err) {
@@ -215,9 +220,9 @@ export default {
     try {
       return await replyLike(commentId, userId);
     } catch (error) {
-      console.log(error);
-    }
-  },
+      console.log(error);               
+    } 
+  },    
     ratingReview: async (
     vendorId: string
   ): Promise<IRatingReviewResponse | null> => {
@@ -253,6 +258,42 @@ export default {
   likedVendors:async(userId:string)=>{
     try {
       return await likedVendors(userId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  userBooked:async(userId:string)=>{
+    try {
+      return await userBooked(userId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  requestcheck:async(userId:string,vendorId:string)=>{
+    try {
+      return await requestCheck(userId,vendorId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  submitReport:async(userId:string,vendorId:string,boxReason:string,reason:string)=>{
+    try {
+      return await submitReport(userId,vendorId,boxReason,reason)
+    
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  notification:async(vendorId:string)=>{
+    try {
+      return await notification(vendorId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  roomIds:async(userId:string)=>{
+    try {
+      return await roomIds(userId)
     } catch (error) {
       console.log(error)
     }

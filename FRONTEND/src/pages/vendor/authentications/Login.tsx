@@ -38,6 +38,9 @@ const Login: React.FC = () => {
             case 'Password is not correct':
               toast.error('Password is not correct');
               break;
+            case 'You Are Blocked':
+              toast.error('Vendor is blocked');
+              break;
             default:
               toast.error(resultAction.payload as string);
           }

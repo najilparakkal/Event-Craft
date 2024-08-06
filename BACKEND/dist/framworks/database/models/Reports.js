@@ -23,32 +23,32 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Report = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const ChatSchema = new mongoose_1.Schema({
-    users: [
-        {
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: "Users",
-        },
-        {
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: "Vendors",
-        },
-    ],
-    latestMessage: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: "Message",
+const ReportSchema = new mongoose_1.Schema({
+    userId: {
+        type: String,
+        ref: "Users",
+        required: true,
     },
-    is_blocked: {
+    vendorId: {
+        type: String,
+        ref: "Vendors",
+        required: true,
+    },
+    reason: {
+        type: String,
+        required: true,
+    },
+    reasonExplained: {
+        type: String,
+        required: true,
+    },
+    isReaded: {
         type: Boolean,
         default: false,
-    },
-    is_accepted: {
-        type: Boolean,
-        default: false,
-    },
+    }
 }, {
     timestamps: true,
 });
-const ChatModel = mongoose_1.default.model("ChatModel", ChatSchema);
-exports.default = ChatModel;
+exports.Report = mongoose_1.default.model("Report", ReportSchema);

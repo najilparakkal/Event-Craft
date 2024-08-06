@@ -13,8 +13,17 @@ const socketHandler = (io: Server) => {
   io.on("connection", (socket: Socket) => {
     console.log(`Socket connected: ${socket.id}`);
 
+    socket.on("join_home",async(idArray:string[])=>{
+      
+      for (const id of idArray) {
+        console.log(id,"this is the main join 🏫🏫🏫🏫");
+        
+        socket.join(id)
+      }
+    })
+
+
     socket.on("join room", async (room: string) => {
-      console.log(`Socket ${socket.id} joined room: ${room}`);
       socket.join(room);
 
       if (!mongoose.Types.ObjectId.isValid(room)) {
@@ -32,6 +41,7 @@ const socketHandler = (io: Server) => {
         console.error("Error fetching messages:", error);
       }
     });
+
     socket.on("send_voice_message", async (message) => {
       const { senderId, senderModel, content, chatId } = message;
 
@@ -100,11 +110,12 @@ const socketHandler = (io: Server) => {
       } catch (error) {
         console.error("Error updating messages:", error);
       }
-    });
+    });   
 
     socket.on("list_vendors", async (userId) => {
       try {
         const venders = await listVendorsInUserChat(userId);
+
         socket.emit("sorted_list", venders);
       } catch (error) {
         console.error("Error fetching vendors: ", error);

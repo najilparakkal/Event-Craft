@@ -108,22 +108,46 @@ export default {
       console.log(error);
     }
   },
-  refundBooking:async(bookingId:string)=>{
+  refundBooking: async (bookingId: string) => {
     try {
-      return await dashRepositories.refund(bookingId)
-      
+      return await dashRepositories.refund(bookingId);
     } catch (error) {
       console.log(error);
-      
     }
   },
-  bills:async()=>{
+  bills: async () => {
     try {
-      return await dashRepositories.bills()
-      
+      return await dashRepositories.bills();
     } catch (error) {
       console.log(error);
-      
+    }
+  },
+  report: async () => {
+    try {
+      return await dashRepositories.report();
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  blockVendor:async(reportId:string,vendorId:string)=>{
+    try {
+      return await dashRepositories.blockVendor(reportId,vendorId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  readReport:async(reportId:string)=>{
+    try {
+      return await dashRepositories.readReport(reportId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  bookingCount:async()=>{
+    try {
+      return await dashRepositories.bookingCount()
+    } catch (error) {
+      console.log(error)
     }
   }
 };

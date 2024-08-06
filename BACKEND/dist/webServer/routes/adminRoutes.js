@@ -23,4 +23,8 @@ adminRouter.get('/api/admin/dashboard', dashBoardController_1.default.getDashboa
 adminRouter.get('/api/admin/cancelBookings', dashBoardController_1.default.getBookings);
 adminRouter.patch('/api/admin/refund/:bookingId', AdminMiddleware_1.default, dashBoardController_1.default.refundBooking);
 adminRouter.get('/api/admin/bills', dashBoardController_1.default.bills);
+adminRouter.get('/api/admin/reports', dashBoardController_1.default.reports);
+adminRouter.put('/api/admin/blockVendor/:reportId/:vendorId', dashBoardController_1.default.blockVenodr);
+adminRouter.put('/api/admin/readReport/:reportId', dashBoardController_1.default.readReport);
+adminRouter.get('/api/admin/bookingCount', dashBoardController_1.default.booking);
 exports.default = adminRouter;

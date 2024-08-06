@@ -39,7 +39,10 @@ const createUser = (userData, hashedPassword) => __awaiter(void 0, void 0, void 
                 phoneNum: userData.phoneNum,
                 otp: otp,
             });
-            const { accessToken, refreshToken } = yield (0, jwtGenarate_1.CreateToken)({ id: newUser._id + "", email: newUser.email });
+            const { accessToken, refreshToken } = yield (0, jwtGenarate_1.CreateToken)({
+                id: newUser._id + "",
+                email: newUser.email,
+            });
             newUser.refreshToken = refreshToken;
             yield newUser.save();
             const userDatas = {
@@ -133,7 +136,10 @@ const logingUser = (email, password) => __awaiter(void 0, void 0, void 0, functi
                 id: user._id,
                 profilePicture: user.profilePicture,
             };
-            const { accessToken, refreshToken } = yield (0, jwtGenarate_1.CreateToken)({ id: user._id + "", email: user.email });
+            const { accessToken, refreshToken } = yield (0, jwtGenarate_1.CreateToken)({
+                id: user._id + "",
+                email: user.email,
+            });
             user.refreshToken = refreshToken;
             yield user.save();
             return { token: accessToken, userDetails };
@@ -211,6 +217,7 @@ const RegisterWithGoogle = (userData, hashedPassword) => __awaiter(void 0, void 
                 userName: userData.name,
                 email: userData.email,
                 password: hashedPassword,
+                verified: true,
             });
             const userDatas = {
                 id: newUser._id + "",

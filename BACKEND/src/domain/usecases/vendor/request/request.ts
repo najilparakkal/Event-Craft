@@ -174,5 +174,26 @@ export default{
       console.log(error);
       
     }
+  },
+  notification:async(userId:string)=>{
+    try {
+      return await requestRepo.notification(userId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  room:async(venorId:string)=>{
+    try {
+      return await requestRepo.room(venorId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  review:async(vendorId:string)=>{
+    try {
+      return await requestRepo.review(vendorId)
+    } catch (error) {
+      console.log(error)
+    }
   }
 }

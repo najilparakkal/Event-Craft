@@ -98,7 +98,9 @@ export const login = async (
     if (response.status === 200) {
       
       return response.data.response;
-    } else {
+    }else if(response.status === 203){
+      throw new Error(" User Is Blocked")
+    } else  {
       throw new Error("User Not Found");
     }
   } catch (error) {

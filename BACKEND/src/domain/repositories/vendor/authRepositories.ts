@@ -36,7 +36,7 @@ export const RegisterVendor = async (data: any, hashedPassword: string) => {
         name: newVendor.vendorName + "",
         email: newVendor.email + "",
         phoneNum: newVendor.phoneNum + "",
-        profilePicture: newVendor.profilePicture+"",
+        profilePicture: newVendor.profilePicture + "",
       };
       return {
         success: true,
@@ -124,25 +124,33 @@ export const logingVendor = async (
     const isMatch = await bcrypt.compare(password, vendor.password);
 
     if (isMatch) {
-      const vendorWithLicence = await Vendors.findById(vendor._id).populate<{
-        licence: ILicence[];
-      }>("licence");
+      if (vendor.blocked) {
+        return { success: false, message: "Vendor is blocked" };
+      } else {
+        const vendorWithLicence = await Vendors.findById(vendor._id).populate<{
+          licence: ILicence[];
+        }>("licence");
 
-      const vendorDetails: IVendorDetails = {
-        email: vendor.email + "",
-        phoneNum: vendor.phoneNum + "",
-        vendorName: vendor.vendorName + "",
-        id: vendor._id+'',
-        profilePicture:vendor.profilePicture + "",
-      };
-      const { refreshToken, accessToken } = await CreateToken({
-        id: vendor._id + "",
-        email: vendor.email + "",
-      });
-      vendor.refreshToken = refreshToken;
-      vendor.save();
-
-      return { success: true, token:accessToken, vendorDetails, isVendor: vendor.vendor };
+        const vendorDetails: IVendorDetails = {
+          email: vendor.email + "",
+          phoneNum: vendor.phoneNum + "",
+          vendorName: vendor.vendorName + "",
+          id: vendor._id + "",
+          profilePicture: vendor.profilePicture + "",
+        };
+        const { refreshToken, accessToken } = await CreateToken({
+          id: vendor._id + "",
+          email: vendor.email + "",
+        });
+        vendor.refreshToken = refreshToken;
+        vendor.save();
+        return {
+          success: true,
+          token: accessToken,
+          vendorDetails,
+          isVendor: vendor.vendor,
+        };
+      }
     } else {
       console.log("Password does not match");
       return { success: false, message: "Password does not match" };
@@ -232,7 +240,7 @@ export const RegisterWithGoogle = async (
       return {
         success: true,
         message: "vendor registered successfully",
-        token:accessToken,
+        token: accessToken,
         vendorDetails,
         isVendor: newvendor.vendor,
       };

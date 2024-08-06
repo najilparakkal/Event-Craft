@@ -181,5 +181,29 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    notification: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield requestRepo_1.default.notification(userId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    room: (venorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield requestRepo_1.default.room(venorId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    review: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield requestRepo_1.default.review(vendorId);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };
