@@ -11,7 +11,9 @@ import {
 } from "../../entities/admin/admin";
 import { Bookings } from "../../../framworks/database/models/booking";
 import { CancelBookings } from "../../../framworks/database/models/cancelBooking";
-import BillModel from "../../../framworks/database/models/billing";
+import BillModel, {
+  IBilling,
+} from "../../../framworks/database/models/billing";
 import { Report } from "../../../framworks/database/models/Reports";
 export default {
   listUsers: async (data: listUsers) => {
@@ -220,6 +222,15 @@ export default {
       const vendorsDates = vendors.map((item) => {
         return item.registered;
       });
+
+      const totalRevenue = vendors.reduce((total, vendor) => {
+        return total + vendor?.wallet;
+      }, 0);
+      const bills = await BillModel.find();
+      const revenue = bills.map((item: IBilling) => {
+        return { totalAmount: item.totalAmount, createdAt: item.createdAt };
+      });
+
       const usersDates = users.map((item) => {
         return item.registered;
       });
@@ -243,6 +254,8 @@ export default {
         vendorsDates,
         latestUsers,
         latestVendors,
+        revenue,
+        totalRevenue,
       };
     } catch (error) {
       console.log(error);
@@ -273,7 +286,7 @@ export default {
   },
   bills: async () => {
     try {
-      return await BillModel.find();
+      return await BillModel.find({ adminRead: false });
     } catch (error) {
       console.log(error);
     }
@@ -322,9 +335,8 @@ export default {
     }
   },
 
-   bookingCount : async () => {
+  bookingCount: async () => {
     try {
-      // Aggregating the bookings data
       const statusCounts: IStatusCount[] = await Bookings.aggregate([
         {
           $group: {
@@ -334,34 +346,44 @@ export default {
           },
         },
       ]);
-  
-      // Initialize counts for each status and each month
+
       const counts: Record<string, number[]> = {
         pending: Array(12).fill(0),
         completed: Array(12).fill(0),
         cancelled: Array(12).fill(0),
       };
-  
-      // Function to extract month from date
+
       const getMonthIndex = (date: Date): number => {
         return new Date(date).getMonth();
       };
-  
-      // Processing the status counts
+
       statusCounts.forEach((statusCount) => {
         const status = statusCount._id;
         statusCount.createdAt.forEach((date) => {
           const monthIndex = getMonthIndex(date);
-          counts[status][monthIndex] += 1; // Increment count for the corresponding month
+          counts[status][monthIndex] += 1;
         });
       });
-  
-      console.log(counts, "🎶🎶");
+
       return counts;
     } catch (error) {
       console.log(error);
       throw new Error("Failed to fetch booking counts");
     }
-  }
-  
+  },
+  readBill: async (billId: string) => {
+    try {
+      console.log("🍽️🍽️🍽️;ldmc")
+      const data =  await BillModel.findByIdAndUpdate(billId, {
+        $set: {
+          adminRead: true,
+        },
+      });
+      
+      console.log(data,"🍽️🍽️🍽️")
+      return data
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };

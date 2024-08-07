@@ -168,5 +168,13 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    readBill: (billId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield dashRepositories_1.default.readBill(billId);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

@@ -16,6 +16,7 @@ interface CountsProps {
     bookingsCount: number;
     usersCount: number;
     vendorsCount: number;
+    totalRevenue: number;
   }
 const Card: React.FC<CardProps> = ({ icon, title, value, percentage, description, descriptionColor, gradientFrom, gradientTo, shadowColor }) => (
     <div className="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 w-full mt-6 shadow-md">
@@ -34,7 +35,7 @@ const Card: React.FC<CardProps> = ({ icon, title, value, percentage, description
     </div>
 );
 
-const Counts: React.FC<CountsProps> = ({bookingsCount,usersCount,vendorsCount}) => (
+const Counts: React.FC<CountsProps> = ({bookingsCount,usersCount,vendorsCount,totalRevenue}) => (
     <div className="flex space-x-4 m-3">
         <Card
             icon={
@@ -43,7 +44,7 @@ const Counts: React.FC<CountsProps> = ({bookingsCount,usersCount,vendorsCount}) 
                 </svg>
             }
             title="Totel Revenue"
-            value=" ₹53k"
+            value={"₹"+totalRevenue}
             percentage="+55%"
             description="than last week"
             descriptionColor="text-green-500"

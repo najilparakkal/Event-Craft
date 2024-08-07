@@ -107,7 +107,7 @@ export default {
       return { success: true };
     } catch (error) {
       console.error(error);
-    } 
+    }
   },
   rejectRequest: async (_id: string) => {
     try {
@@ -304,11 +304,15 @@ export default {
   },
   updateBooking: async (bookingId: string, status: string) => {
     try {
-      await Bookings.findByIdAndUpdate(bookingId, {
-        $set: {
-          status: status,
-        },
-      });
+      console.log(bookingId, status);
+      const data = await Bookings.findById(bookingId);
+      if(data){
+        data.status = status;
+        await data.save();
+        console.log("Status updated successfully");
+        return true;
+      }
+     
     } catch (error) {
       console.log(error);
     }
@@ -327,13 +331,12 @@ export default {
           },
         },
       ]);
-      if (!booking) {
+      if (booking.length === 0) {
         return { success: false, message: "Booking not found" };
       }
-
       await BillModel.create({
         totalAmount,
-        bookingId,
+        bookingId,    
         items: datas,
         userId: booking[0].userId,
         vendorId: booking[0].vendorId,
@@ -343,34 +346,37 @@ export default {
       console.log(error);
     }
   },
-  notification:async(userId:string)=>{
+  notification: async (userId: string) => {
     try {
-      const response =  await Users.findById(userId)
-      return {userName:response?.userName,profilePicture:response?.profilePicture}
+      const response = await Users.findById(userId);
+      return {
+        userName: response?.userName,
+        profilePicture: response?.profilePicture,
+      };
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  room:async(venorId:string)=>{
+  room: async (venorId: string) => {
     try {
-      const data = await ChatModel.find({users:venorId})
-      const ids = data.map((item)=>item._id+"")    
-      return ids
+      const data = await ChatModel.find({ users: venorId });
+      const ids = data.map((item) => item._id + "");
+      return ids;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  review:async(vendorId:string)=>{
+  review: async (vendorId: string) => {
     try {
-       const vendor = await Vendors.findById(vendorId).populate({
+      const vendor = await Vendors.findById(vendorId).populate({
         path: "ratingAndReview.userId",
         select: "userName profilePicture",
       });
-      return vendor?.ratingAndReview
+      return vendor?.ratingAndReview;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  },
 };
 
 export const fetchUsers = async (vendorId: string) => {

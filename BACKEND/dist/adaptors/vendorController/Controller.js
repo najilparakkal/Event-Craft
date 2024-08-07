@@ -186,7 +186,7 @@ exports.default = {
     }),
     updateBooking: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            yield request_1.default.updateBooking(req.params.bookingId, req.body);
+            yield request_1.default.updateBooking(req.params.bookingId, req.body.status);
             res.status(200);
         }
         catch (error) {

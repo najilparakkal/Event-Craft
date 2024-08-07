@@ -175,7 +175,7 @@ export default {
   },
   updateBooking:async(req:Request, res:Response)=>{
     try {
-       await requesIterator.updateBooking(req.params.bookingId,req.body)
+       await requesIterator.updateBooking(req.params.bookingId,req.body.status)
       res.status(200)
     } catch (error) {
       console.log(error);

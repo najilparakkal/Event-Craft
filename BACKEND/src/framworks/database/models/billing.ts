@@ -6,12 +6,16 @@ export interface IBilling extends Document {
   userId: string;
   vendorId: string;
   totalAmount: number;
+  createdAt: Date;
+  adminRead: boolean;
+  paid: boolean;
 }
 
 const BillSchema: Schema<IBilling> = new Schema(
   {
     bookingId: {
       type: String,
+      ref:"Bookings",
       required: true,
     },
     items: [
@@ -31,6 +35,14 @@ const BillSchema: Schema<IBilling> = new Schema(
     totalAmount: {
       type: Number,
       required: true,
+    },
+    adminRead: {
+      type: Boolean,
+      default: false,
+    },
+    paid: {
+      type: Boolean,
+      default: false,
     },
   },
   {

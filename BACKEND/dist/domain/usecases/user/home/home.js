@@ -291,6 +291,30 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    userBills: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.userBills)(userId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    billPay: (billId, amount) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.billPay)(billId, amount);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    paidBills: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.paidBill)(userId);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };
 const fetchVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {

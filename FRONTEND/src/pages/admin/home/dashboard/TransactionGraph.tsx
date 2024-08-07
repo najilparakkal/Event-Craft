@@ -2,21 +2,23 @@ import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
 
+interface RevenueData {
+    totalAmount: number;
+    createdAt: string;
+}
+
 interface GraphProps {
     usersDetails: string[];
     vendorsDetails: string[];
+    revenue: RevenueData[];
 }
 
-const TransactionGraph: React.FC<GraphProps> = ({ usersDetails = [], vendorsDetails = [] }) => {
-    const [timePeriod, setTimePeriod] = useState('yearly'); // Default to 'yearly'
+type TimePeriod = 'weekly' | 'monthly' | 'yearly';
 
-    const dummyRevenue = {
-        weekly: [200, 250, 300, 280, 320, 290, 310],
-        monthly: Array.from({ length: 30 }, () => Math.floor(Math.random() * 500) + 100),
-        yearly: Array.from({ length: 12 }, () => Math.floor(Math.random() * 6000) + 1000)
-    };
+const TransactionGraph: React.FC<GraphProps> = ({ usersDetails = [], vendorsDetails = [], revenue = [] }) => {
+    const [timePeriod, setTimePeriod] = useState<TimePeriod>('yearly');
 
-    const extractData = (dates: string[]) => {
+    const extractData = (dates: string[]): Record<TimePeriod, number[]> => {
         const dateCounts = {
             weekly: new Array(7).fill(0),
             monthly: new Array(30).fill(0),
@@ -34,15 +36,33 @@ const TransactionGraph: React.FC<GraphProps> = ({ usersDetails = [], vendorsDeta
             dateCounts.weekly[weekDay]++;
         });
 
-        return {
-            weekly: dateCounts.weekly,
-            monthly: dateCounts.monthly,
-            yearly: dateCounts.yearly
+        return dateCounts;
+    };
+
+    const extractRevenueData = (revenue: RevenueData[]): Record<TimePeriod, number[]> => {
+        const revenueCounts = {
+            weekly: new Array(7).fill(0),
+            monthly: new Array(30).fill(0),
+            yearly: new Array(12).fill(0),
         };
+
+        revenue.forEach(item => {
+            const date = new Date(item.createdAt);
+            const month = date.getMonth();
+            const day = date.getDate();
+            const weekDay = date.getDay();
+
+            revenueCounts.yearly[month] += item.totalAmount;
+            revenueCounts.monthly[day - 1] += item.totalAmount;
+            revenueCounts.weekly[weekDay] += item.totalAmount;
+        });
+
+        return revenueCounts;
     };
 
     const userCounts = extractData(usersDetails);
     const vendorCounts = extractData(vendorsDetails);
+    const revenueCounts = extractRevenueData(revenue);
 
     const data = {
         labels: timePeriod === 'yearly' ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] :
@@ -65,7 +85,7 @@ const TransactionGraph: React.FC<GraphProps> = ({ usersDetails = [], vendorsDeta
             },
             {
                 label: 'Total Revenue',
-                data: dummyRevenue[timePeriod],
+                data: revenueCounts[timePeriod],
                 fill: false,
                 backgroundColor: 'red',
                 borderColor: 'red',
@@ -81,14 +101,14 @@ const TransactionGraph: React.FC<GraphProps> = ({ usersDetails = [], vendorsDeta
         },
     };
 
-    const handleTimePeriodChange = (period: string) => {
+    const handleTimePeriodChange = (period: TimePeriod) => {
         setTimePeriod(period);
         document.getElementById("lastDaysdropdown")?.classList.toggle("hidden");
     };
 
     return (
-        <div className="   w-full  rounded-lg shadow bg-[#292F45] p-4 md:p-6 m-3">
-            <div className="flex justify-between mb- 5">
+        <div className="w-full rounded-lg shadow bg-[#292F45] p-4 md:p-6 m-3">
+            <div className="flex justify-between mb-5">
                 <div>
                     <button
                         id="dropdownDefaultButton"

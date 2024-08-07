@@ -37,6 +37,9 @@ import {
   submitReport,
   notification,
   roomIds,
+  userBills,
+  billPay,
+  paidBill,
 } from "../../../repositories/user/homeRepo";
 
 export default {
@@ -295,6 +298,27 @@ export default {
     try {
       return await roomIds(userId)
     } catch (error) {
+      console.log(error)
+    }
+  },
+  userBills:async(userId:string)=>{
+    try {
+      return await userBills(userId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  billPay:async(billId:string,amount:number)=>{
+    try {
+     return  await billPay(billId,amount)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  paidBills:async(userId:string)=>{
+    try {
+      return await paidBill(userId)
+           } catch (error) {
       console.log(error)
     }
   }

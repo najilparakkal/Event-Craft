@@ -27,6 +27,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const BillSchema = new mongoose_1.Schema({
     bookingId: {
         type: String,
+        ref: "Bookings",
         required: true,
     },
     items: [
@@ -46,6 +47,14 @@ const BillSchema = new mongoose_1.Schema({
     totalAmount: {
         type: Number,
         required: true,
+    },
+    adminRead: {
+        type: Boolean,
+        default: false,
+    },
+    paid: {
+        type: Boolean,
+        default: false,
     },
 }, {
     timestamps: true,

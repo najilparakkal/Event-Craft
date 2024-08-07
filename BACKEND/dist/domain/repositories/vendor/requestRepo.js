@@ -270,11 +270,14 @@ exports.default = {
     }),
     updateBooking: (bookingId, status) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            yield booking_1.Bookings.findByIdAndUpdate(bookingId, {
-                $set: {
-                    status: status,
-                },
-            });
+            console.log(bookingId, status);
+            const data = yield booking_1.Bookings.findById(bookingId);
+            if (data) {
+                data.status = status;
+                yield data.save();
+                console.log("Status updated successfully");
+                return true;
+            }
         }
         catch (error) {
             console.log(error);
@@ -290,7 +293,7 @@ exports.default = {
                     },
                 },
             ]);
-            if (!booking) {
+            if (booking.length === 0) {
                 return { success: false, message: "Booking not found" };
             }
             yield billing_1.default.create({
@@ -309,7 +312,10 @@ exports.default = {
     notification: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield user_1.Users.findById(userId);
-            return { userName: response === null || response === void 0 ? void 0 : response.userName, profilePicture: response === null || response === void 0 ? void 0 : response.profilePicture };
+            return {
+                userName: response === null || response === void 0 ? void 0 : response.userName,
+                profilePicture: response === null || response === void 0 ? void 0 : response.profilePicture,
+            };
         }
         catch (error) {
             console.log(error);
@@ -336,7 +342,7 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
-    })
+    }),
 };
 const fetchUsers = (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
     try {

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.roomIds = exports.notification = exports.submitReport = exports.requestCheck = exports.userBooked = exports.likedVendors = exports.likedPosts = exports.vendorLike = exports.addReview = exports.ratingReview = exports.replyLike = exports.commentLike = exports.newReply = exports.getComments = exports.newComment = exports.updateLike = exports.getPosts = exports.getDatesOfVendor = exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
+exports.paidBill = exports.billPay = exports.userBills = exports.roomIds = exports.notification = exports.submitReport = exports.requestCheck = exports.userBooked = exports.likedVendors = exports.likedPosts = exports.vendorLike = exports.addReview = exports.ratingReview = exports.replyLike = exports.commentLike = exports.newReply = exports.getComments = exports.newComment = exports.updateLike = exports.getPosts = exports.getDatesOfVendor = exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
 const awsConfig_1 = require("../../../config/awsConfig");
 const booking_1 = require("../../../framworks/database/models/booking");
 const cancelBooking_1 = require("../../../framworks/database/models/cancelBooking");
@@ -27,6 +27,7 @@ const vendor_1 = require("../../../framworks/database/models/vendor");
 const date_fns_1 = require("date-fns");
 const mongoose_1 = __importDefault(require("mongoose"));
 const Reports_1 = require("../../../framworks/database/models/Reports");
+const billing_1 = __importDefault(require("../../../framworks/database/models/billing"));
 const listVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const vendors = yield vendor_1.Vendors.find({ vendor: true })
@@ -694,7 +695,10 @@ exports.submitReport = submitReport;
 const notification = (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = yield vendor_1.Vendors.findById(vendorId);
-        return { vendorName: data === null || data === void 0 ? void 0 : data.vendorName, profilePicture: data === null || data === void 0 ? void 0 : data.profilePicture };
+        return {
+            vendorName: data === null || data === void 0 ? void 0 : data.vendorName,
+            profilePicture: data === null || data === void 0 ? void 0 : data.profilePicture,
+        };
     }
     catch (error) {
         console.log(error);
@@ -712,3 +716,65 @@ const roomIds = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.roomIds = roomIds;
+const userBills = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const bills = yield billing_1.default.find({ userId, paid: false });
+        return bills;
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.userBills = userBills;
+const billPay = (billingId, amount) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const update = yield billing_1.default.findByIdAndUpdate(billingId, {
+            $set: {
+                paid: true,
+            },
+        });
+        const updateVenodor = yield vendor_1.Vendors.findByIdAndUpdate(update === null || update === void 0 ? void 0 : update.vendorId, {
+            $inc: {
+                wallet: amount,
+            },
+        });
+        if (update && updateVenodor) {
+            return { success: true };
+        }
+        else {
+            return { success: false };
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.billPay = billPay;
+const paidBill = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const bills = yield billing_1.default.find({ userId, paid: true }).populate({
+            path: "bookingId",
+            select: "advance createdAt eventDate",
+        });
+        const userData = yield user_1.Users.findById(userId).select("userName email phoneNum");
+        const vendors = [];
+        for (const bill of bills) {
+            if (bill.vendorId) {
+                const vendor = yield vendor_1.Vendors.findById(bill.vendorId).select("vendorName phoneNum email");
+                if (vendor) {
+                    vendors.push(vendor);
+                }
+            }
+        }
+        const response = {
+            billingData: bills,
+            userData,
+            vendors,
+        };
+        return response;
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.paidBill = paidBill;

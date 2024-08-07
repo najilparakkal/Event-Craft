@@ -46,4 +46,7 @@ userRouter.get('/api/user/requestcheck/:userId/:vendorId',userAuth,Controller.re
 userRouter.post('/api/user/submitReport/:userId/:vendorId',userAuth,Controller.submitReport)
 userRouter.get('/api/user/notifications/:vendorId',userAuth,Controller.notification)
 userRouter.get("/api/user/roomIds/:userId",userAuth,Controller.roomIds)
+userRouter.get('/api/user/userBills/:userId',userAuth,Controller.userBills)
+userRouter.post('/api/user/billPay/:billingId',userAuth,Controller.billPay)
+userRouter.get('/api/user/paidBills/:userId',userAuth,Controller.paidBills)
 export default userRouter                   

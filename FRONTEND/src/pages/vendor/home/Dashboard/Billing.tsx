@@ -12,7 +12,6 @@ const Billing: React.FC<BillingProps> = ({ isOpen, onClose, bookingId }) => {
     const [fields, setFields] = useState([{ item: '', amount: '' }]);
     const [totalAmount, setTotalAmount] = useState(0);
     const [errors, setErrors] = useState<{ item: string; amount: string }[]>([{ item: '', amount: '' }]);
-
     useEffect(() => {
         if (!isOpen) {
             setFields([{ item: '', amount: '' }]);
@@ -40,7 +39,7 @@ const Billing: React.FC<BillingProps> = ({ isOpen, onClose, bookingId }) => {
     const handleFieldChange = (index: number, field: string, value: string) => {
         const updatedFields = [...fields];
         const updatedErrors = [...errors];
-        updatedFields[index][field] = value;
+        updatedFields[index][field as keyof typeof fields[number]] = value;
 
         if (field === 'amount') {
             if (isNaN(Number(value))) {

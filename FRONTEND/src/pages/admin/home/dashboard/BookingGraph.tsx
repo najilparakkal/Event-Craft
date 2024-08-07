@@ -28,15 +28,15 @@ const ApexChart: React.FC = () => {
 
     const series = [
         {
-            name: 'Completed Bookings',
+            name: 'Completed ',
             data: completedCounts,
         },
         {
-            name: 'Pending Bookings',
+            name: 'Pending ',
             data: pendingCounts,
         },
         {
-            name: 'Cancelled Bookings',
+            name: 'Cancelled ',
             data: cancelledCounts,
         },
     ];

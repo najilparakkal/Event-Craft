@@ -173,11 +173,19 @@ export const readReport = async (reportId: string) => {
   }
 };
 
-export const fetchBookingsCount = async()=>{
+export const fetchBookingsCount = async () => {
   try {
-    const response = await authAxiosInstance.get('admin/bookingCount')
+    const response = await authAxiosInstance.get("admin/bookingCount");
     return response.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
+
+export const readBill = async (billId: string) => {
+  try {
+    await authAxiosInstance.put(`admin/readBill/${billId}`);
+  } catch (error) {
+    console.log(error);
+  }
+};

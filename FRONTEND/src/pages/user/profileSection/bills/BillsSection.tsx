@@ -1,17 +1,18 @@
 import React from 'react'
 import ProfileHeader from '../../../../compounents/user/ProfileHeader'
-import Bookings from './Bookings'
 import Notification from '../../../../compounents/user/Notification'
+import Bills from './Bills'
+import PayedBills from './PayedBills'
 
-const BookingSection = () => {
+const BillsSection = () => {
   return (
     <div>
       <ProfileHeader/>
       <Notification/>
-      <Bookings/>
-
+      <Bills/>
+      <PayedBills/>
     </div>
   )
 }
 
-export default React.memo(BookingSection)
+export default BillsSection

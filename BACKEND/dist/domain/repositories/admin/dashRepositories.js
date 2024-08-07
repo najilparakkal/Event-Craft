@@ -218,6 +218,13 @@ exports.default = {
             const vendorsDates = vendors.map((item) => {
                 return item.registered;
             });
+            const totalRevenue = vendors.reduce((total, vendor) => {
+                return total + (vendor === null || vendor === void 0 ? void 0 : vendor.wallet);
+            }, 0);
+            const bills = yield billing_1.default.find();
+            const revenue = bills.map((item) => {
+                return { totalAmount: item.totalAmount, createdAt: item.createdAt };
+            });
             const usersDates = users.map((item) => {
                 return item.registered;
             });
@@ -235,6 +242,8 @@ exports.default = {
                 vendorsDates,
                 latestUsers,
                 latestVendors,
+                revenue,
+                totalRevenue,
             };
         }
         catch (error) {
@@ -267,7 +276,7 @@ exports.default = {
     }),
     bills: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return yield billing_1.default.find();
+            return yield billing_1.default.find({ adminRead: false });
         }
         catch (error) {
             console.log(error);
@@ -322,7 +331,6 @@ exports.default = {
     }),
     bookingCount: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            // Aggregating the bookings data
             const statusCounts = yield booking_1.Bookings.aggregate([
                 {
                     $group: {
@@ -332,30 +340,41 @@ exports.default = {
                     },
                 },
             ]);
-            // Initialize counts for each status and each month
             const counts = {
                 pending: Array(12).fill(0),
                 completed: Array(12).fill(0),
                 cancelled: Array(12).fill(0),
             };
-            // Function to extract month from date
             const getMonthIndex = (date) => {
                 return new Date(date).getMonth();
             };
-            // Processing the status counts
             statusCounts.forEach((statusCount) => {
                 const status = statusCount._id;
                 statusCount.createdAt.forEach((date) => {
                     const monthIndex = getMonthIndex(date);
-                    counts[status][monthIndex] += 1; // Increment count for the corresponding month
+                    counts[status][monthIndex] += 1;
                 });
             });
-            console.log(counts, "🎶🎶");
             return counts;
         }
         catch (error) {
             console.log(error);
             throw new Error("Failed to fetch booking counts");
         }
-    })
+    }),
+    readBill: (billId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            console.log("🍽️🍽️🍽️;ldmc");
+            const data = yield billing_1.default.findByIdAndUpdate(billId, {
+                $set: {
+                    adminRead: true,
+                },
+            });
+            console.log(data, "🍽️🍽️🍽️");
+            return data;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
 };

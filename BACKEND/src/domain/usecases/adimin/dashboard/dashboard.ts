@@ -149,5 +149,12 @@ export default {
     } catch (error) {
       console.log(error)
     }
+  },
+  readBill:async(billId:string)=>{
+    try {
+      return await dashRepositories.readBill(billId)
+    } catch (error) {
+      console.log(error)
+    }
   }
 };

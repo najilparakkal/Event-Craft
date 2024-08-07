@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { bills } from "../../../../API/services/admin/Dashboard";
+import { bills, readBill } from "../../../../API/services/admin/Dashboard";
 import { AnimatePresence, motion } from "framer-motion";
-import { DetailsModal } from "./DetailsModal";
 
 export function BillSection() {
     const [datas, setDatas] = useState([]);
@@ -10,11 +9,10 @@ export function BillSection() {
     useEffect(() => {
         bills()
             .then((data) => {
-                console.log(data, "🧠🧠🧠");
                 const transformedData = data.map((bill: any) => ({
-                    title: `Billing ID: ${bill.bookingId}`,
+                    title: `Billing ID: ${bill._id}`,
                     fullDetails: bill.items,
-                    bookingId: bill.bookingId,
+                    billingId: bill._id,
                 }));
                 setDatas(transformedData);
             })
@@ -22,11 +20,15 @@ export function BillSection() {
                 console.log(err);
             });
     }, []);
-
-    const handleSubmitBill = (billingId: string) => {
-        console.log(`Submitting bill with ID: ${billingId}`);
+    const handleSubmitBill = async (billingId: string) => {
+        try {
+            await readBill(billingId);
+            setDatas((prevDatas) => prevDatas.filter((bill: any) => bill._id !== billingId));
+        } catch (err) {
+            console.error("Error submitting the bill:", err);
+        }
     };
-
+    
     return (
         <div className="max-w-5xl mx-auto px-8">
             <HoverEffect items={datas} onOpenDetails={setSelectedDetails} onSubmitBill={handleSubmitBill} />
@@ -55,7 +57,7 @@ export const HoverEffect = ({
     items: {
         title: string;
         fullDetails: any;
-        bookingId: string;
+        billingId: string;
     }[];
     className?: string;
     onOpenDetails: (content: any) => void;
@@ -88,7 +90,7 @@ export const HoverEffect = ({
 
                         <CardTitle>{item.title}</CardTitle>
                         </div>
-                        <div className="h-36  overflow-y-auto scrollNoDiv crollbar-hidden ">
+                        <div className="h-36  overflow-y-auto scrollNoDiv scrollbar-hidden ">
                             <ul className="mt-4 space-y-2">
                                 {item.fullDetails.map((detail: any, index: number) => (
                                     <li
@@ -105,7 +107,7 @@ export const HoverEffect = ({
                         <div className="flex mt-5 space-x-4 h-full">
                             <button
                                 className="bg-blue-500 bottom-7 text-white px-2 py-2 rounded"
-                                onClick={() => onSubmitBill(item.bookingId)}
+                                onClick={() => onSubmitBill(item.billingId)}
                             >
                                 Submit Bill
                             </button>

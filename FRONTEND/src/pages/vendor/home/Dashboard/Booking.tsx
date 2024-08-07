@@ -36,9 +36,9 @@ const Booking: React.FC = () => {
     const [showSubmitBillModal, setShowSubmitBillModal] = useState<boolean>(false);
     const [dropdownOpen, setDropdownOpen] = useState<{ [key: string]: boolean }>({});
     const [selectedBillBooking, setSelectedBillBooking] = useState<Booking | null>(null);
-
+    const [update, setUpdate] = useState(false)
     const navigate = useNavigate();
-
+    const [bookingId,setBookingId] = useState("")
     useEffect(() => {
         const fetchBookings = async () => {
             const datas: Booking[] = await userBookings(_id + "");
@@ -55,7 +55,7 @@ const Booking: React.FC = () => {
             setBookings(pending);
         };
         fetchBookings();
-    }, [_id]);
+    }, []);
 
     const calculateDaysDifference = (eventDate: string) => {
         const currentDate = new Date();
@@ -109,7 +109,7 @@ const Booking: React.FC = () => {
     const toggleMenu = (id: string, bookedDate: string) => {
         const currentDate = new Date();
         const eventDate = new Date(bookedDate);
-    
+
         if (currentDate > eventDate) {
             setDropdownOpen(prevState => ({
                 ...prevState,
@@ -126,19 +126,22 @@ const Booking: React.FC = () => {
             ...prevState,
             [bookingId]: false
         }));
-
         if (option === 'Completed' || option === 'Cancelled') {
             setBookings(prev => prev.filter(booking => booking._id !== bookingId));
-            setAcceptedBookings((prev:any) => [...prev, updatedBooking]);
+            setAcceptedBookings((prev: any) => [...prev, updatedBooking]);
+            setUpdate(true)
         } else if (option === 'Pending') {
+            setUpdate(true)
             setAcceptedBookings(prev => prev.filter(booking => booking._id !== bookingId));
-            setBookings((prev:any) => [...prev, updatedBooking]);
+            setBookings((prev: any) => [...prev, updatedBooking]);
         }
+
     };
 
     const handleOpenBilling = (booking: Booking) => {
         setSelectedBillBooking(booking);
         setShowSubmitBillModal(true);
+        setBookingId(booking._id);
     };
 
     const handleCloseBilling = () => {
@@ -148,7 +151,7 @@ const Booking: React.FC = () => {
 
     return (
         <div>
-            <Toaster position='top-center'/>
+            <Toaster position='top-center' />
             {acceptedBookings.length > 0 && (
                 <div className="p-4">
                     <h1 className="text-2xl font-bold mb-4">Accepted Bookings</h1>
@@ -171,7 +174,7 @@ const Booking: React.FC = () => {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{new Date(booking.eventDate).toLocaleDateString()}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{booking.clientName}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            {booking.status !== 'Completed' && booking.status !== 'Pending' ? (
+                                            {booking.status == 'Pending' ? (
                                                 <div className="relative inline-block text-left">
                                                     <button
                                                         onClick={() => toggleMenu(booking._id, new Date(booking.eventDate).toLocaleDateString())}
@@ -189,7 +192,7 @@ const Booking: React.FC = () => {
                                                             <ul className="flex space-x-2 py-2 text-sm text-gray-700 dark:text-gray-200">
                                                                 <li>
                                                                     <a
-                                                                        href="#"
+
                                                                         onClick={() => handleSelectOption('Completed', booking._id)}
                                                                         className="block px-4 py-2 text-green-600"
                                                                     >
@@ -198,7 +201,7 @@ const Booking: React.FC = () => {
                                                                 </li>
                                                                 <li>
                                                                     <a
-                                                                        href="#"
+
                                                                         onClick={() => handleSelectOption('Cancelled', booking._id)}
                                                                         className="block px-4 py-2 text-red-700"
                                                                     >
@@ -220,9 +223,7 @@ const Booking: React.FC = () => {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                                             <button className="text-green-500 hover:text-green-700" onClick={() => handleOpenBilling(booking)}>Submit Bill</button>
                                         </td>
-                                        {showSubmitBillModal && (
-                                            <Billing isOpen={showSubmitBillModal} bookingId={booking._id} onClose={handleCloseBilling} />
-                                        )}
+
                                     </tr>
                                 ))}
                             </tbody>
@@ -230,7 +231,9 @@ const Booking: React.FC = () => {
                     </div>
                 </div>
             )}
-
+            {showSubmitBillModal && (
+                <Billing isOpen={showSubmitBillModal} bookingId={bookingId} onClose={handleCloseBilling} />
+            )}
             {bookings.length > 0 && (
                 <div className="p-4">
                     <h1 className="text-2xl font-bold mb-4">Pending Bookings</h1>
@@ -326,7 +329,7 @@ const Booking: React.FC = () => {
                             <div className="p-6 text-center">
                                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">Booking Details</h3>
                                 <div className="mt-4 text-left">
-                                <p><strong>Client Name:</strong> {selectedBooking.clientName}</p>
+                                    <p><strong>Client Name:</strong> {selectedBooking.clientName}</p>
                                     <p><strong>Event Date:</strong> {new Date(selectedBooking.eventDate).toLocaleDateString()}</p>
                                     <p><strong>Event:</strong> {selectedBooking.event}</p>
                                     <p><strong>Advance:</strong> {selectedBooking.advance}</p>

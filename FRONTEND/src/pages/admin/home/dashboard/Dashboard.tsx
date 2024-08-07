@@ -16,6 +16,8 @@ interface DashboardData {
   vendorsDates: [];
   latestUsers: [];
   latestVendors: [];
+  revenue:[]
+  totalRevenue:number
 }
 
 const Dashboard: React.FC = () => {
@@ -29,6 +31,7 @@ const Dashboard: React.FC = () => {
     fetch();
   }, []);
 
+
   return (
     <div className="flex bg-[#171E31]">
       <Sidebar />
@@ -40,11 +43,13 @@ const Dashboard: React.FC = () => {
               bookingsCount={datas.bookingsCount}
               usersCount={datas.usersCount}
               vendorsCount={datas.vendorsCount}
+              totalRevenue={datas.totalRevenue}
             />
             <div className='flex p-4 space-x-4'>
               <div className='flex-1'>
                 <TransactionGraph
                   usersDetails={datas.usersDates}
+                  revenue={datas.revenue}
                   vendorsDetails={datas.vendorsDates}
                 />
               </div>

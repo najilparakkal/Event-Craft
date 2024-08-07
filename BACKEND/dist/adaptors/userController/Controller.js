@@ -335,5 +335,37 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    userBills: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.userBills(req.params.userId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    billPay: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.billPay(req.params.billingId, req.body.amount);
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                res.status(200).json({ message: "User Payed The Bill" });
+            }
+            else {
+                res.status(400).json({ message: "User failed to pay the bill" });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    paidBills: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.paidBills(req.params.userId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

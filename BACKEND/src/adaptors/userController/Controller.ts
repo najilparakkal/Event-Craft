@@ -304,5 +304,33 @@ export default {
     } catch (error) {
       console.log(error)
     }
+  },
+  userBills:async(req:Request,res:Response) => {
+    try {
+      const response = await userIterator.userBills(req.params.userId)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  billPay:async(req:Request,res:Response)=>{
+    try {
+      const response = await userIterator.billPay(req.params.billingId,req.body.amount)
+      if(response?.success){
+        res.status(200).json({message:"User Payed The Bill"})
+      }else{
+        res.status(400).json({message:"User failed to pay the bill"})
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  paidBills:async(req:Request, res:Response)=>{
+    try {
+      const response = await userIterator.paidBills(req.params.userId)
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
+    }
   }
 };

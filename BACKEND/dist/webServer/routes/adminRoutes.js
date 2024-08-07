@@ -27,4 +27,5 @@ adminRouter.get('/api/admin/reports', dashBoardController_1.default.reports);
 adminRouter.put('/api/admin/blockVendor/:reportId/:vendorId', dashBoardController_1.default.blockVenodr);
 adminRouter.put('/api/admin/readReport/:reportId', dashBoardController_1.default.readReport);
 adminRouter.get('/api/admin/bookingCount', dashBoardController_1.default.booking);
+adminRouter.put('/api/admin/readBill/:billId', dashBoardController_1.default.readBill);
 exports.default = adminRouter;

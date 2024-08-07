@@ -16,8 +16,8 @@ const ProfileHeader = () => {
             case '/wishlist':
                 setSelectedMenuItem('WISHLIST');
                 break;
-            case '/bookings':
-                setSelectedMenuItem('BOOKINGS');
+            case '/bills':
+                setSelectedMenuItem('BILLS');
                 break;
             case '/requests':
                 setSelectedMenuItem('REQUESTS');
@@ -98,10 +98,10 @@ const ProfileHeader = () => {
                         WISHLIST
                     </li>
                     <li
-                        onClick={() => handleMenuItemClick('BOOKINGS', '/bookings')}
-                        className={`py-2 px-4 text-black hover:bg-[#0092AB] hover:text-white font-bold rounded-lg cursor-pointer transition-colors duration-500 ${selectedMenuItem === 'BOOKINGS' ? 'bg-[#0092AB] text-white' : ''}`}
+                        onClick={() => handleMenuItemClick('BILLS', '/bills')}
+                        className={`py-2 px-4 text-black hover:bg-[#0092AB] hover:text-white font-bold rounded-lg cursor-pointer transition-colors duration-500 ${selectedMenuItem === 'BILLS' ? 'bg-[#0092AB] text-white' : ''}`}
                     >
-                        BOOKINGS
+                        BILLS
                     </li>
                     <li
                         onClick={() => handleMenuItemClick('REQUESTS', '/requests')}

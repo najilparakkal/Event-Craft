@@ -22,6 +22,7 @@ import {
 import { Socket } from "socket.io-client";
 import mongoose from "mongoose";
 import { Report } from "../../../framworks/database/models/Reports";
+import BillModel from "../../../framworks/database/models/billing";
 
 export const listVendors = async (data: string) => {
   try {
@@ -711,11 +712,11 @@ export const submitReport = async (
   reason: string
 ) => {
   try {
-   const value = await Report.create({
+    const value = await Report.create({
       userId,
       vendorId,
-      reason:boxReason,
-      reasonExplained:reason,
+      reason: boxReason,
+      reasonExplained: reason,
     });
     return { success: true };
   } catch (error) {
@@ -723,21 +724,86 @@ export const submitReport = async (
   }
 };
 
-export const notification = async(vendorId:string)=>{
+export const notification = async (vendorId: string) => {
   try {
     const data = await Vendors.findById(vendorId);
-    return {vendorName:data?.vendorName,profilePicture:data?.profilePicture}
+    return {
+      vendorName: data?.vendorName,
+      profilePicture: data?.profilePicture,
+    };
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
-export const roomIds = async(userId:string)=>{
+export const roomIds = async (userId: string) => {
   try {
-    const data = await ChatModel.find({users:userId})
-    const ids = data.map((item)=>item._id+"")    
-    return ids
+    const data = await ChatModel.find({ users: userId });
+    const ids = data.map((item) => item._id + "");
+    return ids;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
+
+export const userBills = async (userId: string) => {
+  try {
+    const bills = await BillModel.find({ userId, paid: false });
+    return bills;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const billPay = async (billingId: string, amount: number) => {
+  try {
+    const update = await BillModel.findByIdAndUpdate(billingId, {
+      $set: {
+        paid: true,
+      },
+    });
+    const updateVenodor = await Vendors.findByIdAndUpdate(update?.vendorId, {
+      $inc: {
+        wallet: amount,
+      },
+    });
+    if (update && updateVenodor) {
+      return { success: true };
+    } else {
+      return { success: false };
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const paidBill = async (userId: string) => {
+  try {
+    const bills = await BillModel.find({ userId, paid: true }).populate({
+      path: "bookingId",
+      select: "advance createdAt eventDate",
+    });
+    const userData = await Users.findById(userId).select(
+      "userName email phoneNum"
+    );
+    const vendors = [];
+    for (const bill of bills) {
+      if (bill.vendorId) {
+        const vendor = await Vendors.findById(bill.vendorId).select(
+          "vendorName phoneNum email"
+        );
+        if (vendor) {
+          vendors.push(vendor);
+        }
+      }
+    }
+    const response = {
+      billingData: bills,
+      userData,
+      vendors,
+    };
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};

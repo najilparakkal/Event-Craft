@@ -190,5 +190,13 @@ export default {
     } catch (error) {
       console.log(error)
     }
+  },
+  readBill:async(req:Request,res:Response)=>{
+    try {
+       await dashboard.readBill(req.params.billId)
+      res.status(200).json({message:"Bill Read successfully"})
+    } catch (error) {
+      console.log(error)
+    }
   }
 };

@@ -50,4 +50,7 @@ userRouter.get('/api/user/requestcheck/:userId/:vendorId', UserMiddleware_1.defa
 userRouter.post('/api/user/submitReport/:userId/:vendorId', UserMiddleware_1.default, Controller_1.default.submitReport);
 userRouter.get('/api/user/notifications/:vendorId', UserMiddleware_1.default, Controller_1.default.notification);
 userRouter.get("/api/user/roomIds/:userId", UserMiddleware_1.default, Controller_1.default.roomIds);
+userRouter.get('/api/user/userBills/:userId', UserMiddleware_1.default, Controller_1.default.userBills);
+userRouter.post('/api/user/billPay/:billingId', UserMiddleware_1.default, Controller_1.default.billPay);
+userRouter.get('/api/user/paidBills/:userId', UserMiddleware_1.default, Controller_1.default.paidBills);
 exports.default = userRouter;

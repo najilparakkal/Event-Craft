@@ -215,5 +215,14 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    readBill: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield dashboard_1.default.readBill(req.params.billId);
+            res.status(200).json({ message: "Bill Read successfully" });
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };
