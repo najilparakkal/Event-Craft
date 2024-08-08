@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
+import { ChartData } from 'chart.js';
 
 interface RevenueData {
     totalAmount: number;
@@ -64,10 +65,14 @@ const TransactionGraph: React.FC<GraphProps> = ({ usersDetails = [], vendorsDeta
     const vendorCounts = extractData(vendorsDetails);
     const revenueCounts = extractRevenueData(revenue);
 
-    const data = {
-        labels: timePeriod === 'yearly' ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] :
-                timePeriod === 'monthly' ? Array.from({ length: 30 }, (_, i) => i + 1) :
-                ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    const labels: Record<TimePeriod, string[]> = {
+        weekly: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        monthly: Array.from({ length: 30 }, (_, i) => (i + 1).toString()),
+        yearly: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    };
+
+    const data: ChartData<'line', number[], string> = {
+        labels: labels[timePeriod],
         datasets: [
             {
                 label: 'User Registrations',

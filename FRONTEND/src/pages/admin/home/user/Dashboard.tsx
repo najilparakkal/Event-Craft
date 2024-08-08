@@ -3,7 +3,7 @@ import Sidebar from '../../../../compounents/admin/Sidebar';
 import Header from '../../../../compounents/admin/Header';
 import UserTable from './UserTable';
 
-const Dashboard :React.FC = () => {
+const Dashboard: React.FC = () => {
 
   return (
     <div className="flex">
@@ -11,7 +11,7 @@ const Dashboard :React.FC = () => {
       <div className="flex-1">
         <Header name="Users List" />
 
-          <UserTable />
+        <UserTable />
       </div>
     </div>
   );

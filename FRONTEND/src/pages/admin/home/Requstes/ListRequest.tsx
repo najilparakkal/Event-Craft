@@ -39,7 +39,6 @@ const ListRequest: React.FC = () => {
         };
         fetchData();
     }, []);
-    console.log(list);
 
     const handleCardClick = (request: Request) => {
         setSelectedRequest(request);
@@ -184,4 +183,4 @@ const ListRequest: React.FC = () => {
     );
 };
 
-export default ListRequest;
+export default React.memo(ListRequest);

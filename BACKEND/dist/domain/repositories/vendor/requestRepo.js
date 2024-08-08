@@ -343,6 +343,14 @@ exports.default = {
             console.log(error);
         }
     }),
+    wallet: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield vendor_1.Vendors.findById(vendorId).select('wallet');
+        }
+        catch (error) {
+            console.log(error);
+        }
+    })
 };
 const fetchUsers = (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
     try {

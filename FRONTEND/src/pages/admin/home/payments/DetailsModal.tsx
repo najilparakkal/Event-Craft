@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalTrigger } from "../../../../utils/asternityUi/SourceCode";
 
 export function DetailsModal() {

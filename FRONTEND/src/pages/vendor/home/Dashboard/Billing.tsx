@@ -146,4 +146,4 @@ const Billing: React.FC<BillingProps> = ({ isOpen, onClose, bookingId }) => {
     );
 };
 
-export default Billing;
+export default React.memo(Billing);

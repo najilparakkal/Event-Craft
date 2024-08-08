@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '../../../../costumeHooks/costum';
-import { paidBills, payingBill, userBills } from '../../../../API/services/user/Services';
+import { payingBill, userBills } from '../../../../API/services/user/Services';
 import { AnimatePresence, motion } from "framer-motion";
 import easyinvoice from 'easyinvoice';
 import toast from 'react-hot-toast';
@@ -40,11 +40,12 @@ const Bills: React.FC = () => {
     const [selectedDetails, setSelectedDetails] = useState<any>(null);
     const { _id, name, phoneNum } = useAppSelector((state) => state.user.userDetails);
     const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
+
     useEffect(() => {
         userBills(_id+"")
             .then((data) => {
                 const transformedData = data.map((bill: any) => ({
-                    title: `Billing ID: ${bill.bookingId}`,
+                    title: `Billing ID: ${bill.bookingId.slice(0, 10)}...`,
                     fullDetails: bill.items,
                     bookingId: bill.bookingId,
                     billingId: bill._id,
@@ -56,6 +57,7 @@ const Bills: React.FC = () => {
                 console.log(err);
             });
     }, [_id]);
+
     useEffect(() => {
         const script = document.createElement('script');
         script.src = 'https://checkout.razorpay.com/v1/checkout.js';
@@ -69,7 +71,7 @@ const Bills: React.FC = () => {
             alert('Razorpay SDK is still loading or failed to load. Please try again later.');
             return;
         }
-        alert(billingId)
+
         const options = {
             key: import.meta.env.VITE_APP_RAZORPAY_KEYID,
             amount: amount * 100, 
@@ -97,12 +99,14 @@ const Bills: React.FC = () => {
                 },
             },
         };
+
         const rzp = new (window as any).Razorpay(options);
         rzp.open();
     };
 
     return (
         <div className="max-w-5xl mx-auto px-8">
+            <h1 className="text-3xl font-bold  text-gray-500">Bill</h1>
             <HoverEffect
                 items={datas}
                 onOpenDetails={setSelectedDetails}
@@ -176,7 +180,7 @@ export const HoverEffect: React.FC<HoverEffectProps> = ({
                     <AnimatePresence>
                         {hoveredIndex === idx && (
                             <motion.span
-                                className="absolute inset-0 h-full w-full bg-neutral-200 dark:bg-slate-800/[0.8] block rounded-3xl"
+                                className="absolute inset-0 h-full w-full bg-gray-700 block dark:bg-slate-800/[0.8] rounded-3xl"
                                 layoutId="hoverBackground"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1, transition: { duration: 0.15 } }}
@@ -188,12 +192,12 @@ export const HoverEffect: React.FC<HoverEffectProps> = ({
                         <div className="mb-2">
                             <CardTitle>{item.title}</CardTitle>
                         </div>
-                        <div className="h-36 overflow-y-auto scrollNoDiv scrollbar-hidden">
+                        <div className="h-36 overflow-y-auto scrollbar-hidden">
                             <ul className="mt-4 space-y-2">
                                 {item.fullDetails.map((detail, index) => (
                                     <li
                                         key={index}
-                                        className="flex justify-between border-b border-white text-gray-400"
+                                        className="flex justify-between border-b border-gray-500 text-gray-300"
                                     >
                                         <span>{detail.item}</span>
                                         <span>₹{detail.amount}</span>
@@ -203,13 +207,13 @@ export const HoverEffect: React.FC<HoverEffectProps> = ({
                         </div>
                         <div className="flex mt-5 space-x-4 h-full">
                             <button
-                                className="bg-blue-500 bottom-7 text-white px-2 py-2 rounded"
+                                className="bg-blue-600 text-white px-2 py-2 rounded hover:bg-blue-700"
                                 onClick={() => onSubmitBill(item.billingId, item.totalAmount)}
                             >
                                 Pay ₹{item.totalAmount}
                             </button>
                             <button
-                                className="bg-green-500 bottom-7 text-white px-2 py-2 rounded"
+                                className="bg-green-600 text-white px-2 py-2 rounded hover:bg-green-700"
                                 onClick={() => handleDownloadPDF(item)}
                             >
                                 Download PDF
@@ -228,7 +232,7 @@ export const Card: React.FC<CardProps> = ({
 }) => {
     return (
         <div
-            className={`rounded-2xl h-full w-full p-4 overflow-hidden bg-gray-100 border border-gray-300 group-hover:border-gray-400 relative z-20 ${className}`}
+            className={`rounded-2xl h-full w-full p-4 overflow-hidden bg-gray-800  border-gray-700  relative z-20 ${className}`}
         >
             <div className="relative z-50">
                 <div className="p-4">{children}</div>
@@ -242,7 +246,7 @@ export const CardTitle: React.FC<CardTitleProps> = ({
     children,
 }) => {
     return (
-        <h4 className={`text-gray-900 font-bold tracking-wide mt-4 ${className}`}>
+        <h4 className={`text-white font-bold tracking-wide mt-4 ${className}`}>
             {children}
         </h4>
     );

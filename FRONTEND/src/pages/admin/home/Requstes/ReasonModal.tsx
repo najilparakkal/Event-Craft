@@ -74,4 +74,4 @@ const ReasonModal: React.FC<ReasonModalProps> = ({ submit, setOpen, open }) => {
     );
 };
 
-export default ReasonModal;
+export default React.memo(ReasonModal);

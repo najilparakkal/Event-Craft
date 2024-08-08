@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useAppSelector } from '../../../../costumeHooks/costum';
+import React from 'react';
 
 const Profile: React.FC = () => {
   
@@ -114,4 +113,4 @@ const Profile: React.FC = () => {
     );
 };
 
-export default Profile;
+export default React.memo(Profile);

@@ -22,6 +22,9 @@ const ProfileHeader = () => {
             case '/requests':
                 setSelectedMenuItem('REQUESTS');
                 break;
+            case '/bookings':
+                setSelectedMenuItem('CHANGE PASSWORD');
+                break;
             case '/change-password':
                 setSelectedMenuItem('CHANGE PASSWORD');
                 break;
@@ -104,10 +107,10 @@ const ProfileHeader = () => {
                         BILLS
                     </li>
                     <li
-                        onClick={() => handleMenuItemClick('REQUESTS', '/requests')}
+                        onClick={() => handleMenuItemClick('BOOKINGS', '/bookings')}
                         className={`py-2 px-4 text-black hover:bg-[#0092AB] hover:text-white font-bold rounded-lg cursor-pointer transition-colors duration-500 ${selectedMenuItem === 'REQUESTS' ? 'bg-[#0092AB] text-white' : ''}`}
                     >
-                        REQUESTS
+                        BOOKINGS
                     </li>
                     <li
                         onClick={() => handleMenuItemClick('CHANGE PASSWORD', '/change-password')}

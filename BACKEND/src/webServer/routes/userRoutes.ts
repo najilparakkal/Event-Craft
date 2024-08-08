@@ -21,7 +21,7 @@ userRouter.get("/api/user/vendorProfile/:vendorId",userAuth, Controller.getVendo
 userRouter.post("/api/user/addRequest", userAuth,Controller.addRequest);
 userRouter.get("/api/user/request/:userId", userAuth,Controller.listRequest);
 userRouter.post("/api/user/cancelRequest",userAuth, Controller.cancelRequest);
-userRouter.get("/api/user/fetchVendors/:userId",userAuth, Controller.fetchVendors);
+// userRouter.get("/api/user/fetchVendors/:userId",userAuth, Controller.fetchVendors);
 userRouter.get("/api/user/chatId/:userId/:vendorId",userAuth,Controller.getChatId);
 userRouter.post("/api/user/addBooking",userAuth, Controller.addBooking); 
 userRouter.get("/api/user/bookings/:userId",userAuth, Controller.getBooking);

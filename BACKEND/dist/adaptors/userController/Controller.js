@@ -83,15 +83,14 @@ exports.default = {
             console.log(error);
         }
     }),
-    fetchVendors: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const response = yield home_1.default.fetchVendors(req.params.userId);
-            res.status(200).json(response);
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }),
+    // fetchVendors: async (req: Request, res: Response) => {
+    //   try {
+    //     const response = await userIterator.fetchVendors(req.params.userId);
+    //     res.status(200).json(response);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // },
     getChatId: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield home_1.default.getChatId(req.params);

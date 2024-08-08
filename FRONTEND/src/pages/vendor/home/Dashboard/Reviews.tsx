@@ -14,7 +14,7 @@ interface Review {
   _id: string;
 }
 
-const Reviews = () => {
+const Reviews:React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const { _id } = useAppSelector((state) => state.vendor.vendorDetails);
 
@@ -22,26 +22,26 @@ const Reviews = () => {
     if (_id) {
       fetchReviews(_id + "")
         .then((data) => {
-          console.log('Fetched data:', data); // Debugging: Check fetched data
-          setReviews(data); // Store the array directly
+          setReviews(data);
         })
         .catch((err) => {
-          console.log('Fetch error:', err);
+          console.error('Fetch error:', err);
         });
     }
   }, [_id]);
 
-  console.log('reviews state:', reviews); // Debugging: Check state before rendering
-
   return (
     <div className='h-full w-full'>
-      <div className='w-full '>
+      <div className='w-full'>
         <h3 className="text-md font-semibold text-gray-700 mb-4">Ratings and Reviews:</h3>
         {reviews.length > 0 ? (
           <div className="overflow-y-auto scrollNoDiv max-h-96">
             {reviews.map((reviewData) => (
-              <div key={reviewData._id} className="mb-4 p-4 border border-gray-300 rounded-lg flex justify-between">
-                <div className="w-4/5">
+              <div 
+                key={reviewData._id} 
+                className="mb-4 p-4 shadow-lg rounded-lg flex flex-col md:flex-row justify-between bg-white"
+              >
+                <div className="w-full md:w-4/5">
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Rating
                       name="read-only"
@@ -53,11 +53,11 @@ const Reviews = () => {
                   </Box>
                   <p className="text-gray-800 mt-2">{reviewData.review}</p>
                 </div>
-                <div className="w-1/5 flex flex-col items-end">
+                <div className="w-full md:w-1/5 mt-4 md:mt-0 flex flex-col items-start md:items-end">
                   <img
                     src={reviewData.userId?.profilePicture}
                     alt={reviewData.userId?.userName}
-                    className="w-8 h-8 rounded-full object-cover"
+                    className="w-10 h-10 rounded-full object-cover"
                   />
                   <span className="mt-2 text-gray-700">{reviewData.userId?.userName}</span>
                 </div>
@@ -72,4 +72,4 @@ const Reviews = () => {
   );
 };
 
-export default Reviews;
+export default React.memo(Reviews);

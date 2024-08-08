@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
+import { ApexOptions } from 'apexcharts'; // Import ApexOptions
 import { fetchBookingsCount } from '../../../../API/services/admin/Dashboard';
-
-
-interface BookingData {
-    cancelled: { count: number; createdAt: string }[];
-    completed: { count: number; createdAt: string }[];
-    pending: { count: number; createdAt: string }[];
-}
 
 const ApexChart: React.FC = () => {
     const [pendingCounts, setPendingCounts] = useState<number[]>(Array(12).fill(0));
@@ -16,7 +10,7 @@ const ApexChart: React.FC = () => {
 
     useEffect(() => {
         fetchBookingsCount()
-            .then((data: BookingData) => {
+            .then((data: any) => {
                 setPendingCounts(data.pending);
                 setCompletedCounts(data.completed);
                 setCancelledCounts(data.cancelled);
@@ -41,7 +35,7 @@ const ApexChart: React.FC = () => {
         },
     ];
 
-    const options = {
+    const options: ApexOptions = { // Type the options object
         chart: {
             type: 'bar',
             height: 350,
@@ -50,7 +44,7 @@ const ApexChart: React.FC = () => {
             bar: {
                 horizontal: false,
                 columnWidth: '55%',
-                endingShape: 'rounded',
+                borderRadius: 5, // Use borderRadius for rounded corners
             },
         },
         dataLabels: {

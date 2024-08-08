@@ -123,4 +123,4 @@ const Posts: React.FC<PostProps> = ({ userId }) => {
     );
 }
 
-export default Posts;
+export default React.memo(Posts);

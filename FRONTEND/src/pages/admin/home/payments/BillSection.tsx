@@ -51,8 +51,7 @@ export function BillSection() {
 export const HoverEffect = ({
     items,
     className,
-    onOpenDetails,
-    onSubmitBill,
+        onSubmitBill,
 }: {
     items: {
         title: string;

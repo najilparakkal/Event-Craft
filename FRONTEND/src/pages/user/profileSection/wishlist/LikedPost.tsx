@@ -11,7 +11,6 @@ import ShareIcon from '@mui/icons-material/Share';
 import CommentIcon from '@mui/icons-material/Comment';
 import { Typography } from '@mui/material';
 import PostModal from '../../../../compounents/user/PostModal';
-// import PostModal from './PostModal';
 
 interface prop { userId: string }
 
@@ -124,4 +123,4 @@ const LikedPost: React.FC<prop> = ({ userId }) => {
     )
 }
 
-export default LikedPost
+export default React.memo(LikedPost)

@@ -67,7 +67,7 @@ const RatingReview: React.FC<RatingReviewProps> = ({ vendorId, vendorServices })
             setStar(0);
             setReview('');
             toast.success("Review submitted successfully!");
-            setUpdated(true); 
+            setUpdated(true);
         } catch (err) {
             console.log(err);
             toast.error("Failed to submit review");
@@ -83,17 +83,17 @@ const RatingReview: React.FC<RatingReviewProps> = ({ vendorId, vendorServices })
     };
 
     return (
-        <div className="bg-white p-6 shadow-lg rounded-lg">
+        <div className="bg-black p-6 shadow-lg rounded-lg text-white">
             <Toaster position='top-center' />
             <div>
-                <h2 className="text-lg font-bold text-gray-800">About - {vendorData?.vendorName}</h2>
-                <p className="text-gray-600 mt-2">{vendorData?.about}</p>
+                <h2 className="text-lg font-bold text-white">About - {vendorData?.vendorName}</h2>
+                <p className="text-gray-400 mt-2">{vendorData?.about}</p>
                 <div className="mt-4">
-                    <h3 className="text-md font-semibold text-gray-700">Our Services:</h3>
+                    <h3 className="text-md font-semibold text-white">Our Services:</h3>
                     <div className="flex flex-wrap mt-2">
                         {vendorServices.map(service => (
                             <div key={service._id} className="flex items-center mr-4">
-                                <span className="text-gray-700">{service.name}</span>
+                                <span className="text-gray-400">{service.name}</span>
                             </div>
                         ))}
                     </div>
@@ -108,35 +108,47 @@ const RatingReview: React.FC<RatingReviewProps> = ({ vendorId, vendorServices })
                                 type="text"
                                 name="floating_review"
                                 id="floating_review"
-                                className="block py-2.5 px-0 w-full text-sm text-gray-800 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-gray-600 appearance-none focus:outline-none focus:ring-0 focus:border-white peer"
                                 placeholder=" "
                                 value={review}
                                 onChange={(e) => setReview(e.target.value)}
                             />
                             <label
                                 htmlFor="floating_review"
-                                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                                className="absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:text-white peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                             >
                                 Review
                             </label>
                         </div>
 
                         <div className="w-1/5 pl-4 flex justify-between items-center">
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', borderRadius: '4px', padding: '4px' }}>
                                 <Rating
+                                    className='border-why'
                                     name="simple-controlled"
                                     value={star}
-                                    onChange={(event, newStar) => {
+                                    onChange={(_event, newStar) => {
                                         setStar(newStar || 0);
                                     }}
                                     sx={{
-                                        color: 'orange',
+                                        color: 'white',
+                                        '& .MuiRating-icon': {
+                                            border: '1px solid white',
+                                            borderRadius: '2px', 
+                                        },
+                                        '& .MuiRating-iconFilled': {
+                                            color: 'white',
+                                        },
+                                        '& .MuiRating-iconHover': {
+                                            color: 'white',
+                                        },
                                     }}
                                 />
                             </Box>
+
                             <button
                                 type="submit"
-                                className="bg-blue-500 flex text-white p-2 rounded-full hover:bg-blue-600 transition duration-300"
+                                className="bg-gray-800 flex text-white p-2 rounded-full hover:bg-gray-700 transition duration-300"
                             >
                                 Submit <span className='mt-1'> <FaPaperPlane /> </span>
                             </button>
@@ -146,11 +158,11 @@ const RatingReview: React.FC<RatingReviewProps> = ({ vendorId, vendorServices })
             </div>
 
             <div className='w-full mt-8'>
-                <h3 className="text-md font-semibold text-gray-700 mb-4">Ratings and Reviews:</h3>
+                <h3 className="text-md font-semibold text-white mb-4">Ratings and Reviews:</h3>
                 {vendorData?.ratingAndReview.length ? (
                     <div>
                         {vendorData.ratingAndReview.slice(0, visibleReviews).map((reviewData, index) => (
-                            <div key={index} className="mb-4 p-4 border border-gray-300 rounded-lg flex justify-between">
+                            <div key={index} className="mb-4 p-4 border border-gray-600 rounded-lg flex justify-between bg-gray-800">
                                 <div className="w-4/5">
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                         <Rating
@@ -158,12 +170,12 @@ const RatingReview: React.FC<RatingReviewProps> = ({ vendorId, vendorServices })
                                             value={reviewData.star}
                                             readOnly
                                             sx={{
-                                                color: 'orange',
+                                                color: 'white',
                                             }}
                                         />
-                                        <span className="ml-2 text-gray-600">({reviewData.star} stars)</span>
+                                        <span className="ml-2 text-gray-400">({reviewData.star} stars)</span>
                                     </Box>
-                                    <p className="text-gray-800 mt-2">{reviewData.review}</p>
+                                    <p className="text-gray-200 mt-2">{reviewData.review}</p>
                                 </div>
                                 <div className="w-1/5 grid items-center justify-end">
                                     <img
@@ -171,7 +183,7 @@ const RatingReview: React.FC<RatingReviewProps> = ({ vendorId, vendorServices })
                                         alt={reviewData.userId?.userName}
                                         className="w-8 h-8 rounded-full object-cover"
                                     />
-                                    <span className="mr-2 text-gray-700">{reviewData.userId?.userName}</span>
+                                    <span className="mr-2 text-gray-200">{reviewData.userId?.userName}</span>
                                 </div>
                             </div>
                         ))}
@@ -179,7 +191,7 @@ const RatingReview: React.FC<RatingReviewProps> = ({ vendorId, vendorServices })
                             {visibleReviews < vendorData?.ratingAndReview.length && (
                                 <button
                                     onClick={handleShowMore}
-                                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300 mr-4"
+                                    className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition duration-300 mr-4"
                                 >
                                     Show More
                                 </button>
@@ -187,7 +199,7 @@ const RatingReview: React.FC<RatingReviewProps> = ({ vendorId, vendorServices })
                             {visibleReviews > 4 && (
                                 <button
                                     onClick={handleShowLess}
-                                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
+                                    className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition duration-300"
                                 >
                                     Show Less
                                 </button>
@@ -196,7 +208,7 @@ const RatingReview: React.FC<RatingReviewProps> = ({ vendorId, vendorServices })
 
                     </div>
                 ) : (
-                    <p className="text-gray-600">No reviews yet.</p>
+                    <p className="text-gray-400">No reviews yet.</p>
                 )}
             </div>
         </div>

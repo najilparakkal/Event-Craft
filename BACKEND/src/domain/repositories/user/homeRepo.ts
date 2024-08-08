@@ -686,7 +686,7 @@ export const userBooked = async (userId: string) => {
 
 export const requestCheck = async (userId: string, vendorId: string) => {
   try {
-    const request = await ChatModel.find({
+    const request:any = await ChatModel.find({
       users: {
         $all: [
           new mongoose.Types.ObjectId(userId),
@@ -694,7 +694,7 @@ export const requestCheck = async (userId: string, vendorId: string) => {
         ],
       },
     });
-    if (request?.is_accepted) {
+    if ( request.is_accepted) {
       return { success: true };
     } else {
       return { success: false };

@@ -219,7 +219,8 @@ exports.default = {
                 return item.registered;
             });
             const totalRevenue = vendors.reduce((total, vendor) => {
-                return total + (vendor === null || vendor === void 0 ? void 0 : vendor.wallet);
+                var _a;
+                return total + ((_a = vendor.wallet) !== null && _a !== void 0 ? _a : 0);
             }, 0);
             const bills = yield billing_1.default.find();
             const revenue = bills.map((item) => {
@@ -340,19 +341,33 @@ exports.default = {
                     },
                 },
             ]);
+            console.log(statusCounts, "🍽️🍽️");
             const counts = {
                 pending: Array(12).fill(0),
                 completed: Array(12).fill(0),
                 cancelled: Array(12).fill(0),
             };
             const getMonthIndex = (date) => {
-                return new Date(date).getMonth();
+                if (!(date instanceof Date) || isNaN(date.getTime())) {
+                    console.error("Invalid date:", date);
+                    return -1;
+                }
+                return date.getMonth();
             };
             statusCounts.forEach((statusCount) => {
-                const status = statusCount._id;
+                const status = statusCount._id.toLowerCase(); // Normalize to lowercase
+                if (!counts[status]) {
+                    console.warn("Unknown status:", status);
+                    return;
+                }
                 statusCount.createdAt.forEach((date) => {
-                    const monthIndex = getMonthIndex(date);
-                    counts[status][monthIndex] += 1;
+                    const monthIndex = getMonthIndex(new Date(date));
+                    if (monthIndex >= 0 && monthIndex < 12) {
+                        counts[status][monthIndex] += 1;
+                    }
+                    else {
+                        console.error("Invalid month index:", monthIndex);
+                    }
                 });
             });
             return counts;
@@ -364,7 +379,6 @@ exports.default = {
     }),
     readBill: (billId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            console.log("🍽️🍽️🍽️;ldmc");
             const data = yield billing_1.default.findByIdAndUpdate(billId, {
                 $set: {
                     adminRead: true,

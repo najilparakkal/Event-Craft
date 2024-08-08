@@ -13,6 +13,7 @@ import ProfileSection from "../pages/user/profileSection/profile/ProfileSection"
 import WishlistSection from "../pages/user/profileSection/wishlist/WishlistSection";
 
 import BillsSection from "../pages/user/profileSection/bills/BillsSection";
+import BookingSection from "../pages/user/profileSection/bookings/BookingSection";
 
 const UserRouter: React.FC = () => {
     const userDetails = useAppSelector((state) => state.user.userDetails._id);
@@ -31,7 +32,8 @@ const UserRouter: React.FC = () => {
                 <Route path="/wishlist" element={<WishlistSection />} />
                 <Route path="/messages" element={<MessageSection />} />
                 <Route path="/bills" element={<BillsSection />} />
-                <Route path="/profile" element={<ProfileSection />} />
+                <Route path="/bookings" element={<BookingSection />} />
+                                <Route path="/profile" element={<ProfileSection />} />
             </Route>
         </Routes>
     );

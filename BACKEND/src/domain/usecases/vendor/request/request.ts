@@ -195,5 +195,12 @@ export default{
     } catch (error) {
       console.log(error)
     }
+  },
+  wallet:async(vendorId:string)=>{
+    try {
+      return await requestRepo.wallet(vendorId)
+    } catch (error) {
+      console.log(error)
+    }
   }
 }

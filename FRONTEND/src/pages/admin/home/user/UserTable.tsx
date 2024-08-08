@@ -9,10 +9,10 @@ interface User {
   phoneNum: string;
   registered: string;
   image: string;
-  blocked: boolean; // Changed to boolean for better type checking
+  blocked: boolean; 
 }
 
-const UserTable = () => {
+const UserTable:React.FC = () => {
   const [list, setList] = useState<string>("");
   const [users, setUsers] = useState<User[]>([]);
 

@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { login, vendorRegister } from "./vendorAuthService";
 import Cookies from "js-cookie";
-const storedVendorDetails: vendorDetails | null = JSON.parse(
+import { IvendorDetails, IvendorState } from "./interfaces";
+const storedVendorDetails: IvendorDetails | null = JSON.parse(
   localStorage.getItem("vendorDetails") || "null"
 );
 
-const initialState: vendorState = {
+const initialState: IvendorState = {
   vendorDetails: storedVendorDetails ?? {
     _id: null,
     name: null,
@@ -80,7 +81,7 @@ const vendorSlice = createSlice({
       state.status = "idle";
       state.error = null;
     },
-    updateVendorDetails(state, action: PayloadAction<Partial<vendorDetails>>) {
+    updateVendorDetails(state, action: PayloadAction<Partial<IvendorDetails>>) {
       localStorage.removeItem("vendorDetails");
       state.vendorDetails = {
         ...state.vendorDetails,

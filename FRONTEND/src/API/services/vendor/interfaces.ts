@@ -1,4 +1,4 @@
-interface vendorDetails {
+export interface IvendorDetails {
     _id?: string | null;
     name?: string | null;
     email?: string | null;
@@ -7,15 +7,15 @@ interface vendorDetails {
   }
 
 
-  interface vendorState {
-    vendorDetails: vendorDetails;
+  export interface IvendorState {
+    vendorDetails: IvendorDetails;
     jwt: string | null;
     status: "idle" | "loading" | "succeeded" | "failed";
     error: string | null;
   }
 
 
-  interface authResponse {
+  export interface IauthResponse {
     token: any;
     response: any;
     vendor: {
@@ -32,7 +32,7 @@ interface vendorDetails {
   }
 
   
-export interface IAuthResponse {
+export  interface IAuthResponse {
   vendorDetails?: any;
   token?: string | null;
   response: any; 

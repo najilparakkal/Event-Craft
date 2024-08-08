@@ -263,3 +263,12 @@ export const fetchReviews = async(vendorId:string)=>{
     console.log(error)
   }
 }
+
+export const fetchWallet = async(vendorId:string)=>{
+  try {
+    const response = await authAxiosInstance.get(`/vendor/wallet/${vendorId}`)
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
+}

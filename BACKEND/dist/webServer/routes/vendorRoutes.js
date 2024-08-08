@@ -38,4 +38,5 @@ vendorRouter.post('/api/vendor/billing', VendorMiddleware_1.default, Controller_
 vendorRouter.get('/api/vendor/notifications/:userId', VendorMiddleware_1.default, Controller_1.default.notification);
 vendorRouter.get('/api/vendor/roomIds/:vendorId', VendorMiddleware_1.default, Controller_1.default.room);
 vendorRouter.get('/api/vendor/reviews/:vendorId', VendorMiddleware_1.default, Controller_1.default.review);
+vendorRouter.get('/api/vendor/wallet/:vendorId', VendorMiddleware_1.default, Controller_1.default.wallet);
 exports.default = vendorRouter;

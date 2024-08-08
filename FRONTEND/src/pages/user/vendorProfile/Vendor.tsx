@@ -8,7 +8,6 @@ import { useAppSelector } from '../../../costumeHooks/costum';
 import Header from '../../../compounents/user/Header';
 import RatingReview from './RatingReview';
 import { Button, Popover, Typography } from '@mui/material';
-import { string } from 'yup';
 import Report from './Report';
 import Notification from '../../../compounents/user/Notification';
 
@@ -29,7 +28,6 @@ interface VendorDetails {
 
 
 const Vendor: React.FC = () => {
-    const [isFavorite, setIsFavorite] = useState(false);
     const [vendorDetails, setVendorDetails] = useState<VendorDetails | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [message, setMessage] = useState('');
@@ -374,4 +372,4 @@ const Vendor: React.FC = () => {
     );
 };
 
-export default Vendor;
+export default React.memo(Vendor);

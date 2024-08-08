@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
 import Messages from './Messages';
 import { useAppSelector } from '../../../../costumeHooks/costum';
-import { fetchUsers } from '../../../../API/services/vendor/services';
 import Navbar from '../../../../compounents/vendor/Navbar';
 import { useSocket } from '../../../../API/services/outer/SocketProvider';
 

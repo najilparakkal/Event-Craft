@@ -1,9 +1,8 @@
-// VoiceMessage.tsx
 import React, { useState } from 'react';
 
 interface VoiceMessageProps {
-  audioSrc: string; // URL to the audio file
-  duration: string; // Duration of the audio message
+  audioSrc: string; 
+  duration: string;
 }
 
 const Voice: React.FC<VoiceMessageProps> = ({ audioSrc, duration }) => {
@@ -41,4 +40,4 @@ const Voice: React.FC<VoiceMessageProps> = ({ audioSrc, duration }) => {
   );
 };
 
-export default Voice;
+export default React.memo(Voice);

@@ -35,4 +35,4 @@ const Sidebar: React.FC<SidebarProps> = ({ vendors, onVendorClick, sidebarOpen }
   );
 };
 
-export default Sidebar;
+export default React.memo(Sidebar);

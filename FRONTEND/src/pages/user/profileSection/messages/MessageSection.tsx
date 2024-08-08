@@ -12,7 +12,7 @@ interface Vendor {
 }
 
 const MessageSection: React.FC = () => {
-  const { _id } = useAppSelector((state) => state.user.userDetails);
+  const { _id } = useAppSelector((state)=>state.user.userDetails);
   const { socket } = useSocket();
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -61,4 +61,4 @@ const MessageSection: React.FC = () => {
   );
 };
 
-export default MessageSection;
+export default React.memo(MessageSection);

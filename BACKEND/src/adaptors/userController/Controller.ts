@@ -66,14 +66,14 @@ export default {
       console.log(error);
     }
   },
-  fetchVendors: async (req: Request, res: Response) => {
-    try {
-      const response = await userIterator.fetchVendors(req.params.userId);
-      res.status(200).json(response);
-    } catch (error) {
-      console.log(error);
-    }
-  },
+  // fetchVendors: async (req: Request, res: Response) => {
+  //   try {
+  //     const response = await userIterator.fetchVendors(req.params.userId);
+  //     res.status(200).json(response);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // },
   getChatId: async (req: Request, res: Response) => {
     try {
       const response = await userIterator.getChatId(req.params);

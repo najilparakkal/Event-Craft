@@ -35,4 +35,5 @@ vendorRouter.post('/api/vendor/billing',vendorAuth,Controller.billing)
 vendorRouter.get('/api/vendor/notifications/:userId',vendorAuth,Controller.notification)
 vendorRouter.get('/api/vendor/roomIds/:vendorId',vendorAuth,Controller.room)
 vendorRouter.get('/api/vendor/reviews/:vendorId',vendorAuth,Controller.review)
+vendorRouter.get('/api/vendor/wallet/:vendorId',vendorAuth,Controller.wallet)
 export default vendorRouter

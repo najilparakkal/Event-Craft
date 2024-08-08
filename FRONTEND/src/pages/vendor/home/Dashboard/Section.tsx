@@ -3,7 +3,6 @@ import DatePicker from './DatePicker';
 import { useAppSelector } from '../../../../costumeHooks/costum';
 import Booking from './Booking';
 import { Wallet } from './Wallet';
-import Billing from './Billing';
 import Reviews from './Reviews';
 import Notification from '../../../../compounents/vendor/Notification';
 
@@ -15,8 +14,8 @@ const Section: React.FC = () => {
       <Notification/>
       <div className="flex flex-col md:flex-row w-full mt-5">
         <div className="w-full md:w-1/4 p-4">
-          <DatePicker vendorId={_id} />
-          <Wallet />
+          <DatePicker vendorId={_id+""} />
+          <Wallet vendorId={_id+""}/>
         </div>
         <div className="w-full md:w-3/4 p-4">
           <Reviews />

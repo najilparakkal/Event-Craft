@@ -7,6 +7,8 @@ interface UserDatas {
 }
 
 interface AuthResponse {
+  vendorDetails: any;
+  IvendorDetails: any;
   isVendor: any;
   userDatas?: any;
   userDetails?: any;

@@ -1,7 +1,7 @@
 import React from 'react'
 import Dashboard from './Dashboard'
 
-const Home:React.FC = () => {
+const Home: React.FC = () => {
   return (
     <div className='bg-[#171E31]'>
       <Dashboard />
@@ -11,4 +11,4 @@ const Home:React.FC = () => {
   )
 }
 
-export default Home
+export default React.memo(Home)

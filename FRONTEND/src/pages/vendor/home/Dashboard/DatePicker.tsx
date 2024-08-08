@@ -18,6 +18,7 @@ const DatePicker: React.FC<Prop> = ({ vendorId }) => {
             console.log(err);
         });
     }, [vendorId]);
+
     const handleDateClick = (date: Date) => {
         if (isBefore(date, new Date())) return;
         if (absentDates.some(absentDate => isSameDay(absentDate, date))) {
@@ -120,16 +121,16 @@ const DatePicker: React.FC<Prop> = ({ vendorId }) => {
                         className={`px-2 py-3 text-center cursor-pointer md:px-3 ${!isSameMonth(day, monthStart)
                             ? 'text-gray-300'
                             : isSameDay(day, new Date())
-                                ? 'bg-blue-500 text-white rounded-full'
+                                ? 'text-blue-500'
                                 : isAbsent
-                                    ? 'bg-red-500 text-white rounded-full'
+                                    ? 'text-red-500'
                                     : isPast
                                         ? 'text-gray-400'
                                         : 'hover:text-blue-500 text-black'
                             }`}
                         onClick={() => handleDateClick(cloneDay)}
                     >
-                        <span className="text-black">{formattedDate}</span>
+                        <span>{formattedDate}</span>
                     </td>
                 );
                 day = addDays(day, 1);
@@ -159,4 +160,4 @@ const DatePicker: React.FC<Prop> = ({ vendorId }) => {
     );
 };
 
-export default DatePicker;
+export default React.memo(DatePicker);

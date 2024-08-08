@@ -3,11 +3,12 @@ import { authAxiosInstance } from "./axios/AxiosInstance";
 import { useDispatch } from "react-redux";
 import { logout } from "./aurhSlice";
 import Cookies from "js-cookie";
+import { IauthResponse, IvendorDetails } from "./interfaces";
 
 export const vendorRegister = async (
   endpoint: string,
-  vendorData: vendorDetails
-): Promise<authResponse> => {
+  vendorData: IvendorDetails
+): Promise<IauthResponse> => {
   try {
     const response = await authAxiosInstance.post(endpoint, vendorData);
     if (response.status === 200) {
@@ -62,7 +63,7 @@ export const resendOtp = async (vendorEmail: any) => {
 
 export const login = async (
   endpoint: string,
-  vendorDetails: vendorDetails
+  vendorDetails: IvendorDetails
 ): Promise<AuthResponse> => {
   try {
     const response: AxiosResponse<AuthResponse> = await authAxiosInstance.post(

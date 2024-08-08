@@ -1,6 +1,5 @@
 import { authAxiosInstance } from "./axios/AxiosInstance";
 import { outerAxios } from "../outer/axios";
-import { string } from "yup";
 
 export const fetchVendors = async (data: string) => {
   try {

@@ -1,10 +1,10 @@
 import { Vendors } from "../../framworks/database/models/vendor";
-import { IVendors } from "../entities/vendor/vendor";
+import { IVendorDetails } from "../entities/vendor/vendor";
 import { CreateUserResponse } from "../repositories/user/authRepositories";
 
 
 
-export const checkingVendor = async (data: IVendors): Promise<CreateUserResponse> => {
+export const checkingVendor = async (data: IVendorDetails): Promise<CreateUserResponse> => {
   try {
     const userWithEmail = await Vendors.findOne({ email: data.email });
     const userWithPhoneNum = await Vendors.findOne({ phoneNum: data.phoneNum });

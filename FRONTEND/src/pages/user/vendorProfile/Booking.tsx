@@ -350,4 +350,4 @@ const Booking: React.FC<BookingProps> = ({ vendorId }) => {
     );
 };
 
-export default Booking;
+export default React.memo(Booking);

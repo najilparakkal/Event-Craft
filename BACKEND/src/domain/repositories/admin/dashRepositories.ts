@@ -224,7 +224,7 @@ export default {
       });
 
       const totalRevenue = vendors.reduce((total, vendor) => {
-        return total + vendor?.wallet;
+        return total + (vendor.wallet ?? 0);
       }, 0);
       const bills = await BillModel.find();
       const revenue = bills.map((item: IBilling) => {
@@ -346,25 +346,39 @@ export default {
           },
         },
       ]);
-
+      console.log(statusCounts, "🍽️🍽️");
+  
       const counts: Record<string, number[]> = {
         pending: Array(12).fill(0),
         completed: Array(12).fill(0),
         cancelled: Array(12).fill(0),
       };
-
+  
       const getMonthIndex = (date: Date): number => {
-        return new Date(date).getMonth();
+        if (!(date instanceof Date) || isNaN(date.getTime())) {
+          console.error("Invalid date:", date);
+          return -1;
+        }
+        return date.getMonth();
       };
-
+  
       statusCounts.forEach((statusCount) => {
-        const status = statusCount._id;
+        const status = statusCount._id.toLowerCase(); // Normalize to lowercase
+        if (!counts[status]) {
+          console.warn("Unknown status:", status);
+          return;
+        }
+  
         statusCount.createdAt.forEach((date) => {
-          const monthIndex = getMonthIndex(date);
-          counts[status][monthIndex] += 1;
+          const monthIndex = getMonthIndex(new Date(date));
+          if (monthIndex >= 0 && monthIndex < 12) {
+            counts[status][monthIndex] += 1;
+          } else {
+            console.error("Invalid month index:", monthIndex);
+          }
         });
       });
-
+  
       return counts;
     } catch (error) {
       console.log(error);
@@ -373,7 +387,6 @@ export default {
   },
   readBill: async (billId: string) => {
     try {
-      console.log("🍽️🍽️🍽️;ldmc")
       const data =  await BillModel.findByIdAndUpdate(billId, {
         $set: {
           adminRead: true,

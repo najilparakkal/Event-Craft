@@ -219,5 +219,13 @@ export default {
     } catch (error) {
       console.log(error)
     }
+  },
+  wallet:async(req:Request,res:Response)=>{
+    try {
+      const response = await requesIterator.wallet(req.params.vendorId)
+      res.status(200).json(response?.wallet)
+    } catch (error) {
+      console.log(error)
+    }
   }
 };

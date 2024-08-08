@@ -13,14 +13,14 @@ interface BillItem {
     bookingId: string;
     totalAmount: number;
     billingId: string;
-    eventDate: string; // Date of the event
+    eventDate: string;
     vendorInfo: {
         vendorName: string;
         vendorEmail: string;
         vendorPhone: string;
     };
-    advancePayment: number; // Advance payment
-    bookedDate: string; // Date when the booking was made
+    advancePayment: number;
+    bookedDate: string;
 }
 
 interface HoverEffectProps {
@@ -42,14 +42,13 @@ interface CardTitleProps {
 
 const PayedBills = () => {
     const [datas, setDatas] = useState<BillItem[]>([]);
-    const { _id, userName, phoneNum } = useAppSelector((state) => state.user.userDetails);
+    const { _id, name, phoneNum } = useAppSelector((state) => state.user.userDetails);
 
     useEffect(() => {
         paidBills(_id + "")
             .then((data) => {
-                console.log(data); // Debug log for fetched data
                 const transformedData = data.billingData.map((bill: any) => ({
-                    title: `Billing ID: ${bill._id}`,
+                    title: `Billing ID: ${bill._id.slice(0, 10)}...`,
                     fullDetails: bill.items,
                     bookingId: bill.bookingId._id,
                     billingId: bill._id,
@@ -69,13 +68,14 @@ const PayedBills = () => {
                 console.log(err);
             });
     }, [_id]);
-    
+
     return (
-        <div className="max-w-5xl mx-auto px-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-8">
+            <h1 className='text-3xl font-bold text-gray-500 mb-6'>Completed Events</h1>
             <HoverEffect
                 items={datas}
-                userName={userName}
-                phoneNumber={phoneNum}
+                userName={name + ""}
+                phoneNumber={phoneNum + ""}
             />
         </div>
     );
@@ -99,7 +99,7 @@ export const HoverEffect: React.FC<HoverEffectProps> = ({
             marginTop: 25,
             marginRight: 25,
             marginLeft: 25,
-            logo: "/black.png", // Ensure the correct path to your logo
+            logo: "/black.png",
             sender: {
                 company: "EVENT CRAFT",
                 address: "Eranamkulam",
@@ -109,9 +109,9 @@ export const HoverEffect: React.FC<HoverEffectProps> = ({
             },
             client: {
                 company: userName,
-                address: "User's Address", // Replace with actual user address if available
-                zip: "User's Zip", // Replace with actual user zip if available
-                city: "User's City", // Replace with actual user city if available
+                address: "User's Address",
+                zip: "User's Zip",
+                city: "User's City",
                 country: "India",
                 phone: phoneNumber,
             },
@@ -136,59 +136,63 @@ export const HoverEffect: React.FC<HoverEffectProps> = ({
                 Total Amount Paid: ₹${item.totalAmount}
             `,
         };
-    
+
         const result = await easyinvoice.createInvoice(invoiceData);
         easyinvoice.download(`invoice_${item.billingId}.pdf`, result.pdf);
     };
-    
+
     return (
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 py-10 ${className}`}>
-            {items.map((item, idx) => (
-                <div
-                    key={idx}
-                    className="relative group block p-2 h-full w-full"
-                    onMouseEnter={() => setHoveredIndex(idx)}
-                    onMouseLeave={() => setHoveredIndex(null)}
-                >
-                    <AnimatePresence>
-                        {hoveredIndex === idx && (
-                            <motion.span
-                                className="absolute inset-0 h-full w-full bg-neutral-200 dark:bg-slate-800/[0.8] block rounded-3xl"
-                                layoutId="hoverBackground"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1, transition: { duration: 0.15 } }}
-                                exit={{ opacity: 0, transition: { duration: 0.15, delay: 0.2 } }}
-                            />
-                        )}
-                    </AnimatePresence>
-                    <Card>
-                        <div className="mb-2">
-                            <CardTitle>{item.title}</CardTitle>
-                        </div>
-                        <div className="h-36 overflow-y-auto scrollNoDiv scrollbar-hidden">
-                            <ul className="mt-4 space-y-2">
-                                {item.fullDetails.map((detail, index) => (
-                                    <li
-                                        key={index}
-                                        className="flex justify-between border-b border-white text-gray-400"
-                                    >
-                                        <span>{detail.item}</span>
-                                        <span>₹{detail.amount}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div className="flex mt-5 space-x-4 h-full">
-                            <button
-                                className="bg-green-500 bottom-7 text-white px-2 py-2 rounded"
-                                onClick={() => handleDownloadPDF(item)}
-                            >
-                                Download PDF
-                            </button>
-                        </div>
-                    </Card>
-                </div>
-            ))}
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 py-10 ${className}`}>
+            {items.length > 0 ? (
+                items.map((item, idx) => (
+                    <div
+                        key={idx}
+                        className="relative group block p-4 h-full w-full"
+                        onMouseEnter={() => setHoveredIndex(idx)}
+                        onMouseLeave={() => setHoveredIndex(null)}
+                    >
+                        <AnimatePresence>
+                            {hoveredIndex === idx && (
+                                <motion.span
+                                    className="absolute inset-0 h-full w-full bg-neutral-200 dark:bg-slate-800/[0.8] block rounded-3xl"
+                                    layoutId="hoverBackground"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1, transition: { duration: 0.15 } }}
+                                    exit={{ opacity: 0, transition: { duration: 0.15, delay: 0.2 } }}
+                                />
+                            )}
+                        </AnimatePresence>
+                        <Card>
+                            <div className="mb-2">
+                                <CardTitle>{item.title}</CardTitle>
+                            </div>
+                            <div className="h-36 overflow-y-auto scrollNoDiv scrollbar-hidden">
+                                <ul className="mt-4 space-y-2">
+                                    {item.fullDetails.map((detail, index) => (
+                                        <li
+                                            key={index}
+                                            className="flex justify-between border-b border-white text-gray-400"
+                                        >
+                                            <span>{detail.item}</span>
+                                            <span>₹{detail.amount}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div className="flex mt-5 space-x-4 h-full">
+                                <button
+                                    className="bg-green-500 text-white px-4 py-2 rounded"
+                                    onClick={() => handleDownloadPDF(item)}
+                                >
+                                    Download PDF
+                                </button>
+                            </div>
+                        </Card>
+                    </div>
+                ))
+            ) : (
+                <h1 className='text-3xl font-bold text-gray-500 col-span-2'>NO Completed Events</h1>
+            )}
         </div>
     );
 };
@@ -199,7 +203,7 @@ export const Card: React.FC<CardProps> = ({
 }) => {
     return (
         <div
-            className={`rounded-2xl h-full w-full p-4 overflow-hidden bg-gray-100 border border-gray-300 group-hover:border-gray-400 relative z-20 ${className}`}
+            className={`rounded-2xl h-full w-full p-4 overflow-hidden bg-gray-800 relative z-20 ${className}`}
         >
             <div className="relative z-50">
                 <div className="p-4">{children}</div>
@@ -213,7 +217,7 @@ export const CardTitle: React.FC<CardTitleProps> = ({
     children,
 }) => {
     return (
-        <h4 className={`text-gray-900 font-bold tracking-wide mt-4 ${className}`}>
+        <h4 className={`text-white font-bold tracking-wide ${className}`}>
             {children}
         </h4>
     );

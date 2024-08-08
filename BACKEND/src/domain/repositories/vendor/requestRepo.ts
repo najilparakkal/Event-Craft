@@ -377,6 +377,13 @@ export default {
       console.log(error);
     }
   },
+  wallet:async(vendorId:string)=>{
+    try {
+      return await Vendors.findById(vendorId).select('wallet')
+    } catch (error) {
+      console.log(error)
+    }
+  }
 };
 
 export const fetchUsers = async (vendorId: string) => {

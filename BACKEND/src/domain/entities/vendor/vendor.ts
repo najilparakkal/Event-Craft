@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 
-
-
 export interface IvendorDetails {
   id: string;
   email: string;
@@ -19,7 +17,10 @@ export interface IotpVeri {
 export interface IresendOtp {
   email: string;
 }
-
+export interface Iwallet {
+  _id: string;
+  wallet: number;
+}
 export interface ILogin {
   email: string;
   password: string;
@@ -94,7 +95,7 @@ export interface Licence {
 export interface Vendor {
   vendorName: string;
   phoneNum: string;
-  coverPicture: string; 
+  coverPicture: string;
 
   licence: Licence[];
 }
@@ -107,7 +108,7 @@ interface PostDetails {
 }
 export interface VendorProfile {
   likes: string[];
-  _id:string
+  _id: string;
   vendorName: string;
   phoneNum: string;
   profilePicture: string;
@@ -116,8 +117,8 @@ export interface VendorProfile {
   coverPicture: string;
   posts: PostDetails[];
   availableDate?: string;
-  reviewCount:number
-  totalStars:number
+  reviewCount: number;
+  totalStars: number;
   response?: {
     vendorName: string;
     phoneNum: string;

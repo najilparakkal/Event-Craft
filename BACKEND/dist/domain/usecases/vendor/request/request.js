@@ -205,5 +205,13 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    wallet: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield requestRepo_1.default.wallet(vendorId);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

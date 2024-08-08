@@ -5,7 +5,6 @@ import { generateOTP } from "../../utils/otp";
 
 dotenv.config();
 
-// Nodemailer transporter setup
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
@@ -49,8 +48,6 @@ export const vendorReject = (email: string , text:string) => {
     subject: "Vendor Request verification",
     text: ` Reason for Rejecting : ${text}`,
   };
-console.log(mailOptions,"💕");
-
   transporter.sendMail(mailOptions, (error: Error | null, info: nodemailer.SentMessageInfo) => {
     if (error) {
       console.error("Error sending email:", error);

@@ -234,5 +234,14 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    wallet: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.wallet(req.params.vendorId);
+            res.status(200).json(response === null || response === void 0 ? void 0 : response.wallet);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

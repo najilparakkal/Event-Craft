@@ -4,9 +4,9 @@ import Notification from '../../../../compounents/user/Notification'
 import Bills from './Bills'
 import PayedBills from './PayedBills'
 
-const BillsSection = () => {
+const BillsSection:React.FC = () => {
   return (
-    <div>
+    <div className='bg-black'>
       <ProfileHeader/>
       <Notification/>
       <Bills/>
@@ -15,4 +15,4 @@ const BillsSection = () => {
   )
 }
 
-export default BillsSection
+export default React.memo(BillsSection)

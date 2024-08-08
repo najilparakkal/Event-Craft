@@ -15,11 +15,11 @@ const WishlistSection: React.FC = () => {
   const { _id } = useAppSelector((state) => state.user.userDetails);
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-black h-screen">
       <ProfileHeader />
-      <Notification/>
+      <Notification />
 
-      <div className="flex width-full flex-col">
+      <div className="flex w-full flex-col">
         <Tabs defaultValue={1}>
           <TabsList>
             <Tab value={1}>Liked Posts</Tab>
@@ -29,7 +29,7 @@ const WishlistSection: React.FC = () => {
             <LikedPost userId={_id + ""} />
           </TabPanel>
           <TabPanel value={2}>
-            <LikedVendor userId={_id+""}/>
+            <LikedVendor userId={_id + ""} />
           </TabPanel>
         </Tabs>
       </div>
@@ -39,7 +39,6 @@ const WishlistSection: React.FC = () => {
 
 export default WishlistSection;
 
-// Styled Components
 const Tabs = BaseTabs;
 
 const blue = {
@@ -70,7 +69,8 @@ const Tab = styled(BaseTab)`
   border-radius: 8px;
   display: flex;
   justify-content: center;
-
+  width: 10%;
+  
   &:hover {
     background-color: ${blue[400]};
   }
@@ -89,6 +89,11 @@ const Tab = styled(BaseTab)`
     opacity: 0.5;
     cursor: not-allowed;
   }
+
+  @media (max-width: 768px) {
+    width: auto;
+    font-size: 0.75rem;
+  }
 `;
 
 const TabPanel = styled(BaseTabPanel)`
@@ -99,7 +104,7 @@ const TabPanel = styled(BaseTabPanel)`
 
 const TabsList = styled(BaseTabsList)`
   min-width: 400px;
-  background-color: ${blue[500]};
+  background-color: transparent;
   border-radius: 12px;
   margin-bottom: 16px;
   display: flex;
@@ -107,4 +112,9 @@ const TabsList = styled(BaseTabsList)`
   justify-content: center;
   align-content: space-between;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    min-width: 100%;
+  }
 `;

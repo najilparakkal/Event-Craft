@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchCanelldBookings, refundUser } from '../../../../API/services/admin/Dashboard';
 import { toast, Toaster } from 'react-hot-toast';
-// import { instance } from '../../../../utils/payment/payment';
-import Razorpay from 'razorpay';
+
 
 interface Booking {
   _id: string;
@@ -51,11 +50,7 @@ const Payments: React.FC = () => {
       setBookings((prevBookings) => prevBookings.filter((booking) => booking.bookingId !== bookingId));
     });
   };
-
-
-
-
-  
+ 
   return (
     <div className="p-4">
       <Toaster position="top-center" reverseOrder={false} />
@@ -102,4 +97,4 @@ const Payments: React.FC = () => {
   );
 };
 
-export default Payments;
+export default React.memo(Payments);

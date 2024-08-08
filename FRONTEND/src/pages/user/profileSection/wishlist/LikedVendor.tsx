@@ -27,8 +27,8 @@ const LikedVendor: React.FC<Prop> = ({ userId }) => {
                 const data = await fetchLikedVendors(userId);
                 setVendors(data);
                 const initialLikedVendors = data
-                    .filter(vendor => vendor.likes.includes(userId))
-                    .map(vendor => vendor._id);
+                    .filter((vendor:any) => vendor.likes.includes(userId))
+                    .map((vendor:any) => vendor._id);
                 setVendorLike(initialLikedVendors);
             } catch (err) {
                 console.log(err);
@@ -116,4 +116,4 @@ const LikedVendor: React.FC<Prop> = ({ userId }) => {
     );
 };
 
-export default LikedVendor;
+export default React.memo(LikedVendor);
