@@ -2,7 +2,7 @@ import React from 'react'
 import Cookies from "js-cookie";
 import { Navigate, Outlet } from 'react-router-dom';
 
-const Admin = () => {
+const Admin:React.FC = () => {
     const token = Cookies.get("adminToken")
 
     return (

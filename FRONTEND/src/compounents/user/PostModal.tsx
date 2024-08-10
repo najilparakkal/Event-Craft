@@ -50,7 +50,7 @@ interface PostModalProps {
     post: Post | null;
 }
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+const BootstrapDialog = styled(Dialog)(({ }) => ({
     '& .MuiPaper-root': {
         maxWidth: '650px',
         maxHeight: '650px',

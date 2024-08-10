@@ -1,4 +1,3 @@
-import { Navigate } from "react-router-dom";
 import { authAxiosInstance } from "./axios/AxiosInstance";
 import Cookies from "js-cookie";
 

@@ -16,7 +16,7 @@ interface Booking {
 
 const Payments: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
+  const [_isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
   useEffect(() => {
     const fetch = async () => {
       const datas = await fetchCanelldBookings();

@@ -10,10 +10,10 @@ interface SidebarProps {
   users: User[];
   onUserClick: (user: User) => void;
   sidebarOpen: boolean;
-  toggleSidebar: () => void;
+  toggleSidebar?: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ users, onUserClick, sidebarOpen, toggleSidebar }) => {
+const Sidebar: React.FC<SidebarProps> = ({ users, onUserClick, sidebarOpen }) => {
   return (
     <div className={`h-[550px] bg-[#edebeb] text-black border-white border-2 rounded-md transition-transform duration-300 ease-in-out transform ${sidebarOpen ? 'w-1/3' : 'w-0 overflow-hidden'}`}>
       <div className="flex items-center justify-between p-2  border-b border-gray-800  bg[#edebeb]">

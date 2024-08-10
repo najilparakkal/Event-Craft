@@ -3,7 +3,7 @@ import { useSocket } from '../../API/services/outer/SocketProvider';
 import { useAppSelector } from '../../costumeHooks/costum';
 import { fetchUserRoomIds, fetchVendorNotification } from '../../API/services/user/Services';
 import toast from 'react-hot-toast';
-const Notification = () => {
+const Notification:React.FC = () => {
     const { socket } = useSocket();
     const [idees, setIdees] = useState<string[]>([]);
     const { _id } = useAppSelector((state) => state.user.userDetails)
@@ -78,4 +78,4 @@ const Notification = () => {
     )
 }
 
-export default Notification
+export default React.memo(Notification)

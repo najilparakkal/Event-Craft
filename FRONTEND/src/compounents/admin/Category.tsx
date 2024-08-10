@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Category = () => {
+const Category:React.FC = () => {
   return (
     <div className="bg-white p-4 rounded shadow-custom">
       <h4 className="text-xl font-semibold">Category</h4>
@@ -14,4 +14,4 @@ const Category = () => {
   );
 };
 
-export default Category;
+export default React.memo(Category);

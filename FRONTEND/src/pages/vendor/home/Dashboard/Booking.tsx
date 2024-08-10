@@ -34,7 +34,7 @@ const Booking: React.FC = () => {
     const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
     const [showSubmitBillModal, setShowSubmitBillModal] = useState<boolean>(false);
     const [dropdownOpen, setDropdownOpen] = useState<{ [key: string]: boolean }>({});
-    const [selectedBillBooking, setSelectedBillBooking] = useState<Booking | null>(null);
+    const [_selectedBillBooking, setSelectedBillBooking] = useState<Booking | null>(null);
     const [bookingId, setBookingId] = useState("")
     useEffect(() => {
         const fetchBookings = async () => {

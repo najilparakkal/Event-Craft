@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faSignInAlt, faBell } from '@fortawesome/free-solid-svg-icons';
+import {  faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie";
