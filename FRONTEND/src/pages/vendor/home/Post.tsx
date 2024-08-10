@@ -14,7 +14,7 @@ const Post: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [categories, setCategories] = useState<{ _id: string, name: string }[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState<string>('');
+    const [_isRazorpayLoadedselectedCategory, setSelectedCategory] = useState<string>('');
 
     useEffect(() => {
         const fetchCategories = async () => {
