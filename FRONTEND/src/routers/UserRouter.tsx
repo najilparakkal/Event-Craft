@@ -14,11 +14,10 @@ import WishlistSection from "../pages/user/profileSection/wishlist/WishlistSecti
 
 import BillsSection from "../pages/user/profileSection/bills/BillsSection";
 import BookingSection from "../pages/user/profileSection/bookings/BookingSection";
+import ErrorPage from "../compounents/user/ErrorPage";
 
 const UserRouter: React.FC = () => {
     const userDetails = useAppSelector((state) => state.user.userDetails._id);
-
-
     return (
         <Routes>
             <Route path="/signup" element={<Signup />} />
@@ -33,8 +32,9 @@ const UserRouter: React.FC = () => {
                 <Route path="/messages" element={<MessageSection />} />
                 <Route path="/bills" element={<BillsSection />} />
                 <Route path="/bookings" element={<BookingSection />} />
-                                <Route path="/profile" element={<ProfileSection />} />
+                <Route path="/profile" element={<ProfileSection />} />
             </Route>
+            <Route path="*" element={<ErrorPage />} />
         </Routes>
     );
 };

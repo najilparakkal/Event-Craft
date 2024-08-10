@@ -7,7 +7,6 @@ interface Booking {
   _id: string;
   bookingId: string;
   advance: number;
-  percentage: number;
   createdAt: string;
   updatedAt: string;
   userId: string;
@@ -38,7 +37,7 @@ const Payments: React.FC = () => {
 
 
 
-  const handleRefundClick = async ( bookingId: string, paymentId: string) => { 
+  const handleRefundClick = async (bookingId: string, paymentId: string) => {
     toast.promise(
       refundUser(bookingId, paymentId),
       {
@@ -50,7 +49,7 @@ const Payments: React.FC = () => {
       setBookings((prevBookings) => prevBookings.filter((booking) => booking.bookingId !== bookingId));
     });
   };
- 
+
   return (
     <div className="p-4">
       <Toaster position="top-center" reverseOrder={false} />
@@ -66,7 +65,6 @@ const Payments: React.FC = () => {
                 <th className="py-2 px-4 border-b border-gray-200 text-left">SN</th>
                 <th className="py-2 px-4 border-b border-gray-200 text-left">Booking ID</th>
                 <th className="py-2 px-4 border-b border-gray-200 text-left">Advance</th>
-                <th className="py-2 px-4 border-b border-gray-200 text-left">Percentage</th>
                 <th className="py-2 px-4 border-b border-gray-200 text-left">Requested</th>
                 <th className="py-2 px-4 border-b border-gray-200 text-left">Action</th>
               </tr>
@@ -77,12 +75,11 @@ const Payments: React.FC = () => {
                   <td className="py-2 px-4 border-b border-gray-200">{index + 1}</td>
                   <td className="py-2 px-4 border-b border-gray-200">{booking.bookingId.substring(0, 7)}...</td>
                   <td className="py-2 px-4 border-b border-gray-200">{booking.advance}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">{booking.percentage}%</td>
                   <td className="py-2 px-4 border-b border-gray-200">{new Date(booking.createdAt).toLocaleDateString()}</td>
                   <td className="py-2 px-4 border-b border-gray-200">
                     <button
                       className="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2"
-                      onClick={() => handleRefundClick( booking.bookingId, booking.paymentId)}
+                      onClick={() => handleRefundClick(booking.bookingId, booking.paymentId)}
                     >
                       Refund
                     </button>

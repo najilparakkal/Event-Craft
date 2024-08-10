@@ -22,7 +22,7 @@ export default {
         throw new Error("Password is required");
       }
       const hashedPassword = await Encrypt.cryptPassword(userData.password);
-      console.log("hashedPassword");
+      console.log("Password hashed");
       const savedUser = await createUser(userData, hashedPassword);
       
       return savedUser;

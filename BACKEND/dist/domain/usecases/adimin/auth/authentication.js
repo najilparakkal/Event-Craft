@@ -15,8 +15,7 @@ exports.default = {
         try {
             const email = data.email;
             const password = data.password;
-            const response = yield (0, repositories_1.logingadmin)(email, password);
-            return response;
+            return yield (0, repositories_1.logingadmin)(email, password);
         }
         catch (error) {
             console.log(error);

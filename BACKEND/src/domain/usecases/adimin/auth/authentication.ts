@@ -7,8 +7,7 @@ export default{
         try {
           const email = data.email;
           const password = data.password;
-          const response = await logingadmin(email, password);
-          return response;
+          return await logingadmin(email, password);
         } catch (error) {
           console.log(error);
         }

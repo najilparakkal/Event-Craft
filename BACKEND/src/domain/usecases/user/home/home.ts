@@ -128,11 +128,10 @@ export default {
       console.log(error);
     }
   },
-  cancelBooking: async (pers: any, bookingId: any) => {
+  cancelBooking: async ( bookingId: any) => {
     try {
-      const persentage = Number(pers);
 
-      const response = await cancelBooking(persentage, bookingId);
+      const response = await cancelBooking( bookingId);
       return response;
     } catch (error) {
       console.log(error);

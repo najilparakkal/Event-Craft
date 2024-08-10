@@ -15,19 +15,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.logingadmin = void 0;
 const admin_1 = require("../../../framworks/database/models/admin");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const jwtGenarate_1 = require("../../helpers/jwtGenarate");
 const logingadmin = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const admin = yield admin_1.Admins.findOne({ email });
         if (!admin) {
             console.log("admin not found");
-            return false;
+            return { success: false };
         }
         const isMatch = yield bcrypt_1.default.compare(password, admin.password + "");
         if (isMatch) {
-            return true;
+            const { accessToken } = yield (0, jwtGenarate_1.CreateToken)({
+                id: admin._id + "",
+                email: admin.email,
+                isAdmin: true
+            });
+            return { success: true, accessToken };
         }
         else {
-            return false;
+            return { success: false };
         }
     }
     catch (error) {

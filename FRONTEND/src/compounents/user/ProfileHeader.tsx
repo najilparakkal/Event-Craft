@@ -46,9 +46,7 @@ const ProfileHeader = () => {
 
     return (
         <div className="shadow-md p-4 flex justify-between items-center bg-black">
-            <div className="flex items-center">
-                <img src="/logo-no-background.png" alt="Logo" className="h-8 w-18" />
-            </div>
+          
             <div className="flex items-center">
                 <div className="relative ml-4">
                     {isSidebarOpen && (
@@ -61,9 +59,7 @@ const ProfileHeader = () => {
                         </div>
                     )}
                 </div>
-                <a onClick={() => navigate('/home')} className="text-white mr-9 hover:text-white">
-                    Home
-                </a>
+                
                 <img
                     src={profilePicture ? profilePicture : ""}
                     alt="User"

@@ -19,7 +19,7 @@ exports.default = {
                 throw new Error("Password is required");
             }
             const hashedPassword = yield passwordHashing_1.Encrypt.cryptPassword(userData.password);
-            console.log("hashedPassword");
+            console.log("Password hashed");
             const savedUser = yield (0, authRepositories_1.createUser)(userData, hashedPassword);
             return savedUser;
         }

@@ -17,8 +17,10 @@ exports.default = {
     adminChecking: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield authentication_1.default.login(req.body);
-            if (response) {
-                res.status(200).json({ status: 200, message: "admin is valid", response });
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                res
+                    .status(200)
+                    .json({ status: 200, message: "admin is valid", response });
             }
             else {
                 res.status(201).json({ status: 201, message: "admin is not valid" });

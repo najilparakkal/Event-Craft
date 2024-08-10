@@ -224,5 +224,5 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
-    })
+    }),
 };

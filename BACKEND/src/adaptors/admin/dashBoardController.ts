@@ -122,81 +122,81 @@ export default {
       console.log(error);
     }
   },
-  getBookings:async(req:Request, res:Response)=>{
+  getBookings: async (req: Request, res: Response) => {
     try {
-      const response = await dashboard.getBookings()
-      res.status(200).json(response)
+      const response = await dashboard.getBookings();
+      res.status(200).json(response);
     } catch (error) {
       console.log(error);
-      
     }
   },
 
-  refundBooking:async(req:Request, res:Response) => {
+  refundBooking: async (req: Request, res: Response) => {
     try {
       const { bookingId } = req.params;
-                  const response = await dashboard.refundBooking(bookingId)
-      if(response?.success){
-        res.status(200).json(response)
-      }else{
-        res.status(404).json(response)
+      const response = await dashboard.refundBooking(bookingId);
+      if (response?.success) {
+        res.status(200).json(response);
+      } else {
+        res.status(404).json(response);
       }
     } catch (error) {
       console.log(error);
-      
     }
   },
-  bills:async(req:Request, res:Response)=>{
+  bills: async (req: Request, res: Response) => {
     try {
-      const response = await dashboard.bills()
-      res.status(200).json(response)
+      const response = await dashboard.bills();
+      res.status(200).json(response);
     } catch (error) {
       console.log(error);
-      
     }
   },
-  reports:async(req:Request, res:Response)=>{
+  reports: async (req: Request, res: Response) => {
     try {
-      const response = await dashboard.report()
-      res.status(200).json(response)
+      const response = await dashboard.report();
+      res.status(200).json(response);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  blockVenodr:async(req:Request,res:Response)=>{
+  blockVenodr: async (req: Request, res: Response) => {
     try {
-      const response = await dashboard.blockVendor(req.params.reportId,req.params.vendorId)
-      if(response?.success){
-        res.status(200).json({message:"vendor Blocked successfully"})
-      }else{
-        res.status(404).json({message:"Somthing Failed to Block"})
+      const response = await dashboard.blockVendor(
+        req.params.reportId,
+        req.params.vendorId
+      );
+      if (response?.success) {
+        res.status(200).json({ message: "vendor Blocked successfully" });
+      } else {
+        res.status(404).json({ message: "Somthing Failed to Block" });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  readReport:async(req:Request,res:Response)=>{
+  readReport: async (req: Request, res: Response) => {
     try {
-      const response = await dashboard.readReport(req.params.reportId)
-      res.status(200).json({message:"vendor Read Report successfully"})
+      const response = await dashboard.readReport(req.params.reportId);
+      res.status(200).json({ message: "vendor Read Report successfully" });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  booking:async(req:Request, res:Response)=>{
+  booking: async (req: Request, res: Response) => {
     try {
-      const response = await dashboard.bookingCount()
-      res.status(200).json(response)
+      const response = await dashboard.bookingCount();
+      res.status(200).json(response);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  readBill:async(req:Request,res:Response)=>{
+  readBill: async (req: Request, res: Response) => {
     try {
-       await dashboard.readBill(req.params.billId)
-      res.status(200).json({message:"Bill Read successfully"})
+      await dashboard.readBill(req.params.billId);
+      res.status(200).json({ message: "Bill Read successfully" });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  },
 };

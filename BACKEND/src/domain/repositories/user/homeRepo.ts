@@ -341,17 +341,16 @@ export const getBookings = async (userId: string) => {
     throw error;
   }
 };
-export const cancelBooking = async (percentage: number, bookingId: string) => {
+export const cancelBooking = async (bookingId: string) => {
   try {
     const booking = await Bookings.findById(bookingId).exec();
     if (!booking) {
       throw new Error("Booking not found");
     }
 
-    const createCancelledBooking = await CancelBookings.create({
+    await CancelBookings.create({
       userId: booking.userId,
       vendorId: booking.vendorId,
-      percentage,
       advance: booking.advance,
       bookingId,
       paymentId: booking.paymentId,
@@ -359,19 +358,6 @@ export const cancelBooking = async (percentage: number, bookingId: string) => {
     const bookings = await Bookings.findByIdAndUpdate(bookingId, {
       $set: { status: "requested to cancel" },
     });
-    // const refund = (booking.advance * percentage) / 100;
-
-    // const updateUserWallet = await Users.findByIdAndUpdate(
-    //   booking.userId,
-    //   { $inc: { wallet: refund } },
-    //   { new: true }
-    // ).exec();
-
-    // if (!updateUserWallet) {
-    //   throw new Error("User not found");
-    // }
-
-    // await Bookings.deleteOne({ _id: bookingId }).exec();
 
     return {
       success: true,
@@ -686,7 +672,7 @@ export const userBooked = async (userId: string) => {
 
 export const requestCheck = async (userId: string, vendorId: string) => {
   try {
-    const request:any = await ChatModel.find({
+    const request: any = await ChatModel.find({
       users: {
         $all: [
           new mongoose.Types.ObjectId(userId),
@@ -694,7 +680,7 @@ export const requestCheck = async (userId: string, vendorId: string) => {
         ],
       },
     });
-    if ( request.is_accepted) {
+    if (request.is_accepted) {
       return { success: true };
     } else {
       return { success: false };

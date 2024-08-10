@@ -1,44 +1,53 @@
 import { RequestHandler } from "express";
 import Razorpay from "Razorpay";
+import { VerifyToken } from "../../domain/helpers/jwtGenarate";
 
 const razorpay = new Razorpay({
   key_id: process.env.REZORPAY_KEYID || "",
   key_secret: process.env.REZORPAY_SECRET_KEY || "",
 });
 
-const refund: RequestHandler = async (req, res, next) => {
-  const { paymentId } = req.body;
+export const refund = async (paymentId:string) => {
   try {
     const payment = await razorpay.payments.fetch(paymentId);
     console.log("Payment details:", payment);
 
-    if (payment.status !== "captured") {
       const captureResponse = await razorpay.payments.capture(
         paymentId,
         payment.amount,
         "INR"
       );
       console.log("Capture response:", captureResponse);
-      const refundResponse = await razorpay.payments.refund(payment.id,{
+      const refundResponse = await razorpay.payments.refund(payment.id, {
         amount: payment.amount,
-        speed:"normal"
+        speed: "normal",
       });
-      console.log("Refund response:", refundResponse);
-      next()
-    } else {
-      const refundResponse = await razorpay.payments.refund(paymentId,{
-        amount: payment.amount,
-        speed:"normal"
-      });
-      console.log("Refund response:", refundResponse);
-
-      res.status(200).json(refundResponse);
-    }
-        
-  } catch (error:any) {
+    if(captureResponse)  return true;
+    
+  } catch (error: any) {
     console.error("Refund failed:", error);
-    res.status(500).json({ error: error.message });
   }
 };
 
-export default refund;
+export const adminAuth: RequestHandler = async (req, res, next) => {
+  try {
+    const token = req.cookies.adminToken;
+    VerifyToken(token)
+      .then((data) => {
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (data.exp && data.exp < currentTime)
+          return res.status(204).json({ message: "Token has expired." });
+
+        if (!data.isAdmin)
+          return res.status(403).json({ message: "Admin access required." });
+
+        next();
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.status(204).json({ message: "Token has expired." });
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};

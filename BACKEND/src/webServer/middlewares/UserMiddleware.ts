@@ -13,8 +13,7 @@ const userAuth: RequestHandler = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({ error: "Token not provided" });
     }
-    
-    VerifyToken(token)
+      VerifyToken(token)
       .then((payload) => {
         return next();
       })
@@ -27,7 +26,7 @@ const userAuth: RequestHandler = async (req, res, next) => {
           if (!data) {
             return res.status(401).json({ error: "User not found" });
           }
-
+          
           VerifyRefreshToken(data.refreshToken)
             .then(async (refreshTokenPayload) => {
                 const sevenDaysAgo = Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60)

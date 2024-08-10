@@ -50,7 +50,7 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  
+
   useEffect(() => {
     if (divRef.current) {
       divRef.current.scrollTo({ top: divRef.current.scrollHeight });
@@ -77,7 +77,7 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
   useEffect(() => {
     if (roomId) {
       socket.emit('join room', roomId);
-      socket.emit('read_message',roomId,_id)
+      socket.emit('read_message', roomId, _id)
       const receiveMessageHandler = (message: Message) => {
         setMessages((prevMessages) => [...prevMessages, message]);
       };
@@ -94,7 +94,7 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
         socket.off('room messages');
       };
     }
-  }, [roomId, socket,messages]);
+  }, [roomId, socket, messages]);
 
 
   const sendAudio = async () => {
@@ -244,7 +244,7 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
   );
 
   return (
-    <div className={`flex flex-col ${sidebarOpen ? 'w-full' : 'w-full'} h-full bg-white shadow-lg rounded-md transition-all duration-300`}>
+    <div className={`flex flex-col ${sidebarOpen ? 'w-full' : 'w-0'} h-full bg-white shadow-lg rounded-md transition-all duration-300 overflow-hidden`}>
       <div className="flex items-center p-4 bg-black text-white rounded-t-md border-white border-b-2">
         <h1 className="text-lg font-bold">{selectedVendor ? selectedVendor.vendorName : 'Select a vendor to start chatting'}</h1>
       </div>
@@ -292,11 +292,11 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
             const isDocumentMessage = message.type === 'document';
             const isImageMessage = message.type === 'image';
             const messageTime = formatDistanceToNow(parseISO(message?.createdAt), { addSuffix: true });
-          
+
             const readIndicator = message.read
-              ? '✔✔' 
-              : '✔'; 
-          
+              ? '✔✔'
+              : '✔';
+
             return (
               <div
                 key={index}
@@ -305,7 +305,7 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
                 <div className={`relative p-2 rounded-lg max-w-md ${!isAudioMessage && (isCurrentUser ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black')}`}>
                   {isTextMessage && (
                     <div className="ml-1">
-                      <p>{message.content+""}</p>
+                      <p>{message.content + ""}</p>
                     </div>
                   )}
                   {isAudioMessage && (
@@ -329,7 +329,7 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
                   {isVideoMessage && (
                     <div className="relative small-line-border">
                       <video controls className="rounded-lg w-full max-w-xs">
-                        <source src={message.content+""} type="video/mp4" />
+                        <source src={message.content + ""} type="video/mp4" />
                         Your browser does not support the video element.
                       </video>
                       <div className="absolute bottom-1 right-1 flex items-center text-xs text-white bg-black bg-opacity-50 rounded px-1">
@@ -344,7 +344,7 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
                   )}
                   {isDocumentMessage && (
                     <div className="mt-2">
-                      <a href={message.content+""} download className="underline text-blue-500">
+                      <a href={message.content + ""} download className="underline text-blue-500">
                         Download Document
                       </a>
                       <div className="flex justify-end mt-1">
@@ -361,7 +361,7 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
                   )}
                   {isImageMessage && (
                     <div className="relative">
-                      <img src={message.content+""} alt="Image" className="max-w-full h-auto rounded-lg" />
+                      <img src={message.content + ""} alt="Image" className="max-w-full h-auto rounded-lg" />
                       <div className="absolute bottom-1 right-1 flex items-center text-xs text-white bg-black bg-opacity-50 rounded px-1">
                         <span>{messageTime}</span>
                         {isCurrentUser && (
@@ -389,22 +389,25 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
             );
           })
         )
-        
-        
+
+
         }
       </div>
 
 
       {selectedVendor && req?.is_accepted && (
-        <div className="p-2 bg-black flex items-center rounded-b-md">
-
+        <div className="p-2 bg-black flex items-center flex-wrap rounded-b-md">
           <input
             type="file"
             ref={fileInputRef}
             onChange={handleFileChange}
             className="hidden"
           />
-          <button type="button" onClick={handleFileInputClick} className="mr-2 p-2 text-white rounded-full">
+          <button
+            type="button"
+            onClick={handleFileInputClick}
+            className="mr-2 p-2 text-white rounded-full flex-shrink-0"
+          >
             <FaPaperclip />
           </button>
           <input
@@ -415,22 +418,26 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
             className="flex-1 mr-2 p-2 bg-black text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {isRecording ? (
-            <VoiceRecorder />
+            <VoiceRecorder   />
           ) : (
-            <button type="button" onClick={toggleRecording} className="mr-2 p-2 bg-gray-800 text-white rounded-full">
+
+            <button
+              type="button"
+              onClick={toggleRecording}
+              className="mr-2 p-2 bg-gray-800 text-white rounded-full flex-shrink-0"
+            >
               <FaMicrophone />
             </button>
           )}
-
           <button
             onClick={() => handleSubmit()}
             type="submit"
-            className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-shrink-0"
           >
             Send
           </button>
-
         </div>
+
       )}
 
       {modalOpen && selectedFile && (
@@ -462,10 +469,10 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
                 </video>
               )}
             </div>
-            <div className="flex justify-end">
+            <div className="flex flex-col md:flex-row justify-end gap-2">
               <button
                 onClick={() => handleSendFile(selectedFile)}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-2"
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
               >
                 Send File
               </button>
@@ -474,11 +481,12 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
                   setModalOpen(false);
                   setSelectedFile(null);
                 }}
-                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 w-full md:w-auto"
               >
                 Select Another File
               </button>
             </div>
+
           </div>
         </div>
       )}

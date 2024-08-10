@@ -16,7 +16,6 @@ const socketHandler = (io: Server) => {
     socket.on("join_home",async(idArray:string[])=>{
       
       for (const id of idArray) {
-        console.log(id,"this is the main join 🏫🏫🏫🏫");
         
         socket.join(id)
       }

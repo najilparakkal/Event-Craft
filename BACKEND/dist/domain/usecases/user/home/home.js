@@ -102,10 +102,9 @@ exports.default = {
             console.log(error);
         }
     }),
-    cancelBooking: (pers, bookingId) => __awaiter(void 0, void 0, void 0, function* () {
+    cancelBooking: (bookingId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const persentage = Number(pers);
-            const response = yield (0, homeRepo_1.cancelBooking)(persentage, bookingId);
+            const response = yield (0, homeRepo_1.cancelBooking)(bookingId);
             return response;
         }
         catch (error) {

@@ -13,11 +13,12 @@ import MessageSection from "../pages/vendor/home/messages/MessageSection";
 import Bookings from "../pages/vendor/home/Bookings/Bookings";
 import { useAppSelector } from "../costumeHooks/costum";
 import ProfileSection from "../pages/vendor/home/profile/ProfileSection";
+import ErrorPage from "../compounents/vendor/ErrorPage";
 
 
 const VendorRouter: React.FC = () => {
   const vendor = useAppSelector((state) => state.vendor.vendorDetails._id);
-  
+
 
   return (
     <div>
@@ -35,6 +36,7 @@ const VendorRouter: React.FC = () => {
           <Route path="/bookings" element={<Bookings />} />
           <Route path="/profile" element={<ProfileSection />} />
         </Route>
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </div>
   );

@@ -1,4 +1,4 @@
-import { authAxiosInstance } from "../vendor/axios/AxiosInstance";
+import { authAxiosInstance } from "./axios/AxiosInstance";
 
 export const fetchUsers = async (list: string) => {
   try {

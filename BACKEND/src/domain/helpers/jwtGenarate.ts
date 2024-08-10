@@ -9,6 +9,7 @@ interface Payload {
   id: string;
   email: string;
   exp?: number;
+  isAdmin?: boolean;
 }
 
 interface RefreshTokenPayload {

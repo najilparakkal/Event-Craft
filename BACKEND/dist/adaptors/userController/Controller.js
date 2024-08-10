@@ -128,7 +128,7 @@ exports.default = {
     }),
     cancelBooking: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const response = yield home_1.default.cancelBooking(req.body.percentage, req.body.bookingId);
+            const response = yield home_1.default.cancelBooking(req.body.bookingId);
             res.status(200).send(response);
         }
         catch (error) {

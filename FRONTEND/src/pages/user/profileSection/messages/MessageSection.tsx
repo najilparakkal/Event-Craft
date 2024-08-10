@@ -2,17 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
 import Messages from './Messages';
 import { useAppSelector } from '../../../../costumeHooks/costum';
-import ProfileHeader from '../../../../compounents/user/ProfileHeader';
 import { useSocket } from '../../../../API/services/outer/SocketProvider';
-
+import Header from '../../../../compounents/user/Header';
 interface Vendor {
   _id: string;
   vendorName: string;
   profilePicture: string;
 }
-
 const MessageSection: React.FC = () => {
-  const { _id } = useAppSelector((state)=>state.user.userDetails);
+  const { _id } = useAppSelector((state) => state.user.userDetails);
   const { socket } = useSocket();
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -39,12 +37,12 @@ const MessageSection: React.FC = () => {
         socket.off("sorted_list", handleSortedList);
       };
     }
-  }, [socket, _id,vendors]); 
+  }, [socket, _id, vendors]);
 
   return (
-    <div className="overflow-hidden bg-gray-200">
-      <ProfileHeader />
-      <div className="flex ml-1 mr-1 rounded-lg shadow-lg bg-black h-[calc(100vh-5rem)]">
+    <div className="overflow-hidden h-screen bg-black">
+      <Header />
+      <div className="flex   rounded-lg shadow-lg  mt-[70px]  bg-black h-[calc(100vh-5rem)]">
         <Sidebar
           vendors={vendors}
           onVendorClick={handleVendorClick}

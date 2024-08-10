@@ -15,6 +15,7 @@ import BillModel, {
   IBilling,
 } from "../../../framworks/database/models/billing";
 import { Report } from "../../../framworks/database/models/Reports";
+import { refund } from "../../../webServer/middlewares/AdminMiddleware";
 export default {
   listUsers: async (data: listUsers) => {
     try {
@@ -276,6 +277,7 @@ export default {
       if (!booking) {
         throw new Error("Booking not found");
       }
+      await refund(booking.paymentId)
       booking.status = "cancelled";
       await booking.save();
       await CancelBookings.deleteOne({ bookingId });
@@ -346,7 +348,6 @@ export default {
           },
         },
       ]);
-      console.log(statusCounts, "🍽️🍽️");
   
       const counts: Record<string, number[]> = {
         pending: Array(12).fill(0),
@@ -363,7 +364,7 @@ export default {
       };
   
       statusCounts.forEach((statusCount) => {
-        const status = statusCount._id.toLowerCase(); // Normalize to lowercase
+        const status = statusCount._id.toLowerCase();
         if (!counts[status]) {
           console.warn("Unknown status:", status);
           return;

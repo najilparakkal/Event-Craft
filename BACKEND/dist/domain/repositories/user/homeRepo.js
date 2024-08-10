@@ -303,16 +303,15 @@ const getBookings = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getBookings = getBookings;
-const cancelBooking = (percentage, bookingId) => __awaiter(void 0, void 0, void 0, function* () {
+const cancelBooking = (bookingId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const booking = yield booking_1.Bookings.findById(bookingId).exec();
         if (!booking) {
             throw new Error("Booking not found");
         }
-        const createCancelledBooking = yield cancelBooking_1.CancelBookings.create({
+        yield cancelBooking_1.CancelBookings.create({
             userId: booking.userId,
             vendorId: booking.vendorId,
-            percentage,
             advance: booking.advance,
             bookingId,
             paymentId: booking.paymentId,
@@ -320,16 +319,6 @@ const cancelBooking = (percentage, bookingId) => __awaiter(void 0, void 0, void 
         const bookings = yield booking_1.Bookings.findByIdAndUpdate(bookingId, {
             $set: { status: "requested to cancel" },
         });
-        // const refund = (booking.advance * percentage) / 100;
-        // const updateUserWallet = await Users.findByIdAndUpdate(
-        //   booking.userId,
-        //   { $inc: { wallet: refund } },
-        //   { new: true }
-        // ).exec();
-        // if (!updateUserWallet) {
-        //   throw new Error("User not found");
-        // }
-        // await Bookings.deleteOne({ _id: bookingId }).exec();
         return {
             success: true,
             booking: bookings === null || bookings === void 0 ? void 0 : bookings.status,

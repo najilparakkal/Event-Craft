@@ -37,9 +37,10 @@ interface CardTitleProps {
 
 const Bills: React.FC = () => {
     const [datas, setDatas] = useState<BillItem[]>([]);
-    const [selectedDetails, setSelectedDetails] = useState<any>(null);
+    const [_selectedDetails, setSelectedDetails] = useState<any>(null);
     const { _id, name, phoneNum } = useAppSelector((state) => state.user.userDetails);
     const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
+    const [_windowWidth, setWindowWidth] = useState(window.innerWidth);
 
     useEffect(() => {
         userBills(_id+"")
@@ -64,6 +65,16 @@ const Bills: React.FC = () => {
         script.onload = () => setIsRazorpayLoaded(true);
         script.onerror = () => setIsRazorpayLoaded(false);
         document.body.appendChild(script);
+    }, []);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
     }, []);
 
     const handleSubmitBill = (billingId: string, amount: number) => {
@@ -106,7 +117,7 @@ const Bills: React.FC = () => {
 
     return (
         <div className="max-w-5xl mx-auto px-8">
-            <h1 className="text-3xl font-bold  text-gray-500">Bill</h1>
+            <h1 className="text-3xl font-bold text-gray-500">Bill</h1>
             <HoverEffect
                 items={datas}
                 onOpenDetails={setSelectedDetails}
@@ -232,7 +243,7 @@ export const Card: React.FC<CardProps> = ({
 }) => {
     return (
         <div
-            className={`rounded-2xl h-full w-full p-4 overflow-hidden bg-gray-800  border-gray-700  relative z-20 ${className}`}
+            className={`rounded-2xl h-full w-full p-4 overflow-hidden bg-gray-800 border-gray-700 relative z-20 ${className}`}
         >
             <div className="relative z-50">
                 <div className="p-4">{children}</div>
@@ -246,8 +257,8 @@ export const CardTitle: React.FC<CardTitleProps> = ({
     children,
 }) => {
     return (
-        <h4 className={`text-white font-bold tracking-wide mt-4 ${className}`}>
+        <h1 className={`text-gray-100 font-bold text-lg md:text-lg lg:text-lg ${className}`}>
             {children}
-        </h4>
+        </h1>
     );
 };

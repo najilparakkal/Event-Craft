@@ -23,7 +23,6 @@ const socketHandler = (io) => {
         console.log(`Socket connected: ${socket.id}`);
         socket.on("join_home", (idArray) => __awaiter(void 0, void 0, void 0, function* () {
             for (const id of idArray) {
-                console.log(id, "this is the main join 🏫🏫🏫🏫");
                 socket.join(id);
             }
         }));

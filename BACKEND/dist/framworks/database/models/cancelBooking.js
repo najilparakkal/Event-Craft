@@ -15,9 +15,6 @@ const cancelBookingSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
-    percentage: {
-        type: Number,
-    },
     advance: {
         type: Number
     },

@@ -21,6 +21,7 @@ const booking_1 = require("../../../framworks/database/models/booking");
 const cancelBooking_1 = require("../../../framworks/database/models/cancelBooking");
 const billing_1 = __importDefault(require("../../../framworks/database/models/billing"));
 const Reports_1 = require("../../../framworks/database/models/Reports");
+const AdminMiddleware_1 = require("../../../webServer/middlewares/AdminMiddleware");
 exports.default = {
     listUsers: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -266,6 +267,7 @@ exports.default = {
             if (!booking) {
                 throw new Error("Booking not found");
             }
+            yield (0, AdminMiddleware_1.refund)(booking.paymentId);
             booking.status = "cancelled";
             yield booking.save();
             yield cancelBooking_1.CancelBookings.deleteOne({ bookingId });
@@ -341,7 +343,6 @@ exports.default = {
                     },
                 },
             ]);
-            console.log(statusCounts, "🍽️🍽️");
             const counts = {
                 pending: Array(12).fill(0),
                 completed: Array(12).fill(0),
@@ -355,7 +356,7 @@ exports.default = {
                 return date.getMonth();
             };
             statusCounts.forEach((statusCount) => {
-                const status = statusCount._id.toLowerCase(); // Normalize to lowercase
+                const status = statusCount._id.toLowerCase();
                 if (!counts[status]) {
                     console.warn("Unknown status:", status);
                     return;

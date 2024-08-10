@@ -35,7 +35,7 @@ export default {
 
       const checkOtp = await userIterator.otpVerification(req.body);
 
-      if (checkOtp.success === true) {
+      if (checkOtp.success ) {
         res.status(200).json({ status: 200, message: "User OTP verified" });
       } else if (checkOtp.success === false) {
         res.status(201).json({ status: 201, message: "User OTP denied" });

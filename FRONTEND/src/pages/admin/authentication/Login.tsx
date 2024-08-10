@@ -35,7 +35,7 @@ const Login: React.FC = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <h1 className="font-semibold text-3xl mb-8">WELCOME HOME</h1>
 
-      <button 
+      <button
         className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         onClick={() => setShowModal(true)}
       >

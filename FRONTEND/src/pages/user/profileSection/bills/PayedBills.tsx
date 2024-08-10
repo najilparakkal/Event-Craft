@@ -40,14 +40,14 @@ interface CardTitleProps {
     children: React.ReactNode;
 }
 
-const PayedBills = () => {
+const PayedBills: React.FC = () => {
     const [datas, setDatas] = useState<BillItem[]>([]);
     const { _id, name, phoneNum } = useAppSelector((state) => state.user.userDetails);
 
     useEffect(() => {
         paidBills(_id + "")
             .then((data) => {
-                const transformedData = data.billingData.map((bill: any) => ({
+                const transformedData: BillItem[] = data.billingData.map((bill: any) => ({
                     title: `Billing ID: ${bill._id.slice(0, 10)}...`,
                     fullDetails: bill.items,
                     bookingId: bill.bookingId._id,
@@ -65,7 +65,7 @@ const PayedBills = () => {
                 setDatas(transformedData);
             })
             .catch((err: Error) => {
-                console.log(err);
+                console.error(err);
             });
     }, [_id]);
 
@@ -79,7 +79,7 @@ const PayedBills = () => {
             />
         </div>
     );
-}
+};
 
 export default PayedBills;
 

@@ -12,38 +12,50 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.adminAuth = exports.refund = void 0;
 const Razorpay_1 = __importDefault(require("Razorpay"));
+const jwtGenarate_1 = require("../../domain/helpers/jwtGenarate");
 const razorpay = new Razorpay_1.default({
     key_id: process.env.REZORPAY_KEYID || "",
     key_secret: process.env.REZORPAY_SECRET_KEY || "",
 });
-const refund = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { paymentId } = req.body;
+const refund = (paymentId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const payment = yield razorpay.payments.fetch(paymentId);
         console.log("Payment details:", payment);
-        if (payment.status !== "captured") {
-            const captureResponse = yield razorpay.payments.capture(paymentId, payment.amount, "INR");
-            console.log("Capture response:", captureResponse);
-            const refundResponse = yield razorpay.payments.refund(payment.id, {
-                amount: payment.amount,
-                speed: "normal"
-            });
-            console.log("Refund response:", refundResponse);
-            next();
-        }
-        else {
-            const refundResponse = yield razorpay.payments.refund(paymentId, {
-                amount: payment.amount,
-                speed: "normal"
-            });
-            console.log("Refund response:", refundResponse);
-            res.status(200).json(refundResponse);
-        }
+        const captureResponse = yield razorpay.payments.capture(paymentId, payment.amount, "INR");
+        console.log("Capture response:", captureResponse);
+        const refundResponse = yield razorpay.payments.refund(payment.id, {
+            amount: payment.amount,
+            speed: "normal",
+        });
+        if (captureResponse)
+            return true;
     }
     catch (error) {
         console.error("Refund failed:", error);
-        res.status(500).json({ error: error.message });
     }
 });
-exports.default = refund;
+exports.refund = refund;
+const adminAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const token = req.cookies.adminToken;
+        (0, jwtGenarate_1.VerifyToken)(token)
+            .then((data) => {
+            const currentTime = Math.floor(Date.now() / 1000);
+            if (data.exp && data.exp < currentTime)
+                return res.status(204).json({ message: "Token has expired." });
+            if (!data.isAdmin)
+                return res.status(403).json({ message: "Admin access required." });
+            next();
+        })
+            .catch((err) => {
+            console.log(err);
+            return res.status(204).json({ message: "Token has expired." });
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.adminAuth = adminAuth;

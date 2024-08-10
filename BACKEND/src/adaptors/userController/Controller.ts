@@ -108,7 +108,6 @@ export default {
   cancelBooking: async (req: Request, res: Response): Promise<void> => {
     try {
       const response = await userIterator.cancelBooking(
-        req.body.percentage,
         req.body.bookingId
       );
       res.status(200).send(response);
