@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'react-hot-toast';
 import { Formik, Form, ErrorMessage } from 'formik';
@@ -7,11 +7,13 @@ import { GoogleLogin, vendorLogin } from '../../../API/services/vendor/aurhSlice
 import { useDispatch } from 'react-redux';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../../../firebase/firebase';
-
+import FOG from 'vanta/dist/vanta.fog.min';
+import * as THREE from 'three';
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const vantaRef = useRef<HTMLDivElement>(null);
+  const vantaEffect = useRef<any>(null);
   const initialValue: { email: string; password: string } = {
     email: '',
     password: '',
@@ -29,8 +31,6 @@ const Login: React.FC = () => {
         navigate('/vendor/services');
       } else {
         if (resultAction.payload) {
-          console.log(resultAction);
-
           switch (resultAction.payload) {
             case 'vendor Not Found':
               toast.error('vendor not found');
@@ -76,20 +76,45 @@ const Login: React.FC = () => {
     }
 
   }
+
+  useEffect(() => {
+    if (vantaRef.current && !vantaEffect.current) {
+      vantaEffect.current = FOG({
+        el: vantaRef.current,
+        THREE,
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.00,
+        minWidth: 200.00,
+        highlightColor: 0xffffff,
+        midtoneColor: 0xffffff,
+        lowlightColor: 0xe0e0f4,
+        baseColor: 0xdbd2d2,
+        blurFactor: 0.90,
+        speed: 5.00,
+        zoom: 1.40
+      });
+    }
+
+    return () => {
+      if (vantaEffect.current) {
+        vantaEffect.current.destroy();
+        vantaEffect.current = null;
+      }
+    };
+  }, []);
   return (
-    <section className="flex items-center justify-center min-h-screen bg-[#0593AB]" >
+    <section ref={vantaRef} className="flex items-center justify-center min-h-screen bg-[#0593AB]" >
       <Toaster position="top-center" reverseOrder={false} />
 
       <div className="container mx-auto px-10">
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center lg:space-x-8">
           <div className="mt-8 lg:mt-0 lg:w-1/2">
-            <div className=" p-10 rounded-lg bg-[#FEDC54]">
-              <h2 className="text-xl font-bold mb-6 text-white">Login Account</h2>
-
+            <div className="p-10 rounded-lg  border">
               <Formik
                 initialValues={initialValue}
                 validationSchema={loginValidation}
-
                 onSubmit={handleSubmit}
               >
                 {({ handleChange, values, isSubmitting }) => (
@@ -102,7 +127,7 @@ const Login: React.FC = () => {
                           placeholder="Email"
                           value={values.email}
                           onChange={handleChange}
-                          className="w-full pl-4 pr-6 py-3 text-sm placeholder-gray-900 bg-transparent border-b border-white focus:outline-none " />
+                          className="w-full pl-4 pr-6 py-3 text-black text-sm placeholder-gray-900 bg-transparent border-b border-white focus:outline-none " />
                       </div>
                       <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1 ml-6" />
                     </div>
@@ -114,7 +139,7 @@ const Login: React.FC = () => {
                           name="password"
                           value={values.password}
                           onChange={handleChange}
-                          className="w-full pl-4 pr-6 py-3 text-sm placeholder-gray-900 bg-transparent border-b border-white focus:outline-none " placeholder="Password"
+                          className="w-full pl-4 pr-6 py-3 text-sm text-black placeholder-gray-900 bg-transparent border-b border-white focus:outline-none " placeholder="Password"
                         />
                       </div>
                       <ErrorMessage name="password" component="div" className="text-red-500 text-sm mt-1 ml-6" />
@@ -169,12 +194,20 @@ const Login: React.FC = () => {
             </div>
           </div>
           <div className="text-center lg:text-left lg:w-1/2">
-            <h2 className="text-3xl text-white font-extrabold lg:text-3xl mb-2">WELCOM BACK</h2>
+            <h2 className="text-3xl text-white font-extrabold lg:text-3xl mb-2">WELCOME BACK</h2>
             <h1 className="text-2xl lg:text-3xl font-bold text-black mb-4">
-              continue your journey by   loging <br /> account.
+              continue your journey by loging <br /> account.
             </h1>
-
+            <div className="flex justify-center lg:justify-start">
+              <button
+                onClick={() => navigate("/")}
+                className="mt-4 bottom-4 text-black bg-white hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+              >
+                GO BACK
+              </button>
+            </div>
           </div>
+
         </div>
       </div>
     </section>

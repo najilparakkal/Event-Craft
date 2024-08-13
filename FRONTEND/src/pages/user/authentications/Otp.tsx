@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import OtpInput from 'react-otp-input';
 import { verifyOtp, resendOtp } from '../../../API/services/user/userAuthService';
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../../costumeHooks/costum';
-
+import FOG from 'vanta/dist/vanta.fog.min';
+import * as THREE from 'three';
 const Otp: React.FC = () => {
     const userDetails = useAppSelector((state) => state.user.userDetails);
     const { email } = userDetails;
-
+    const vantaRef = useRef<HTMLDivElement>(null);
+    const vantaEffect = useRef<any>(null);
     const navigate = useNavigate();
     const [otp, setOtp] = useState('');
     const [timer, setTimer] = useState<number>(() => {
@@ -100,15 +102,43 @@ const Otp: React.FC = () => {
     };
 
     useEffect(() => {
-        // Log to track inputVisible state
         console.log('inputVisible:', inputVisible);
     }, [inputVisible]);
 
+
+    
+    useEffect(() => {
+        if (vantaRef.current && !vantaEffect.current) {
+            vantaEffect.current = FOG({
+                el: vantaRef.current,
+                THREE,
+                mouseControls: true,
+                touchControls: true,
+                gyroControls: false,
+                minHeight: 200.00,
+                minWidth: 200.00,
+                highlightColor: 0x1a1a18,
+                midtoneColor: 0x9a2727,
+                lowlightColor: 0x0,
+                baseColor: 0x0,
+                blurFactor: 0.90,
+                speed: 5.00,
+                zoom: 1.40
+            });
+        }
+
+        return () => {
+            if (vantaEffect.current) {
+                vantaEffect.current.destroy();
+                vantaEffect.current = null;
+            }
+        };
+    }, []);
     return (
-        <div className="relative flex min-h-screen flex-col justify-center overflow-hidden py-12" style={{ backgroundColor: '#1F2136' }}>
-            <Toaster position="top-center" reverseOrder={false} />
-            <div className="relative bg-gray-200 px-6 pt-10 pb-9 mx-auto w-full max-w-lg rounded-2xl"
-                style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)', backgroundColor: '#1F2136' }}>
+        <div ref={vantaRef} className="relative flex min-h-screen flex-col justify-center overflow-hidden py-12" >
+            <Toaster position="top-center" />
+            <div className="relative  px-6 pt-10 pb-9 mx-auto w-full max-w-lg rounded-2xl"
+                style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)'}}>
                 <div className="mx-auto flex w-full max-w-md flex-col space-y-16">
                     <div className="flex flex-col items-center justify-center text-center space-y-2">
                         <div className="font-semibold text-white text-3xl">
@@ -122,7 +152,7 @@ const Otp: React.FC = () => {
                     <div>
                         <form onSubmit={handleSubmit}>
                             <div className="flex flex-col space-y-16">
-                                {inputVisible && ( // Only show inputs if inputVisible is true
+                                {inputVisible && ( 
                                     <div className="flex flex-row items-center justify-center mx-auto w-full max-w-xs">
                                         <OtpInput
                                             value={otp}
@@ -158,7 +188,7 @@ const Otp: React.FC = () => {
                                                 Didn't receive code?{'     '}
                                                 <button
                                                     type='button'
-                                                    className=" underline text-black"
+                                                    className=" underline text-white"
                                                     onClick={handleResend}
                                                 >
                                                     Resend

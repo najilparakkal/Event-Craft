@@ -243,9 +243,9 @@ export const Card: React.FC<CardProps> = ({
 }) => {
     return (
         <div
-            className={`rounded-2xl h-full w-full p-4 overflow-hidden bg-gray-800 border-gray-700 relative z-20 ${className}`}
+            className={`rounded-2xl h-full w-full p-4 overflow-hidden bg-gray-800 border-gray-700 relative  ${className}`}
         >
-            <div className="relative z-50">
+            <div className="relative ">
                 <div className="p-4">{children}</div>
             </div>
         </div>

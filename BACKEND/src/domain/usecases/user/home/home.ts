@@ -1,6 +1,7 @@
 import {
   AddBookingParams,
   IMessageRequest,
+  IUserData,
   cancelReq,
 } from "../../../entities/user/user";
 import { IRatingReviewResponse } from "../../../entities/vendor/vendor";
@@ -40,6 +41,9 @@ import {
   userBills,
   billPay,
   paidBill,
+  helpUser,
+  counts,
+  allVendors,
 } from "../../../repositories/user/homeRepo";
 
 export default {
@@ -318,6 +322,26 @@ export default {
     try {
       return await paidBill(userId)
            } catch (error) {
+      console.log(error)
+    }
+  },
+  helpUser:async(userId:string,data:IUserData)=>{
+    try {
+      return await helpUser(userId,data.reason,data.phoneNumber)
+    } catch (error) {
+      console.log(error)
+    }
+  },counts:async()=>{
+    try {
+      return await counts()
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  allVendors:async()=>{
+    try {
+      return await allVendors()
+    } catch (error) {
       console.log(error)
     }
   }

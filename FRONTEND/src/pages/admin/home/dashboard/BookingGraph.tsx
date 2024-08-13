@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
-import { ApexOptions } from 'apexcharts'; // Import ApexOptions
+import { ApexOptions } from 'apexcharts'; 
 import { fetchBookingsCount } from '../../../../API/services/admin/Dashboard';
 
 const ApexChart: React.FC = () => {
@@ -35,7 +35,7 @@ const ApexChart: React.FC = () => {
         },
     ];
 
-    const options: ApexOptions = { // Type the options object
+    const options: ApexOptions = {
         chart: {
             type: 'bar',
             height: 350,
@@ -44,7 +44,7 @@ const ApexChart: React.FC = () => {
             bar: {
                 horizontal: false,
                 columnWidth: '55%',
-                borderRadius: 5, // Use borderRadius for rounded corners
+                borderRadius: 5,
             },
         },
         dataLabels: {

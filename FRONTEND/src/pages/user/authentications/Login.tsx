@@ -1,15 +1,21 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { loginValidation } from '../../../utils/validations/validateSchema';
 import { useDispatch } from 'react-redux';
-import {  useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { loginUser, GoogleLogin } from '../../../API/services/user/authSlice';
 import { auth, signInWithPopup, provider } from '../../../firebase/firebase';
+import * as THREE from 'three';
+import FOG from 'vanta/dist/vanta.fog.min';
+
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const vantaRef = useRef<HTMLDivElement>(null);
+  const vantaEffect = useRef<any>(null);
+
 
   const handleSubmit = async (values: { email: string; password: string }) => {
     try {
@@ -55,20 +61,54 @@ const Login: React.FC = () => {
     }
   };
 
+
+  useEffect(() => {
+    if (vantaRef.current && !vantaEffect.current) {
+      vantaEffect.current = FOG({
+        el: vantaRef.current,
+        THREE,
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.00,
+        minWidth: 200.00,
+        highlightColor: 0x1a1a18,
+        midtoneColor: 0x9a2727,
+        lowlightColor: 0x0,
+        baseColor: 0x0,
+        blurFactor: 0.90,
+        speed: 5.00,
+        zoom: 1.40
+      });
+    }
+
+    return () => {
+      if (vantaEffect.current) {
+        vantaEffect.current.destroy();
+        vantaEffect.current = null;
+      }
+    };
+  }, []);
+
+
+
   return (
-    <div className="absolute top-0 left-0 bottom-0 leading-5 h-full w-full overflow-hidden" style={{ backgroundColor: '#1F2136' }}>
+    <div ref={vantaRef} className="absolute top-0 left-0 bottom-0 leading-5 h-full w-full bg-transparent overflow-hidden">
       <Toaster position="top-center" reverseOrder={false} />
       <div className="relative min-h-screen sm:flex sm:flex-row justify-center bg-transparent rounded-3xl shadow-xl">
         <div className="flex-col flex self-center lg:px-1 mr-10 sm:max-w-4xl xl:max-w-md z-10">
           <div className="self-start hidden lg:flex flex-col text-gray-300 items-center">
-            <img src="/logo-no-background.png" className="w-60 h-auto mt-10" alt="Event Craft Logo" />
-            <p className="pr-3 text-sm opacity-75 mt-10 text-white">
-              Event Craft simplifies event planning with intuitive tools for scheduling, budgeting, and coordination. From weddings to corporate events, manage every detail seamlessly with our expert resources and customizable templates.
-            </p>
+            <img src="/logo-no-background.png" className="w-70 h-auto mt-10" alt="Event Craft Logo" />
+            <button
+              onClick={() => navigate("/")}
+              className="mt-4 bottom-4 text-white bg-black hover:bg-blue-700 focus:ring-4  focus:outline-none focus:ring-blue-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+            >
+              GO BACK
+            </button>
           </div>
         </div>
         <div className="flex justify-center self-center z-10">
-          <div className="p-12 bg-gray-900 mx-auto rounded-3xl w-96">
+          <div className="p-12 bg-transparent border mx-auto rounded-3xl w-96">
             <Formik initialValues={initialValue} validationSchema={loginValidation} onSubmit={handleSubmit}>
               {({ handleChange, values, handleSubmit, isSubmitting }) => (
                 <Form onSubmit={handleSubmit} className="space-y-6">
@@ -140,7 +180,10 @@ const Login: React.FC = () => {
         </div>
       </div>
     </div>
+
   );
 };
 
+
 export default React.memo(Login);
+

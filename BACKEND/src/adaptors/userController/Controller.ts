@@ -107,9 +107,7 @@ export default {
   },
   cancelBooking: async (req: Request, res: Response): Promise<void> => {
     try {
-      const response = await userIterator.cancelBooking(
-        req.body.bookingId
-      );
+      const response = await userIterator.cancelBooking(req.body.bookingId);
       res.status(200).send(response);
     } catch (error) {
       console.log(error);
@@ -157,7 +155,7 @@ export default {
     try {
       await userIterator.updteLike(req.params.userId, req.params.postId);
       res.status(200);
-    } catch (error) {      
+    } catch (error) {
       console.log(error);
     }
   },
@@ -228,108 +226,147 @@ export default {
       console.log(error);
     }
   },
-  vendorLike:async(req:Request,res:Response)=>{
+  vendorLike: async (req: Request, res: Response) => {
     try {
-       await userIterator.vendorLike(req.params.userId,req.params.vendorId)
-       res.status(200).json({message:"Vendor like added successfully"})
+      await userIterator.vendorLike(req.params.userId, req.params.vendorId);
+      res.status(200).json({ message: "Vendor like added successfully" });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  likedPosts:async(req:Request,res:Response)=>{
+  likedPosts: async (req: Request, res: Response) => {
     try {
-      const response = await userIterator.likedPosts(req.params.userId)
-      res.status(200).json(response)
+      const response = await userIterator.likedPosts(req.params.userId);
+      res.status(200).json(response);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  likedVendors:async(req:Request,res:Response)=>{
+  likedVendors: async (req: Request, res: Response) => {
     try {
-      const response = await userIterator.likedVendors(req.params.userId)
-      res.status(200).json(response)
+      const response = await userIterator.likedVendors(req.params.userId);
+      res.status(200).json(response);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  userBooked:async(req:Request,res:Response)=>{
+  userBooked: async (req: Request, res: Response) => {
     try {
-      const response = await userIterator.userBooked(req.params.userId)
-      if(response?.success){
-        res.status(200).json({message:"user booked"})
-      }else{
-        res.status(201).json({message:"user not booked the vendor"})
+      const response = await userIterator.userBooked(req.params.userId);
+      if (response?.success) {
+        res.status(200).json({ message: "user booked" });
+      } else {
+        res.status(201).json({ message: "user not booked the vendor" });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  requestcheck:async(req:Request,res:Response)=>{
+  requestcheck: async (req: Request, res: Response) => {
     try {
-      const reponse = await userIterator.requestcheck(req.params.userId,req.params.vendorId)
-      if(reponse?.success){
-        res.status(200).json({message:"request accepted"})
-      }else{
-        res.status(201).json({message:"request not accepted"})
+      const reponse = await userIterator.requestcheck(
+        req.params.userId,
+        req.params.vendorId
+      );
+      if (reponse?.success) {
+        res.status(200).json({ message: "request accepted" });
+      } else {
+        res.status(201).json({ message: "request not accepted" });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  submitReport:async(req:Request,res:Response)=>{
+  submitReport: async (req: Request, res: Response) => {
     try {
-      const response = await userIterator.submitReport(req.params.userId,req.params.vendorId,req.body.boxReason,req.body.reason)
-      if(response?.success){
-        res.status(200).json({message:"report submitted successfully"})
-      } else{
-        res.status(201).json({message:"report not submitted"})
+      const response = await userIterator.submitReport(
+        req.params.userId,
+        req.params.vendorId,
+        req.body.boxReason,
+        req.body.reason
+      );
+      if (response?.success) {
+        res.status(200).json({ message: "report submitted successfully" });
+      } else {
+        res.status(201).json({ message: "report not submitted" });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  notification:async(req:Request, res:Response)=>{
+  notification: async (req: Request, res: Response) => {
     try {
-      const response = await userIterator.notification(req.params.vendorId)
-      res.status(200).json(response)
+      const response = await userIterator.notification(req.params.vendorId);
+      res.status(200).json(response);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  roomIds:async(req:Request,res:Response)=>{
+  roomIds: async (req: Request, res: Response) => {
     try {
-      const response = await userIterator.roomIds(req.params.userId)
-      res.status(200).json(response)
+      const response = await userIterator.roomIds(req.params.userId);
+      res.status(200).json(response);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  userBills:async(req:Request,res:Response) => {
+  userBills: async (req: Request, res: Response) => {
     try {
-      const response = await userIterator.userBills(req.params.userId)
-      res.status(200).json(response)
+      const response = await userIterator.userBills(req.params.userId);
+      res.status(200).json(response);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  billPay:async(req:Request,res:Response)=>{
+  billPay: async (req: Request, res: Response) => {
     try {
-      const response = await userIterator.billPay(req.params.billingId,req.body.amount)
-      if(response?.success){
-        res.status(200).json({message:"User Payed The Bill"})
-      }else{
-        res.status(400).json({message:"User failed to pay the bill"})
+      const response = await userIterator.billPay(
+        req.params.billingId,
+        req.body.amount
+      );
+      if (response?.success) {
+        res.status(200).json({ message: "User Payed The Bill" });
+      } else {
+        res.status(400).json({ message: "User failed to pay the bill" });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
-  paidBills:async(req:Request, res:Response)=>{
+  paidBills: async (req: Request, res: Response) => {
     try {
-      const response = await userIterator.paidBills(req.params.userId)
+      const response = await userIterator.paidBills(req.params.userId);
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  helpUser: async (req: Request, res: Response) => {
+    try {
+      const response = await userIterator.helpUser(req.params.userId, req.body);
+      if (response?.success) {
+        res.status(200).json({ message: "User needs Help" });
+      } else {
+        res.status(400).json({ message: "User failed to request help" });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  counts: async (req: Request, res: Response) => {
+    try {
+      const response = await userIterator.counts();
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  allVendors:async(req:Request,res:Response)=>{
+    try {
+      const response = await userIterator.allVendors()
       res.status(200).json(response)
     } catch (error) {
       console.log(error)
     }
   }
-};
+};      

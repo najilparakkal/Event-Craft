@@ -46,6 +46,7 @@ exports.default = {
     otpVerification: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const checkOtp = yield authentication_1.default.otpVerification(req.body);
+            console.log(checkOtp, "🎶🎶");
             if (checkOtp.success) {
                 res.status(200).json({ status: 200, message: "User OTP verified" });
             }

@@ -366,5 +366,37 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    helpUser: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.helpUser(req.params.userId, req.body);
+            if (response === null || response === void 0 ? void 0 : response.success) {
+                res.status(200).json({ message: "User needs Help" });
+            }
+            else {
+                res.status(400).json({ message: "User failed to request help" });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    counts: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.counts();
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    allVendors: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield home_1.default.allVendors();
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

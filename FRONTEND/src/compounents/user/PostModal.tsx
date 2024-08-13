@@ -86,7 +86,7 @@ const PostModal: React.FC<PostModalProps> = ({ open, onClose, post }) => {
                     console.log(err);
                 });
         }
-    }, [post?._id, newComment, replyText, likedReply, likedComment]);
+    }, [newComment, replyText, likedReply, likedComment]);
     const handleCommentSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         if (newComment.trim()) {
@@ -158,39 +158,81 @@ const PostModal: React.FC<PostModalProps> = ({ open, onClose, post }) => {
         }
     };
 
-
+    const [visibleReplies, setVisibleReplies] = useState(4); // Initially show 4 replies
+    const showMoreReplies = () => {
+        setVisibleReplies(prevVisibleReplies => prevVisibleReplies + 4); // Show 4 more replies
+    };
 
     return (
-        <BootstrapDialog onClose={onClose} aria-labelledby="customized-dialog-title" open={open}>
+        <BootstrapDialog
+            onClose={onClose}
+            sx={{
+                '& .MuiDialog-paper': {
+                    backgroundColor: '#1F2937',
+                    color: '#FFFFFF',
+                    width: '100%',
+                    maxWidth: '600px',
+                    margin: 'auto',
+                    height: 'auto',
+                    '@media (min-width: 600px)': {
+                        width: '600px',
+                        height: 'auto',
+                    },
+                },
+            }}
+            aria-labelledby="customized-dialog-title"
+            open={open}
+        >
             <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                <Box display="flex" justifyContent="space-between">
-                    <Box flex={1}>
-                        <Typography variant="h5" className="font-semibold" color="text.primary" gutterBottom>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Box flex={1} pr={2}>
+                        <Typography
+                            variant="h6"
+                            className="font-bold"
+                            sx={{ color: 'white', mb: 0, fontWeight: 'bold' }}
+                        >
                             {post.title}
                         </Typography>
-                        <Typography variant="body1" color="text.secondary" gutterBottom>
+
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ color: 'gray', mb: -1.5, fontWeight: 'bold' }}
+                        >
                             {post.description}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="caption" color="text.secondary" sx={{ color: 'gray', fontWeight: 'bold' }}>
                             {new Date(post.createdAt).toLocaleDateString()}
                         </Typography>
                     </Box>
-                    <Box display="flex" alignItems="center">
-                        <img className="w-10 h-10 rounded-full mr-2" src={post.vendorInfo.profilePicture} alt="Vendor" />
-                        <Typography variant="h6" color="text.primary">
+
+                    <Box alignItems="center" ml="auto">
+                        <img
+                            className="w-9 h-9 rounded-full ml-auto transition-transform duration-1000 hover:scale-105"
+                            src={post.vendorInfo.profilePicture}
+                            alt="Vendor"
+                        />
+                        <Typography
+                            variant="body1"
+                            className="font-semibold"
+                            color="text.primary"
+                            ml={1}
+                            sx={{ color: 'white', fontWeight: 'bold' }}
+                        >
                             {post.vendorInfo.vendorName}
                         </Typography>
                     </Box>
                 </Box>
             </DialogTitle>
+
             <DialogContent dividers>
-                <Box display="flex" width="100%">
+                <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} width="100%">
                     <Box flex={1} display="flex" flexDirection="column" mr={2}>
                         <Box mb={2}>
-                            <img className="w-full h-[350px] object-cover" src={post.images[0]} alt="Post" />
+                            <img className="w-full h-[200px] sm:h-[350px] object-cover" src={post.images[0]} alt="Post" />
                         </Box>
                     </Box>
-                    <Box flex={1} display="flex" flexDirection="column" >
+                    <Box flex={1} display="flex" flexDirection="column">
                         <Box
                             flex={1}
                             overflow="auto"
@@ -207,71 +249,40 @@ const PostModal: React.FC<PostModalProps> = ({ open, onClose, post }) => {
                                     backgroundColor: 'transparent',
                                 },
                             }}
-                        >                            {comments.length > 0 ? (
-                            comments.map((comment) => (
-                                <Box key={comment._id} mb={2}>
-                                    <Box display="flex" alignItems="center" mb={1}>
-                                        <div className='flex justify-between w-full p-2'>
-                                            <div className='flex items-start'>
-                                                <img
-                                                    className="w-8 h-8 rounded-full mr-2"
-                                                    src={comment.userId.profilePicture}
-                                                    alt={comment.userId.userName}
-                                                />
-                                                <div>
-                                                    <Typography variant="body2" color="text.primary" className='font-semibold'>
-                                                        {comment.userId.userName}
-                                                    </Typography>
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        {comment.comment}
-                                                    </Typography>
-                                                </div>
-                                            </div>
-
-                                            <div className='flex items-center space-x-2'>
-                                                <IconButton
-                                                    aria-label="add to favorites"
-                                                    sx={{ padding: '2px' }}
-                                                    onClick={() => commentLike(comment._id)}
-                                                >
-                                                    <FavoriteIcon fontSize="small" color={likedComment.includes(comment._id) ? "error" : "inherit"} />
-                                                </IconButton>
-
-                                                <a
-                                                    className="text-sm text-blue-500 hover:underline"
-                                                    onClick={() => handleReplyClick(comment._id)}
-                                                >
-                                                    Reply
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </Box>
-
-                                    {comment.replies.map((reply) => (
-                                        <Box key={reply._id} ml={4} mb={2} display="flex" alignItems="center">
-                                            <div className='flex justify-between w-full p-2'>
-                                                <div className='flex items-start'>
+                        >
+                            {comments.length > 0 ? (
+                                comments.map((comment) => (
+                                    <Box key={comment._id} mb={2}>
+                                        <Box display="flex" alignItems="center" mb={1}>
+                                            <div className="flex justify-between w-full p-2">
+                                                <div className="flex items-start">
                                                     <img
-                                                        className="w-6 h-6 rounded-full mr-2"
+                                                        className="w-8 h-8 rounded-full mr-2"
                                                         src={comment.userId.profilePicture}
                                                         alt={comment.userId.userName}
                                                     />
                                                     <div>
-                                                        <Typography variant="body2" color="text.primary" className='font-semibold'>
+                                                        <Typography
+                                                            variant="body2"
+                                                            color="text.primary"
+                                                            className="font-semibold"
+                                                            sx={{ color: 'white', fontWeight: 'bold' }}
+                                                        >
                                                             {comment.userId.userName}
                                                         </Typography>
-                                                        <Typography variant="body2" color="text.secondary">
-                                                            {reply.comment}
+                                                        <Typography variant="body2" color="text.secondary" sx={{ color: 'gray' }}>
+                                                            {comment.comment}
                                                         </Typography>
                                                     </div>
                                                 </div>
-                                                <div className='flex items-center space-x-2'>
+
+                                                <div className="flex items-center space-x-2">
                                                     <IconButton
                                                         aria-label="add to favorites"
                                                         sx={{ padding: '2px' }}
-                                                        onClick={() => replyLike(reply._id)}
+                                                        onClick={() => commentLike(comment._id)}
                                                     >
-                                                        <FavoriteIcon fontSize="small" color={likedReply.includes(reply._id) ? "error" : "inherit"} />
+                                                        <FavoriteIcon fontSize="small" color={likedComment.includes(comment._id) ? 'error' : 'inherit'} />
                                                     </IconButton>
 
                                                     <a
@@ -283,38 +294,99 @@ const PostModal: React.FC<PostModalProps> = ({ open, onClose, post }) => {
                                                 </div>
                                             </div>
                                         </Box>
-                                    ))}
 
-                                    <div className={`overflow-hidden transition-all duration-500 ${replyingTo === comment._id ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
-                                        <form onSubmit={(e) => handleReplySubmit(comment._id, e)} className="w-full mt-2 pl-10">
-                                            <div className="relative z-0 w-full mb-5 group">
-                                                <input
-                                                    type="text"
-                                                    name="reply"
-                                                    id={`reply_${comment._id}`}
-                                                    className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                                    value={replyText}
-                                                    onChange={handleReplyChange}
-                                                    required
-                                                />
-                                                <label htmlFor={`reply_${comment._id}`} className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-                                                    Reply
-                                                </label>
-                                            </div>
-                                            <Button type="submit" variant="contained" color="primary">
-                                                Submit
-                                            </Button>
-                                        </form>
-                                    </div>
+                                        {comment.replies.slice(0, visibleReplies).map((reply) => (
+                                            <Box key={reply._id} ml={4} mb={2} display="flex" alignItems="center">
+                                                <div className="flex justify-between w-full p-2">
+                                                    <div className="flex items-start">
+                                                        <img
+                                                            className="w-6 h-6 rounded-full mr-2"
+                                                            src={comment.userId.profilePicture}
+                                                            alt={comment.userId.userName}
+                                                        />
+                                                        <div>
+                                                            <Typography
+                                                                variant="body2"
+                                                                color="text.primary"
+                                                                className="font-semibold"
+                                                                sx={{ color: 'white', fontWeight: 'bold' }}
+                                                            >
+                                                                {comment.userId.userName}
+                                                            </Typography>
+                                                            <Typography variant="body2" color="text.secondary" sx={{ color: 'gray' }}>
+                                                                {reply.comment}
+                                                            </Typography>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2">
+                                                        <IconButton
+                                                            aria-label="add to favorites"
+                                                            sx={{ padding: '2px' }}
+                                                            onClick={() => replyLike(reply._id)}
+                                                        >
+                                                            <FavoriteIcon fontSize="small" color={likedReply.includes(reply._id) ? 'error' : 'inherit'} />
+                                                        </IconButton>
+                                                        <a
+                                                            className="text-sm text-blue-500 hover:underline"
+                                                            onClick={() => handleReplyClick(comment._id)}
+                                                        >
+                                                            Reply
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </Box>
+                                        ))}
+
+                                        {visibleReplies < comment.replies.length && (
+                                            <Box ml={4} mb={2} display="flex" justifyContent="center">
+                                                <a
+                                                    className="text-sm text-blue-500 hover:underline cursor-pointer"
+                                                    onClick={showMoreReplies}
+                                                >
+                                                    Show more
+                                                </a>
+                                            </Box>
+                                        )}
+
+                                        <div
+                                            className={`overflow-hidden transition-all duration-500 ${replyingTo === comment._id ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
+                                                }`}
+                                        >
+                                            <form
+                                                onSubmit={(e) => handleReplySubmit(comment._id, e)}
+                                                className="w-full mt-2 pl-10"
+                                            >
+                                                <div className="relative z-0 w-full mb-5 group">
+                                                    <input
+                                                        type="text"
+                                                        name="reply"
+                                                        id={`reply_${comment._id}`}
+                                                        className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                                        value={replyText}
+                                                        onChange={handleReplyChange}
+                                                        required
+                                                    />
+                                                    <label
+                                                        htmlFor={`reply_${comment._id}`}
+                                                        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                                                    >
+                                                        Reply
+                                                    </label>
+                                                </div>
+                                                <Button type="submit" variant="contained" color="primary">
+                                                    Submit
+                                                </Button>
+                                            </form>
+                                        </div>
+                                    </Box>
+                                ))
+                            ) : (
+                                <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+                                    <Typography variant="h5" color="text.secondary">
+                                        NO COMMENTS
+                                    </Typography>
                                 </Box>
-                            ))
-                        ) : (
-                            <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-                                <Typography variant="h5" color="text.secondary">
-                                    NO COMMENTS
-                                </Typography>
-                            </Box>
-                        )}
+                            )}
                         </Box>
                         <Box mt="auto">
                             <form onSubmit={handleCommentSubmit} className="flex mb-4 items-center">
@@ -324,9 +396,9 @@ const PostModal: React.FC<PostModalProps> = ({ open, onClose, post }) => {
                                     color="primary"
                                     size="small"
                                     sx={{ mr: 1, padding: 1 }}
+                                    className="transform transition-transform duration-1000 hover:scale-105"
                                 >
                                     <BsFillEmojiSmileFill />
-
                                 </Button>
                                 <TextField
                                     variant="outlined"
@@ -339,12 +411,18 @@ const PostModal: React.FC<PostModalProps> = ({ open, onClose, post }) => {
                                         sx: {
                                             height: '30px',
                                             padding: 0,
+                                            color: 'white',
                                         },
                                     }}
                                 />
-                                <Button type="submit" variant="contained" color="primary" sx={{ ml: 1, padding: 1 }}>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                    sx={{ ml: 1, padding: 1 }}
+                                    className="transform transition-transform duration-1000 hover:scale-105"
+                                >
                                     <IoMdPaperPlane />
-
                                 </Button>
                             </form>
                             {showEmojiPicker && (
@@ -354,17 +432,25 @@ const PostModal: React.FC<PostModalProps> = ({ open, onClose, post }) => {
                                         bottom: '70px',
                                         left: 0,
                                         zIndex: 9999,
+                                        width: '100%',
+                                        maxWidth: '400px',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        '& .emoji-picker': {
+                                            maxWidth: '100%',
+                                        }
                                     }}
                                 >
                                     <EmojiPicker onEmojiClick={(emoji) => addEmoji(emoji)} />
                                 </Box>
+
                             )}
                         </Box>
                     </Box>
-
                 </Box>
             </DialogContent>
         </BootstrapDialog>
+
     );
 };
 

@@ -7,7 +7,6 @@ const store = configureStore({
   reducer: {
     user: userReducer,
     vendor: vendorReducer,
-  // socket:socketReducer,
   },
 });
 

@@ -11,10 +11,12 @@ import CommentIcon from '@mui/icons-material/Comment';
 import { Typography } from '@mui/material';
 import { fetchPosts, updateLike } from '../../../API/services/user/Services';
 import PostModal from '../../../compounents/user/PostModal';
+import { useNavigate } from 'react-router-dom';
 
 interface VendorInfo {
     vendorName: string;
     profilePicture: string;
+    _id:string
 }
 
 interface Post {
@@ -38,7 +40,7 @@ const Posts: React.FC<PostProps> = ({ userId }) => {
     const [datas, setDatas] = useState<Post[]>([]);
     const [likedPosts, setLikedPosts] = useState<string[]>([]);
     const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-
+    const navigate = useNavigate()
     useEffect(() => {
         fetchPosts(userId + "")
             .then((data) => {
@@ -48,10 +50,9 @@ const Posts: React.FC<PostProps> = ({ userId }) => {
             })
             .catch((error: Error) => console.log(error));
     }, [userId]);
-
-    const handleLike = async(postId: string) => { 
-        setLikedPosts(likedPosts.includes(postId) ? [...likedPosts].filter((item)=>item !== postId) :[...likedPosts, postId] );
-        await updateLike(postId, userId); 
+    const handleLike = async (postId: string) => {
+        setLikedPosts(likedPosts.includes(postId) ? [...likedPosts].filter((item) => item !== postId) : [...likedPosts, postId]);
+        await updateLike(postId, userId);
     };
 
     const handleCardClick = (post: Post) => {
@@ -77,9 +78,9 @@ const Posts: React.FC<PostProps> = ({ userId }) => {
                         onClick={() => handleCardClick(post)}
                     />
                     <CardActions className="flex justify-between p-2 bg-gray-800">
-                        <IconButton 
-                            aria-label="add to favorites" 
-                            sx={{ padding: '8px' }} 
+                        <IconButton
+                            aria-label="add to favorites"
+                            sx={{ padding: '8px' }}
                             onClick={(e) => { e.stopPropagation(); handleLike(post._id); }}
                         >
                             <FavoriteIcon fontSize="small" color={likedPosts.includes(post._id) ? "error" : "inherit"} />
@@ -108,10 +109,11 @@ const Posts: React.FC<PostProps> = ({ userId }) => {
                             </Typography>
                         </div>
                         <div className="items-center">
-                            <Typography variant="body2" className="font-bold text-white mr-2">
-                                {post.vendorInfo.vendorName}
+                            <Typography variant="body2" className="font-bold text-white mr-2 ">
+                                <strong>  {post.vendorInfo.vendorName}</strong>
                             </Typography>
-                            <Avatar src={post.vendorInfo.profilePicture} aria-label="vendor" className="w-5 h-5 mt-1" />
+                            <Avatar src={post.vendorInfo.profilePicture} aria-label="vendor" onClick={() => navigate(`/vendorProfile/${post.vendorInfo._id}`)}
+                                className="w-5 h-5 mt-1 ml-auto  transition-transform duration-700 hover:scale-105" />
                         </div>
                     </CardContent>
                 </Card>

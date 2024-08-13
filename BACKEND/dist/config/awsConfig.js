@@ -63,5 +63,3 @@ const uploadBufferToS3 = (buffer, mimeType) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.uploadBufferToS3 = uploadBufferToS3;
-// 'audio/webm;codecs=opus' audio
-// 

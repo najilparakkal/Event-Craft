@@ -15,6 +15,8 @@ import WishlistSection from "../pages/user/profileSection/wishlist/WishlistSecti
 import BillsSection from "../pages/user/profileSection/bills/BillsSection";
 import BookingSection from "../pages/user/profileSection/bookings/BookingSection";
 import ErrorPage from "../compounents/user/ErrorPage";
+import About from "../pages/user/about/About";
+import AllVendors from "../pages/user/allVendors/AllVendors";
 
 const UserRouter: React.FC = () => {
     const userDetails = useAppSelector((state) => state.user.userDetails._id);
@@ -22,6 +24,7 @@ const UserRouter: React.FC = () => {
         <Routes>
             <Route path="/signup" element={<Signup />} />
             <Route path="/otp" element={<Otp />} />
+            <Route path="/about" element={<About />} />
             <Route path="/login" element={userDetails ? <Navigate to="/home" /> : <Login />} />
             <Route path="/forgot" element={<ForgotPass />} />
             <Route path="" element={<User />}>
@@ -33,6 +36,7 @@ const UserRouter: React.FC = () => {
                 <Route path="/bills" element={<BillsSection />} />
                 <Route path="/bookings" element={<BookingSection />} />
                 <Route path="/profile" element={<ProfileSection />} />
+                <Route path="/vendors" element={<AllVendors />} />
             </Route>
             <Route path="*" element={<ErrorPage />} />
         </Routes>

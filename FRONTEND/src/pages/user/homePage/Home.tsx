@@ -11,6 +11,7 @@ import Posts from './Posts';
 import { useAppSelector } from '../../../costumeHooks/costum';
 import Notification from '../../../compounents/user/Notification';
 import Loading from '../../../compounents/user/Loading';
+import Helper from '../../../compounents/user/Helper';
 
 interface Service {
   _id: string;
@@ -28,6 +29,51 @@ interface Post {
 interface Licence {
   description: string;
   location: string;
+}
+
+interface ILicence {
+  accountNumber: string;
+  applicantName: string;
+  businessName: string;
+  certificateExpirationDate: string;
+  description: string;
+  emailAddress: string;
+  licence: string[];
+  location: string;
+  phoneNumber: string;
+  profilePicture: string;
+  requestedDate: string;
+  services: string;
+  upiIdOrPhoneNumber: string;
+  vendorId: string;
+  verified: boolean;
+  __v: number;
+  _id: string;
+}
+
+interface IVendor {
+  availableDate: string[];
+  blocked: boolean;
+  chats: any[];
+  coverPicture: string;
+  email: string;
+  licence: ILicence[];
+  likes: string[];
+  otp: string;
+  password: string;
+  phoneNum: string;
+  posts: any[];
+  profilePicture: string;
+  ratingAndReview: any[];
+  refreshToken: string;
+  registered: string;
+  updatedAt: string;
+  vendor: boolean;
+  vendorName: string;
+  verified: boolean;
+  wallet: number;
+  __v: number;
+  _id: string;
 }
 
 interface Vendor {
@@ -48,10 +94,10 @@ const Home: React.FC = () => {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const { _id } = useAppSelector((state) => state.user.userDetails)
   const [isLoading, setIsLoading] = useState(true);
-  const [filteredVendors, setFilteredVendors] = useState([]);
+  const [filteredVendors, setFilteredVendors] = useState<IVendor[]>([]);
   const [searchName, setSearchName] = useState('');
   const [searchLocation, setSearchLocation] = useState('');
-
+ 
   useEffect(() => {
     const loadData = async () => {
       await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -69,12 +115,11 @@ const Home: React.FC = () => {
     };
     getServices();
   }, []);
-  console.log(vendors, "🍽️🍽️")
-
 
   useEffect(() => {
     const filterVendors = () => {
-      const filtered:any = vendors.filter((vendor) => {
+      const filtered: any = vendors.filter((vendor) => {
+
         const matchesName = vendor.vendorName.toLowerCase().includes(searchName.toLowerCase());
         const matchesLocation = vendor.licence.some(
           (licence) => licence.location.toLowerCase().includes(searchLocation.toLowerCase())
@@ -85,7 +130,6 @@ const Home: React.FC = () => {
     };
     filterVendors();
   }, [vendors, searchName, searchLocation]);
-
 
   const handleServiceClick = (serviceName: string) => {
     navigate(`/vendors/${serviceName}`);
@@ -132,6 +176,7 @@ const Home: React.FC = () => {
     ],
   };
 
+
   return (
     <>
       {isLoading ? (
@@ -169,6 +214,7 @@ const Home: React.FC = () => {
                 </div>
               </div>
             </section>
+            <VendorsCard vendors={filteredVendors} />
 
             <section className="container mx-auto py-10 px-8">
               <h3 className="text-2xl font-bold mb-8 text-center sm:text-left text-white">Services</h3>
@@ -177,12 +223,12 @@ const Home: React.FC = () => {
                   {services.map((service) => (
                     <div
                       key={service._id}
-                      className="relative bg-gray-300 p-1 shadow-md text-center cursor-pointer"
+                      className="relative bg-gray-300 p-1 shadow-md text-center cursor-pointer transition-transform duration-700 hover:scale-105 hover:shadow-2xl"
                       onClick={() => handleServiceClick(service.name)}
                     >
-                      <img src={service.image} alt={service.name} className="w-full h-32 object-cover" />
-                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                        <h4 className="text-lg font-bold text-white">{service.name}</h4>
+                      <img src={service.image} alt={service.name} className="w-full h-32 object-cover  " />
+                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center ">
+                        <h4 className="text-lg font-bold text-white  transition-transform duration-700 hover:scale-90 hover:shadow-2xl">{service.name}</h4>
                       </div>
                     </div>
                   ))}
@@ -193,7 +239,6 @@ const Home: React.FC = () => {
             </section>
 
 
-            <VendorsCard vendors={filteredVendors} />
 
             <Posts userId={_id + ""} />
 
@@ -206,36 +251,36 @@ const Home: React.FC = () => {
                       <path d="M491 1536l91-91-235-235-91 91v107h128v128h107zm523-928q0-22-22-22-10 0-17 7l-542 542q-7 7-7 17 0 22 22 22 10 0 17-7l542-542q7-7 7-17zm-54-192l416 416-832 832h-416v-416zm683 96q0 53-37 90l-166 166-416-416 166-165q36-38 90-38 53 0 91 38l235 234q37 39 37 91z"></path>
                     </svg>
                   </div>
-                  <h3 className="py-4 text-2xl font-semibold transition-transform duration-700 hover:scale-105 hover:shadow-2xl text-gray-700 sm:text-xl dark:text-white">
+                  <h3 className="py-4 text-2xl font-semibold transition-transform duration-700 hover:scale-105  text-gray-700 sm:text-xl dark:text-white">
                     100% Trusted
                   </h3>
-                  <p className="py-4 text-gray-500 text-md transition-transform duration-700 hover:scale-105 hover:shadow-2xl dark:text-gray-300">
+                  <p className="py-4 text-gray-500 text-md transition-transform duration-700 hover:scale-105  dark:text-gray-300">
                     We are trusted by numerous clients for our reliable and professional event management services.
                   </p>
                 </div>
                 <div className="w-full px-4 py-4 mt-6 bg-white rounded-lg shadow-lg sm:w-1/2 md:w-1/2 lg:w-1/4 dark:bg-gray-800 transform transition-transform duration-700 hover:scale-105 ">
-                  <div className="flex items-center transition-transform duration-700 hover:scale-105 hover:shadow-2xl justify-center w-12 h-12 mx-auto text-white bg-indigo-500 rounded-md">
-                    <svg width="20" height="20" fill="currentColor" className="w-6 transition-transform duration-700 hover:scale-105 hover:shadow-2xl h-6" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                  <div className="flex items-center transition-transform duration-700 hover:scale-105  justify-center w-12 h-12 mx-auto text-white bg-indigo-500 rounded-md">
+                    <svg width="20" height="20" fill="currentColor" className="w-6 transition-transform duration-700 hover:scale-105  h-6" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
                       <path d="M491 1536l91-91-235-235-91 91v107h128v128h107zm523-928q0-22-22-22-10 0-17 7l-542 542q-7 7-7 17 0 22 22 22 10 0 17-7l542-542q7-7 7-17zm-54-192l416 416-832 832h-416v-416zm683 96q0 53-37 90l-166 166-416-416 166-165q36-38 90-38 53 0 91 38l235 234q37 39 37 91z"></path>
                     </svg>
                   </div>
-                  <h3 className="py-4 transition-transform duration-700 hover:scale-105 hover:shadow-2xl text-2xl font-semibold text-gray-700 sm:text-xl dark:text-white">
+                  <h3 className="py-4 transition-transform duration-700 hover:scale-105  text-2xl font-semibold text-gray-700 sm:text-xl dark:text-white">
                     24/7 Support
                   </h3>
-                  <p className="py-4 transition-transform duration-700 hover:scale-105 hover:shadow-2xl text-gray-500 text-md dark:text-gray-300">
+                  <p className="py-4 transition-transform duration-700 hover:scale-105  text-gray-500 text-md dark:text-gray-300">
                     Our team is available around the clock to assist you with any queries or issues you may have.
                   </p>
                 </div>
                 <div className="w-full px-4 py-4 mb-6 bg-white rounded-lg shadow-lg sm:w-1/2 md:w-1/2 lg:w-1/4 dark:bg-gray-800 transform transition-transform duration-700 hover:scale-105 ">
                   <div className="flex transform transition-transform duration-300 hover:scale-105 hover:shadow-xl items-center justify-center w-12 h-12 mx-auto text-white bg-indigo-500 rounded-md">
-                    <svg width="20" height="20" fill="currentColor" className="w-6 h-6 transition-transform duration-700 hover:scale-105 hover:shadow-2xl" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="20" height="20" fill="currentColor" className="w-6 h-6 transition-transform duration-700 hover:scale-105 " viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
                       <path d="M491 1536l91-91-235-235-91 91v107h128v128h107zm523-928q0-22-22-22-10 0-17 7l-542 542q-7 7-7 17 0 22 22 22 10 0 17-7l542-542q7-7 7-17zm-54-192l416 416-832 832h-416v-416zm683 96q0 53-37 90l-166 166-416-416 166-165q36-38 90-38 53 0 91 38l235 234q37 39 37 91z"></path>
                     </svg>
                   </div>
-                  <h3 className="py-4 transition-transform duration-700 hover:scale-105 hover:shadow-2xl text-2xl font-semibold text-gray-700 sm:text-xl dark:text-white">
+                  <h3 className="py-4 transition-transform duration-700 hover:scale-105  text-2xl font-semibold text-gray-700 sm:text-xl dark:text-white">
                     Experienced Team
                   </h3>
-                  <p className="py-4 transition-transform duration-700 hover:scale-105 hover:shadow-2xl text-gray-500 text-md dark:text-gray-300">
+                  <p className="py-4 transition-transform duration-700 hover:scale-105  text-gray-500 text-md dark:text-gray-300">
                     Our team has extensive experience in managing events of all scales and ensuring they are a success.
                   </p>
                 </div>
@@ -332,24 +377,7 @@ const Home: React.FC = () => {
 
 
 
-            <div className="mt-10  p-8">
-              <h2 className="text-2xl text-gray-500 mb-2">Didn't Get Your Vendor .?</h2>
-              <p className="mb-6 text-gray-500">Our executives will call you to understand your requirements to find suitable vendors</p>
-              <div className="flex space-x-4">
-                <input
-                  type="text"
-                  placeholder="Enter Your Name"
-                  className="px-2 py-1 border-b-2 border-gray-300 bg-transparent text-black placeholder-gray-500 w-full"
-                />
-                <input
-                  type="text"
-                  placeholder="Enter Mobile Number"
-                  className="px-2 py-1 border-b-2 border-gray-300 bg-transparent text-black placeholder-gray-500 w-full"
-                />
-
-                <button className="bg-blue-600 text-white px-6 py-2 rounded-md">Submit</button>
-              </div>
-            </div>
+            <Helper _id={_id+""}/>
           </main>
           <Footer />
         </div>

@@ -314,6 +314,29 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    helpUser: (userId, data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.helpUser)(userId, data.reason, data.phoneNumber);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }), counts: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.counts)();
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    allVendors: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield (0, homeRepo_1.allVendors)();
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };
 const fetchVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {

@@ -68,9 +68,9 @@ const UserTable:React.FC = () => {
       </div>
 
       <table className="min-w-full leading-normal">
-        <thead>
+        <thead className=''>
           <tr>
-            <th className="px-5 py-3 border-b-2 border-black bg-[#353C56] text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+            <th className="px-5 py-3 border-b-2  border-black bg-[#353C56] text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
               SL
             </th>
             <th className="px-5 py-3 border-b-2 border-black bg-[#353C56] text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">

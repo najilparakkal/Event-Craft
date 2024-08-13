@@ -34,7 +34,7 @@ export default {
     try {
 
       const checkOtp = await userIterator.otpVerification(req.body);
-
+      console.log(checkOtp,"🎶🎶")
       if (checkOtp.success ) {
         res.status(200).json({ status: 200, message: "User OTP verified" });
       } else if (checkOtp.success === false) {

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.paidBill = exports.billPay = exports.userBills = exports.roomIds = exports.notification = exports.submitReport = exports.requestCheck = exports.userBooked = exports.likedVendors = exports.likedPosts = exports.vendorLike = exports.addReview = exports.ratingReview = exports.replyLike = exports.commentLike = exports.newReply = exports.getComments = exports.newComment = exports.updateLike = exports.getPosts = exports.getDatesOfVendor = exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
+exports.allVendors = exports.counts = exports.helpUser = exports.paidBill = exports.billPay = exports.userBills = exports.roomIds = exports.notification = exports.submitReport = exports.requestCheck = exports.userBooked = exports.likedVendors = exports.likedPosts = exports.vendorLike = exports.addReview = exports.ratingReview = exports.replyLike = exports.commentLike = exports.newReply = exports.getComments = exports.newComment = exports.updateLike = exports.getPosts = exports.getDatesOfVendor = exports.updateUser = exports.getProfile = exports.cancelBooking = exports.getBookings = exports.addBooking = exports.chatId = exports.listVendorsInUserChat = exports.cancelRequest = exports.listRequest = exports.addRequest = exports.getVendorProfile = exports.listServices = exports.listAll = exports.listVendors = void 0;
 const awsConfig_1 = require("../../../config/awsConfig");
 const booking_1 = require("../../../framworks/database/models/booking");
 const cancelBooking_1 = require("../../../framworks/database/models/cancelBooking");
@@ -28,9 +28,10 @@ const date_fns_1 = require("date-fns");
 const mongoose_1 = __importDefault(require("mongoose"));
 const Reports_1 = require("../../../framworks/database/models/Reports");
 const billing_1 = __importDefault(require("../../../framworks/database/models/billing"));
+const helpUser_1 = require("../../../framworks/database/models/helpUser");
 const listVendors = (data) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const vendors = yield vendor_1.Vendors.find({ vendor: true })
+        const vendors = yield vendor_1.Vendors.find({ vendor: true, blocked: false })
             .populate("licence")
             .populate("posts")
             .exec();
@@ -60,11 +61,14 @@ exports.listVendors = listVendors;
 const listAll = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const services = yield services_1.Services.find();
-        const vendors = yield vendor_1.Vendors.find()
+        const vendors = yield vendor_1.Vendors.find({ blocked: false, vendor: true })
             .populate("posts")
             .populate("licence")
             .exec();
-        return { services, vendors };
+        const vendorData = vendors.map((vendor) => {
+            return Object.assign(Object.assign({}, vendor._doc), { ratingAndReviewCount: vendor.ratingAndReview.length, likesCount: vendor.likes.length });
+        });
+        return { services, vendors: vendorData };
     }
     catch (error) {
         console.log(error);
@@ -78,7 +82,10 @@ const listServices = () => __awaiter(void 0, void 0, void 0, function* () {
             .populate("posts")
             .populate("licence")
             .exec();
-        return { services, vendors };
+        const vendorData = vendors.map((vendor) => {
+            return Object.assign(Object.assign({}, vendor._doc), { ratingAndReviewCount: vendor.ratingAndReview.length, likesCount: vendor.likes.length });
+        });
+        return { services, vendors: vendorData };
     }
     catch (error) {
         console.log(error);
@@ -402,6 +409,7 @@ const getPosts = (userId) => __awaiter(void 0, void 0, void 0, function* () {
                     likes: 1,
                     "vendorInfo.vendorName": 1,
                     "vendorInfo.profilePicture": 1,
+                    "vendorInfo._id": 1,
                 },
             },
         ]);
@@ -767,3 +775,61 @@ const paidBill = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.paidBill = paidBill;
+const helpUser = (userId, reason, phoneNumber) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield user_1.Users.findById(userId);
+        if (!user) {
+            return { success: false };
+        }
+        else {
+            const newModal = yield helpUser_1.HelpUsers.create({
+                userId,
+                reason,
+                phoneNumber,
+            });
+            if (newModal) {
+                return { success: true };
+            }
+            else {
+                return { success: false };
+            }
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.helpUser = helpUser;
+const counts = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield user_1.Users.find();
+        const vendor = yield vendor_1.Vendors.find();
+        const events = yield booking_1.Bookings.find({ status: "Completed" });
+        return {
+            userCount: user.length,
+            vendorCount: vendor.length,
+            eventsCount: events.length,
+        };
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.counts = counts;
+const allVendors = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const vendors = yield vendor_1.Vendors.find({ vendor: true, blocked: false })
+            .populate("posts")
+            .populate({
+            path: "licence",
+            select: "services",
+        })
+            .exec();
+        console.log(vendors);
+        return vendors;
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.allVendors = allVendors;

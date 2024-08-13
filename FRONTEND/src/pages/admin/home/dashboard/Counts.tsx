@@ -18,8 +18,8 @@ interface CountsProps {
     vendorsCount: number;
     totalRevenue: number;
   }
-const Card: React.FC<CardProps> = ({ icon, title, value, percentage, description, descriptionColor, gradientFrom, gradientTo, shadowColor }) => (
-    <div className="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 w-full mt-6 shadow-md">
+const Card: React.FC<CardProps> = ({ icon, title, value, gradientFrom, gradientTo, shadowColor }) => (
+    <div className="relative flex flex-col bg-clip-border rounded-xl bg-[#292F45] text-gray-400 w-full mt-6 shadow-md">
         <div className={`bg-clip-border mx-4 rounded-xl overflow-hidden bg-gradient-to-tr ${gradientFrom} ${gradientTo} text-white ${shadowColor} absolute -mt-4 grid h-16 w-16 place-items-center`}>
             {icon}
         </div>
@@ -27,11 +27,7 @@ const Card: React.FC<CardProps> = ({ icon, title, value, percentage, description
             <p className="block antialiased font-sans text-sm leading-normal font-normal text-blue-gray-600">{title}</p>
             <h4 className="block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900">{value}</h4>
         </div>
-        <div className="border-t border-blue-gray-50 p-4">
-            <p className="block antialiased font-sans text-base leading-relaxed font-normal text-blue-gray-600">
-                <strong className={descriptionColor}>{percentage}</strong>&nbsp;{description}
-            </p>
-        </div>
+    
     </div>
 );
 

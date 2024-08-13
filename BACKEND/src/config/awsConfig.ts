@@ -15,14 +15,12 @@ const s3 = new S3Client({
 
 export async function uploadImage(image: any) {
   const fileContent = fs.readFileSync(image);
-
   const fileName = await generateName();
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME + "",
     Key: fileName,
     Body: fileContent,
   };
-
   try {
     const command = new PutObjectCommand(params);
     await s3.send(command);
@@ -32,6 +30,8 @@ export async function uploadImage(image: any) {
     throw new Error("File upload failed");
   }
 }
+
+
 
 export const uploadBufferToS3 = async (buffer: ArrayBuffer, mimeType: string): Promise<string> => {
   const fileName = await generateName();
@@ -53,6 +53,3 @@ export const uploadBufferToS3 = async (buffer: ArrayBuffer, mimeType: string): P
   }
 };
 
-
-// 'audio/webm;codecs=opus' audio
-// 

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { bills, readBill } from "../../../../API/services/admin/Dashboard";
-import { AnimatePresence, motion } from "framer-motion";
 
 export function BillSection() {
     const [datas, setDatas] = useState([]);
@@ -20,6 +19,7 @@ export function BillSection() {
                 console.log(err);
             });
     }, []);
+
     const handleSubmitBill = async (billingId: string) => {
         try {
             await readBill(billingId);
@@ -28,17 +28,17 @@ export function BillSection() {
             console.error("Error submitting the bill:", err);
         }
     };
-    
+
     return (
-        <div className="max-w-5xl mx-auto px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <HoverEffect items={datas} onOpenDetails={setSelectedDetails} onSubmitBill={handleSubmitBill} />
             {selectedDetails && (
-                <div className="p-4 border border-gray-200 rounded-lg bg-white shadow-lg">
+                <div className="p-4 border border-gray-200 rounded-lg bg-white shadow-lg max-w-lg mx-auto mt-6">
                     <h2 className="text-xl font-bold mb-4">Billing Details</h2>
-                    <pre>{JSON.stringify(selectedDetails, null, 2)}</pre>
+                    <pre className="whitespace-pre-wrap">{JSON.stringify(selectedDetails, null, 2)}</pre>
                     <button
                         onClick={() => setSelectedDetails(null)}
-                        className="mt-4 px-4 py-2 bg-gray-500 text-white rounded"
+                        className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
                     >
                         Close
                     </button>
@@ -47,11 +47,12 @@ export function BillSection() {
         </div>
     );
 }
+import { AnimatePresence, motion } from "framer-motion";
 
 export const HoverEffect = ({
     items,
     className,
-        onSubmitBill,
+    onSubmitBill,
 }: {
     items: {
         title: string;
@@ -62,10 +63,10 @@ export const HoverEffect = ({
     onOpenDetails: (content: any) => void;
     onSubmitBill: (billingId: string) => void;
 }) => {
-    let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
     return (
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 py-10 ${className}`}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 ${className}`}>
             {items.map((item, idx) => (
                 <div
                     key={idx}
@@ -86,10 +87,9 @@ export const HoverEffect = ({
                     </AnimatePresence>
                     <Card>
                         <div className="mb-2">
-
-                        <CardTitle>{item.title}</CardTitle>
+                            <CardTitle>{item.title}</CardTitle>
                         </div>
-                        <div className="h-36  overflow-y-auto scrollNoDiv scrollbar-hidden ">
+                        <div className="h-36 overflow-y-auto scrollbar-hidden">
                             <ul className="mt-4 space-y-2">
                                 {item.fullDetails.map((detail: any, index: number) => (
                                     <li
@@ -103,9 +103,9 @@ export const HoverEffect = ({
                             </ul>
                         </div>
 
-                        <div className="flex mt-5 space-x-4 h-full">
+                        <div className="flex mt-5 space-x-4">
                             <button
-                                className="bg-blue-500 bottom-7 text-white px-2 py-2 rounded"
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                                 onClick={() => onSubmitBill(item.billingId)}
                             >
                                 Submit Bill
@@ -117,7 +117,6 @@ export const HoverEffect = ({
         </div>
     );
 };
-
 export const Card = ({
     className,
     children,
@@ -127,7 +126,7 @@ export const Card = ({
 }) => {
     return (
         <div
-            className={`rounded-2xl h-full w-full p-4 overflow-hidden bg-[#292F45]  border border-transparent  group-hover:border-slate-700 relative z-20 ${className}`}
+            className={`rounded-2xl h-full w-full p-4 overflow-hidden bg-[#292F45] border border-transparent group-hover:border-slate-700 relative z-20 ${className}`}
         >
             <div className="relative z-50">
                 <div className="p-4">{children}</div>

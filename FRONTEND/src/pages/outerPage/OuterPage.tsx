@@ -8,6 +8,8 @@ import Footer from '../../compounents/user/Footer';
 import VendorsCard from '../../compounents/user/VendorsCard';
 import { useLogout } from '../../API/services/user/userAuthService';
 import { vendorLogout } from '../../API/services/vendor/vendorAuthService';
+import Helper from '../../compounents/user/Helper';
+import { Toaster } from 'react-hot-toast';
 
 interface Category {
   id: number;
@@ -37,18 +39,67 @@ interface Vendor {
   licence: Licence[];
 }
 
+
+interface ILicence {
+  accountNumber: string;
+  applicantName: string;
+  businessName: string;
+  certificateExpirationDate: string;
+  description: string;
+  emailAddress: string;
+  licence: string[];
+  location: string;
+  phoneNumber: string;
+  profilePicture: string;
+  requestedDate: string;
+  services: string;
+  upiIdOrPhoneNumber: string;
+  vendorId: string;
+  verified: boolean;
+  _id: string;
+}
+
+interface IVendor {
+  availableDate: string[];
+  blocked: boolean;
+  chats: any[];
+  coverPicture: string;
+  email: string;
+  licence: ILicence[];
+  likes: string[];
+  otp: string;
+  password: string;
+  phoneNum: string;
+  posts: any[];
+  profilePicture: string;
+  ratingAndReview: any[];
+  refreshToken: string;
+  registered: string;
+  updatedAt: string;
+  vendor: boolean;
+  vendorName: string;
+  verified: boolean;
+  wallet: number;
+  _id: string;
+}
+interface Licence {
+  description: string;
+  location: string;
+}
+
 const OuterPage: React.FC = () => {
   const navigate = useNavigate();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
-
+  const [filteredVendors, setFilteredVendors] = useState<IVendor[]>([]);
+  const [searchName, setSearchName] = useState('');
+  const [searchLocation, setSearchLocation] = useState('');
   const handleLogout = useLogout();
   const handleVendorLogout = vendorLogout()
-  
+
   useEffect(() => {
     handleLogout();
-    handleVendorLogout()   
+    handleVendorLogout()
     const fetch = async () => {
       const datas = await fetchOuterServices();
       setCategories(datas.services);
@@ -57,9 +108,23 @@ const OuterPage: React.FC = () => {
     fetch();
   }, []);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+
+
+  useEffect(() => {
+    const filterVendors = () => {
+      const filtered: any = vendors.filter((vendor) => {
+
+        const matchesName = vendor.vendorName.toLowerCase().includes(searchName.toLowerCase());
+        const matchesLocation = vendor.licence.some(
+          (licence) => licence.location.toLowerCase().includes(searchLocation.toLowerCase())
+        );
+        return matchesName && matchesLocation;
+      });
+      setFilteredVendors(filtered);
+    };
+    filterVendors();
+  }, [vendors, searchName, searchLocation]);
+
 
   const settings = {
     dots: false,
@@ -104,26 +169,31 @@ const OuterPage: React.FC = () => {
 
   return (
     <div className="relative scrollNoDiv overflow-y-auto shadow-md  scrollbar-hidden bg-black ">
+      <Toaster position='top-center' />
       <header className="bg-transparent absolute top-0 left-0 w-full z-10">
         <div className="container mx-auto py-4 px-6 flex justify-between items-center">
-          <img src="/logo-no-background.png" className="h-8 sm:h-8" alt="Event Planner Logo" />
-          <nav className="hidden md:flex space-x-4">
+          <img
+            src="/logo-no-background.png"
+            className="h-8 sm:h-8 cursor-pointer"
+            alt="Event Planner Logo"
+            onClick={() => navigate("/about")}
+          />
 
-            <a onClick={() => navigate("/vendor/login")} className="text-gray-300 hover:text-white cursor-pointer">Become a Vendor?</a>
-            <a onClick={() => navigate("/login")} className="text-gray-300 hover:text-white cursor-pointer">Login</a>
+          <nav className="flex space-x-4">
+            <a
+              onClick={() => navigate("/vendor/login")}
+              className="text-gray-300 hover:text-white cursor-pointer"
+            >
+              Become a Vendor?
+            </a>
+            <a
+              onClick={() => navigate("/login")}
+              className="text-gray-300 hover:text-white cursor-pointer"
+            >
+              Login
+            </a>
           </nav>
-          <button className="md:hidden text-gray-600" onClick={toggleMobileMenu}>
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-            </svg>
-          </button>
         </div>
-        {isMobileMenuOpen && (
-          <nav className="md:hidden bg-black px-6 py-4">
-            <a onClick={() => navigate("/vendor/login")} className="block text-gray-600 hover:text-white mb-2 cursor-pointer">Become a Vendor?</a>
-            <a onClick={() => navigate("/login")} className="block text-gray-600 hover:text-white cursor-pointer">Login</a>
-          </nav>
-        )}
       </header>
 
       <div className='w-full'>
@@ -132,9 +202,26 @@ const OuterPage: React.FC = () => {
           <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-end items-center text-white pb-8 sm:pb-12 px-4">
             <h2 className="text-2xl sm:text-4xl font-bold mb-2 sm:mb-4 text-center">India's Largest <span className="text-red-500">Event Services</span> Marketplace</h2>
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mb-4 sm:mb-8 w-full max-w-xl">
-              <input type="text" placeholder="Search for vendors" className="px-4 py-2 rounded-md bg-gray-300 text-black placeholder-gray-700 w-full sm:flex-1" />
-              <input type="text" placeholder="Search for location" className="px-4 py-2 rounded-md bg-gray-300 text-black placeholder-gray-700 w-full sm:flex-1" />
-              <button className="bg-red-500 text-white px-6 py-2 rounded-md w-full sm:w-auto">Find Vendors</button>
+              <input
+                type="text"
+                placeholder="Search for vendors"
+                className="px-4 py-2 rounded-md bg-gray-300 text-black placeholder-gray-700 w-full sm:flex-1"
+                value={searchName}
+                onChange={(e) => setSearchName(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Search for location"
+                className="px-4 py-2 rounded-md bg-gray-300 text-black placeholder-gray-700 w-full sm:flex-1"
+                value={searchLocation}
+                onChange={(e) => setSearchLocation(e.target.value)}
+              />
+              <button
+                className="transition duration-150 ease-out hover:ease-out bg-red-500 text-white px-6 py-2 rounded-md w-full sm:w-auto"
+                onClick={() => { }}
+              >
+                Find Vendors
+              </button>
             </div>
           </div>
         </section>
@@ -143,7 +230,7 @@ const OuterPage: React.FC = () => {
 
 
 
-        <VendorsCard vendors={vendors} />
+        <VendorsCard vendors={filteredVendors} />
 
 
 
@@ -190,30 +277,10 @@ const OuterPage: React.FC = () => {
         )}
         <section className='relative'>
 
-
-          <div className="mt-10  p-8">
-            <h2 className="text-2xl mb-2">Help us with your details</h2>
-            <p className="mb-6">Our executives will call you to understand your requirements to find suitable vendors</p>
-            <div className="flex space-x-4">
-              <input
-                type="text"
-                placeholder="Enter Your Name"
-                className="px-2 py-1 border-b-2 border-gray-300 bg-transparent text-black placeholder-gray-500 w-full"
-              />
-              <input
-                type="text"
-                placeholder="Enter Mobile Number"
-                className="px-2 py-1 border-b-2 border-gray-300 bg-transparent text-black placeholder-gray-500 w-full"
-              />
-
-              <button className="bg-blue-600 text-white px-6 py-2 rounded-md">Submit</button>
-            </div>
-          </div>
+          <Helper _id={null} />
 
         </section>
 
-
-        {/* </section> */}
 
 
         <div className="  text-center p-8">

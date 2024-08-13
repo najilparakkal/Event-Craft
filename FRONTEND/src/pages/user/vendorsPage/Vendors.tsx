@@ -7,39 +7,18 @@ import VendorsCard from '../../../compounents/user/VendorsCard';
 import Footer from '../../../compounents/user/Footer';
 import Notification from '../../../compounents/user/Notification';
 
-interface Post {
-  images: string;
-  title?: string;
-}
-
-interface Licence {
-  description: string;
-}
-
-interface Vendor {
-  _id: string;
-  vendorName: string;
-  profilePicture: string;
-  coverPicture: string;
-  email: string;
-  phoneNum?: string;
-  posts: Post[];      
-  registered: string;
-  verified?: boolean;
-  licence?: Licence[];
-}
 
 
 const Vendors: React.FC = () => {
   const { service } = useParams<{ service: string }>();
-  const [vendorsList, setVendorsList] = useState<Vendor[]>([]);
+  const [vendorsList, setVendorsList] = useState([]);
   const [page, setPage] = useState(1);
   const vendorsPerPage = 9;
 
   useEffect(() => {
     const vendors = async () => {
       if (service) {
-        const list: Vendor[] = await fetchVendors(service);
+        const list: any = await fetchVendors(service);
         setVendorsList(list);
       }
     };

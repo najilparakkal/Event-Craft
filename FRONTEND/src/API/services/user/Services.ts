@@ -376,3 +376,37 @@ export const paidBills = async (userId: string) => {
     console.log(error);
   }
 };
+
+export const submitHelp = async (
+  userId: string,
+  reason: string,
+  phoneNumber: string
+) => {
+  try {
+    const data = { reason, phoneNumber };
+    const response = await authAxiosInstance.post(
+      `user/healpUser/${userId}`,
+      data
+    );
+    return response.status === 200;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchCouts = async()=>{
+try {
+  const response = await authAxiosInstance.get('user/counts')
+  return response.status === 200 ?response.data:false
+} catch (error) {
+  console.log(error)
+}  
+}
+export const fetchAllVendors = async()=>{
+  try{
+    const response = await authAxiosInstance.get('user/allVendors')
+    return response.data
+  }catch(err){
+    console.log(err)
+  }
+}

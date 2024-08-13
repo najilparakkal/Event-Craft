@@ -9,6 +9,7 @@ const Controller_1 = __importDefault(require("../../adaptors/userController/Cont
 const UserMiddleware_1 = __importDefault(require("../middlewares/UserMiddleware"));
 const userRouter = express_1.default.Router();
 userRouter.get("/api/user/OterServices", Controller_1.default.listAll);
+userRouter.get("/api/user/counts", Controller_1.default.counts);
 userRouter.post("/api/user/signup", authController_1.default.userRegistration);
 userRouter.post("/api/user/otp", authController_1.default.otpVerification);
 userRouter.post("/api/user/Fotp", authController_1.default.forgotOtpVerification);
@@ -25,7 +26,6 @@ userRouter.get("/api/user/vendorProfile/:vendorId", UserMiddleware_1.default, Co
 userRouter.post("/api/user/addRequest", UserMiddleware_1.default, Controller_1.default.addRequest);
 userRouter.get("/api/user/request/:userId", UserMiddleware_1.default, Controller_1.default.listRequest);
 userRouter.post("/api/user/cancelRequest", UserMiddleware_1.default, Controller_1.default.cancelRequest);
-// userRouter.get("/api/user/fetchVendors/:userId",userAuth, Controller.fetchVendors);
 userRouter.get("/api/user/chatId/:userId/:vendorId", UserMiddleware_1.default, Controller_1.default.getChatId);
 userRouter.post("/api/user/addBooking", UserMiddleware_1.default, Controller_1.default.addBooking);
 userRouter.get("/api/user/bookings/:userId", UserMiddleware_1.default, Controller_1.default.getBooking);
@@ -53,4 +53,6 @@ userRouter.get("/api/user/roomIds/:userId", UserMiddleware_1.default, Controller
 userRouter.get('/api/user/userBills/:userId', UserMiddleware_1.default, Controller_1.default.userBills);
 userRouter.post('/api/user/billPay/:billingId', UserMiddleware_1.default, Controller_1.default.billPay);
 userRouter.get('/api/user/paidBills/:userId', UserMiddleware_1.default, Controller_1.default.paidBills);
+userRouter.post('/api/user/healpUser/:userId', UserMiddleware_1.default, Controller_1.default.helpUser);
+userRouter.get('/api/user/allVendors', UserMiddleware_1.default, Controller_1.default.allVendors);
 exports.default = userRouter;

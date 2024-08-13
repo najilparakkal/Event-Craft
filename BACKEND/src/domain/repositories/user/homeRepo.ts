@@ -23,10 +23,11 @@ import { Socket } from "socket.io-client";
 import mongoose from "mongoose";
 import { Report } from "../../../framworks/database/models/Reports";
 import BillModel from "../../../framworks/database/models/billing";
+import { HelpUsers } from "../../../framworks/database/models/helpUser";
 
 export const listVendors = async (data: string) => {
   try {
-    const vendors = await Vendors.find({ vendor: true })
+    const vendors = await Vendors.find({ vendor: true, blocked: false })
       .populate<{
         licence: ILicence[];
       }>("licence")
@@ -59,15 +60,24 @@ export const listVendors = async (data: string) => {
 export const listAll = async () => {
   try {
     const services = await Services.find();
-    const vendors = await Vendors.find()
+    const vendors = await Vendors.find({ blocked: false, vendor: true })
       .populate("posts")
       .populate("licence")
       .exec();
-    return { services, vendors };
+
+    const vendorData = vendors.map((vendor: any) => {
+      return {
+        ...vendor._doc,
+        ratingAndReviewCount: vendor.ratingAndReview.length,
+        likesCount: vendor.likes.length,
+      };
+    });
+    return { services, vendors: vendorData };
   } catch (error) {
     console.log(error);
   }
 };
+
 export const listServices = async () => {
   try {
     const services = await Services.find();
@@ -75,7 +85,14 @@ export const listServices = async () => {
       .populate("posts")
       .populate("licence")
       .exec();
-    return { services, vendors };
+    const vendorData = vendors.map((vendor: any) => {
+      return {
+        ...vendor._doc,
+        ratingAndReviewCount: vendor.ratingAndReview.length,
+        likesCount: vendor.likes.length,
+      };
+    });
+    return { services, vendors: vendorData };
   } catch (error) {
     console.log(error);
   }
@@ -437,6 +454,7 @@ export const getPosts = async (userId: string) => {
           likes: 1,
           "vendorInfo.vendorName": 1,
           "vendorInfo.profilePicture": 1,
+          "vendorInfo._id": 1,
         },
       },
     ]);
@@ -789,6 +807,62 @@ export const paidBill = async (userId: string) => {
       vendors,
     };
     return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const helpUser = async (
+  userId: string,
+  reason: string,
+  phoneNumber: string
+) => {
+  try {
+    const user = await Users.findById(userId);
+    if (!user) {
+      return { success: false };
+    } else {
+      const newModal = await HelpUsers.create({
+        userId,
+        reason,
+        phoneNumber,
+      });
+      if (newModal) {
+        return { success: true };
+      } else {
+        return { success: false };
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const counts = async () => {
+  try {
+    const user = await Users.find();
+    const vendor = await Vendors.find();
+    const events = await Bookings.find({ status: "Completed" });
+    return {
+      userCount: user.length,
+      vendorCount: vendor.length,
+      eventsCount: events.length,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const allVendors = async () => {
+  try {
+    const vendors = await Vendors.find({ vendor: true, blocked: false })
+      .populate("posts")
+      .populate({
+        path: "licence",
+        select: "services", 
+      })
+      .exec();
+    console.log(vendors);
+    return vendors;
   } catch (error) {
     console.log(error);
   }

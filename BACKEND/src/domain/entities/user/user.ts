@@ -104,3 +104,55 @@ export interface IAddBooking {
   userId: string;
   amount: number;
 }
+
+
+import { ObjectId } from 'mongodb';
+
+interface IListLicenses {
+  _id: ObjectId;
+  applicantName: string;
+  businessName: string;
+  emailAddress: string;
+  phoneNumber: string;
+  location: string;
+  upiIdOrPhoneNumber: string;
+  services: string;
+  accountNumber: string;
+  description: string;
+  certificateExpirationDate: string;
+  profilePicture: string;
+  licence: any[];
+  verified: boolean;
+  vendorId: string;
+  requestedDate: Date;
+  __v: number;
+}
+
+export interface IListVenodrs {
+  wallet: number;
+  likes: string[]; 
+  _id: ObjectId;
+  vendorName: string;
+  email: string;
+  password: string;
+  phoneNum: string;
+  verified: boolean;
+  blocked: boolean;
+  vendor: boolean;
+  otp: string;
+  profilePicture: string;
+  licence: IListLicenses[];
+  posts: any[];
+  chats: any[];
+  availableDate: Date[];
+  coverPicture: string;
+  registered: Date;
+  __v: number;
+  refreshToken: string;
+  ratingAndReview: any[]; 
+}
+
+export interface IUserData{
+  reason: string;
+  phoneNumber: string;
+}
