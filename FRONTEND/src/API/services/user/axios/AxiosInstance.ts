@@ -31,7 +31,7 @@ authAxiosInstance.interceptors.response.use(
   },
   (error) => {
     if(error.response ){
-      // Cookies.remove('jwt')
+      Cookies.remove('jwt')
       console.log("Un Authorization Error ❌❌");
       // window.location.href = "/";
     }

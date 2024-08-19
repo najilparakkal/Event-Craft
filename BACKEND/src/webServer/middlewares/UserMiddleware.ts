@@ -10,6 +10,7 @@ const userAuth: RequestHandler = async (req, res, next) => {
   try {
     console.log(req.cookies.jwt,req.headers,"🧠🧠🧠🧠🧠🧠🧠🧠🧠🧠🧠🧠🧠🧠🧠")
     const token = req.headers.authorization?.split(" ")[1] as string;
+    console.log(token)
     
     if (!token) {
       return res.status(401).json({ error: "Token not provided" });

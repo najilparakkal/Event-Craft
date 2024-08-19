@@ -31,7 +31,10 @@ export const refund = async (paymentId:string) => {
 
 export const adminAuth: RequestHandler = async (req, res, next) => {
   try {
-    const token = req.cookies.adminToken;
+
+    console.log(req.cookies,req.headers)
+    const token = req.headers.authorization?.split(" ")[1] as string;
+    console.log(token,"❌❌")
     VerifyToken(token)
       .then((data) => {
         const currentTime = Math.floor(Date.now() / 1000);

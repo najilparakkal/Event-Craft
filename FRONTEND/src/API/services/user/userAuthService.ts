@@ -1,14 +1,15 @@
-import   {   AxiosResponse } from "axios";
-import { useDispatch } from 'react-redux';
+import { AxiosResponse } from "axios";
+import { useDispatch } from "react-redux";
 import { logout } from "./authSlice";
 import { authAxiosInstance } from "../vendor/axios/AxiosInstance";
+import Cookies from "js-cookie";
 
 interface userData {
   name?: string;
   email?: string;
   phoneNum?: string;
   password?: string;
-  uid?:string
+  uid?: string;
 }
 
 interface authResponse {
@@ -28,14 +29,15 @@ interface authResponse {
   status: number;
 }
 
-
-
 export const userRegister = async (
   endpoint: string,
   userData: userData
 ): Promise<authResponse> => {
   try {
-    const response: AxiosResponse<authResponse> = await authAxiosInstance.post(endpoint, userData);
+    const response: AxiosResponse<authResponse> = await authAxiosInstance.post(
+      endpoint,
+      userData
+    );
 
     if (response.status === 200) {
       return response.data;
@@ -46,10 +48,9 @@ export const userRegister = async (
     }
   } catch (error: any) {
     console.error("userRegister error:", error.response?.data || error.message);
-    throw error; 
+    throw error;
   }
 };
-
 
 export const verifyOtp = async (otp: string): Promise<boolean> => {
   const user: string | null = localStorage.getItem("userDetails");
@@ -72,13 +73,12 @@ export const verifyOtp = async (otp: string): Promise<boolean> => {
       return false;
     }
   }
-  return false; 
+  return false;
 };
-
 
 export const resendOtp = async (userEmail: any) => {
   try {
-    const email = userEmail
+    const email = userEmail;
     await authAxiosInstance.post("/user/resendOtp", { email });
   } catch (error) {
     console.error("Error resending OTP:", error);
@@ -96,11 +96,10 @@ export const login = async (
       userData
     );
     if (response.status === 200) {
-      
       return response.data.response;
-    }else if(response.status === 203){
-      throw new Error(" User Is Blocked")
-    } else  {
+    } else if (response.status === 203) {
+      throw new Error(" User Is Blocked");
+    } else {
       throw new Error("User Not Found");
     }
   } catch (error) {
@@ -108,16 +107,13 @@ export const login = async (
   }
 };
 
-
-
-
 export const validEmail = async (email: string) => {
   try {
     const response = await authAxiosInstance.post("/user/validEmail", {
       email,
     });
     if (response.status === 200) {
-      localStorage.setItem("email",email)
+      localStorage.setItem("email", email);
       return true;
     } else if (response.status === 201) {
       return false;
@@ -126,7 +122,7 @@ export const validEmail = async (email: string) => {
     console.log(error);
   }
 };
-export const forgotOtp = async (otp:string) => {
+export const forgotOtp = async (otp: string) => {
   const user = localStorage.getItem("email");
   const data = user !== null ? JSON.parse(user) : null;
   const userEmail = data.email;
@@ -146,10 +142,6 @@ export const forgotOtp = async (otp:string) => {
   }
 };
 
-
-
-
-
 export const forgotVerifyOtp = async (otp: string): Promise<boolean> => {
   const email = localStorage.getItem("email");
   if (!email) {
@@ -168,10 +160,9 @@ export const forgotVerifyOtp = async (otp: string): Promise<boolean> => {
   }
 };
 
-
-export const changePassword = async(password:string)=>{
+export const changePassword = async (password: string) => {
   const email = localStorage.getItem("email");
-  try {    
+  try {
     const response = await authAxiosInstance.post("/user/changePassword", {
       password,
       email,
@@ -181,15 +172,14 @@ export const changePassword = async(password:string)=>{
     console.error("Error verifying OTP:", error);
     return false;
   }
-}
-
+};
 
 export const useLogout = () => {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    localStorage.removeItem('userDetails');
-    // Cookies.remove('jwt');
+    localStorage.removeItem("userDetails");
+    Cookies.remove("jwt");
     dispatch(logout());
   };
 
