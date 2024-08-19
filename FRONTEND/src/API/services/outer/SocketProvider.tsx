@@ -7,7 +7,7 @@ function SocketProvider({ children }: any) {
     const [socket, setSocket] = useState<any>(null)
     useEffect(() => {
         if (!socket) {
-            const newSocket = io('http://localhost:3000')
+            const newSocket = io(import.meta.env.VITE_APP_SOCKET)
             setSocket(newSocket);
         }
         return () => {
