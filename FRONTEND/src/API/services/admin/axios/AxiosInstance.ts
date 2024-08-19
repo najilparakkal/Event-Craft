@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import Cookies from "js-cookie";
 
 export const authAxiosInstance: AxiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL:import.meta.env.VITE_APP_BASE_URL,
   headers: {
     "Content-Type": "application/json",
     Authorization: "Bearer" + Cookies.get('adminToken')

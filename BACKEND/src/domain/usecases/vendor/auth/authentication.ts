@@ -1,5 +1,4 @@
 import {
-  IVendors,
   ILogin,
   IcheckFOtp,
   IforgotPasswod,
@@ -22,7 +21,7 @@ import {
 } from "../../../repositories/vendor/authRepositories";
 
 export default {
-  signup: async (data: IVendors) => {
+  signup: async (data:any) => {
     const hashedPassword: string = await Encrypt.cryptPassword(
       data.password + ""
     );
