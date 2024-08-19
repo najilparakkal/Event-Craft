@@ -9,11 +9,14 @@ interface IPost {
     title: string;
     images: string[];
     description: string;
-    likesCount: number;
-    commentsCount: number;
+    likesCount?: number;
+    commentsCount?: number;
     category?: string;  
     createdAt?: string; 
     likes?: string[];  
+    vendorId?:string;
+    is_blocked?: boolean;
+   
 }
 
 interface PostProps {

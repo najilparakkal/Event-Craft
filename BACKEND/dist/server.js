@@ -17,11 +17,10 @@ const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 const io = new socket_io_1.Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: process.env.ORIGIN,
         methods: ["GET", "POST"],
-    }
+    },
 });
-const port = 3000;
 app.use(express_1.default.json());
 app.use((0, morgan_1.default)("dev"));
 app.use((0, cookie_parser_1.default)());
@@ -30,6 +29,6 @@ app.use(userRoutes_1.default);
 app.use(vendorRoutes_1.default);
 app.use(adminRoutes_1.default);
 (0, socket_1.default)(io);
-server.listen(port, () => {
-    console.log(`Backend app listening at http://localhost:${port}`);
+server.listen(process.env.PORT, () => {
+    console.log(`Backend app listening at http://localhost:${process.env.PORT}`);
 });
