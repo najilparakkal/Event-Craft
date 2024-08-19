@@ -5,7 +5,7 @@ export const authAxiosInstance: AxiosInstance = axios.create({
   baseURL:import.meta.env.VITE_APP_BASE_URL,
   headers: {
     "Content-Type": "application/json",
-    Authorization: "Bearer" + Cookies.get('adminToken')
+    Authorization: "Bearer " + Cookies.get('adminToken')
   },
   withCredentials: true,
 });
