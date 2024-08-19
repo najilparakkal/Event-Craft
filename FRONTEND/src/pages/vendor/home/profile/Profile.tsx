@@ -25,7 +25,7 @@ interface Licence {
 }
 
 
-interface Post {
+export interface Post {
     _id: string;
     title: string;
     images: string[];
@@ -235,7 +235,7 @@ const Profile: React.FC = () => {
             <section className="p-10 w-full">
                 <h2 className="text-2xl font-bold mb-4">Posts</h2>
                 <div className="grid gap-8 lg:grid-cols-3 md:grid-cols-2">
-                    {details.posts?.map((post:any) => (
+                    {details.posts?.map((post) => (
                         <PostComponent key={post._id} post={post} />
                     ))}
                 </div>

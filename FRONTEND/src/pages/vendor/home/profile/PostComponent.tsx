@@ -3,24 +3,24 @@ import { IoTrash, IoHeart, IoChatbubbleEllipses } from "react-icons/io5";
 import PostModal from '../../../../compounents/vendor/PostModal';
 import toast from 'react-hot-toast';
 import { deletePost } from '../../../../API/services/vendor/services';
+import { Post } from './Profile';
 
-interface IPost {
-    _id: string;
-    title: string;
-    images: string[];
-    description: string;
-    likesCount?: number;
-    commentsCount?: number;
-    category?: string;  
-    createdAt?: string; 
-    likes?: string[];  
-    vendorId?:string;
-    is_blocked?: boolean;
-   
-}
+// interface IPost {
+//     _id: string;
+//     title: string;
+//     images: string[];
+//     description: string;
+//     likesCount?: number;
+//     commentsCount?: number;
+//     category?: string;  
+//     createdAt?: string; 
+//     likes?: string[];  
+//     vendorId?:string;
+//     is_blocked?: boolean;
+//    }
 
 interface PostProps {
-    post: IPost;
+    post: Post;
 }
 
 const PostComponent: React.FC<PostProps> = ({ post }) => {
