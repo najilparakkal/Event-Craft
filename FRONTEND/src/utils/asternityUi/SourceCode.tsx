@@ -1,4 +1,3 @@
-"use client";
 import { cn } from "./util";
 import { AnimatePresence, motion } from "framer-motion";
 import React, {
