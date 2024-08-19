@@ -84,11 +84,11 @@ const Post: React.FC = () => {
                 onSubmit={handleSubmit}
             >
                 {({ isSubmitting, setFieldValue }) => (
-                    <div className='flex flex-col md:flex-row flex-1 md:h-[450px] m-1 bg-[#FEDC54] rounded-md overflow-hidden'>
+                    <div className='flex flex-col md:flex-row flex-1 md:h-[450px] m-1  rounded-md overflow-hidden'>
                         <div className='md:w-1/2 h-full  m-1'>
                             <Form className="m-14 mt-14">
                                 <div className="grid gap-6 mb-6 w-full">
-                                    <div className="mb-6">
+                                    <div className="mb-6 ">
                                         <label htmlFor="title" className="block mb-2 text-sm font-medium text-gray-900 ">
                                             Title
                                         </label>
@@ -96,7 +96,7 @@ const Post: React.FC = () => {
                                             type="text"
                                             id="title"
                                             name="title"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5   dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            className="bg-gray-50  shadow-lg border-gray-300 text-gray-900  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5   dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                             placeholder="Title"
                                         />
                                         <ErrorMessage name="title" component="div" className="text-red-500 text-xs mt-1" />
@@ -116,7 +116,7 @@ const Post: React.FC = () => {
                                             type="text"
                                             id="category"
                                             name="category"
-                                            className="bg-gray-50  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            className="bg-gray-50 shadow-lg  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                             placeholder="Search Services..."
                                             value={searchTerm}
                                             autoComplete="off"
@@ -158,7 +158,7 @@ const Post: React.FC = () => {
                                         id="description"
                                         name="description"
                                         rows={4}
-                                        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border  focus:ring-blue-500 focus:border-blue-500   dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg shadow-lg  focus:ring-blue-500 focus:border-blue-500   dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                         placeholder="Write your thoughts here..."
                                     />
                                     <ErrorMessage name="description" component="div" className="text-red-500 text-xs mt-1" />
@@ -167,7 +167,7 @@ const Post: React.FC = () => {
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="bg-blue-600 ml-7 text-white px-10 py-2 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                                        className="border-blue-600 ml-7 font-semibold text-blue-600 px-10 py-2 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                                     >
                                         POST
                                     </button>
@@ -175,10 +175,9 @@ const Post: React.FC = () => {
                             </Form>
                         </div>
 
-                        {/* Right Section */}
                         <div className='md:w-1/2 md:h-full m-1 hidden md:block'>
                             <div className="h-full m-20">
-                                <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-[285px] border-2 border-white border-dashed rounded-lg cursor-pointer bg-gray-50 bg-transparent hover:bg-gray-100  dark:hover:border-gray-500 dark:hover:bg-[#0092AB]">
+                                <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-[285px] border-2  border-dashed rounded-lg cursor-pointer bg-gray-100  hover:bg-gray-100 shadow-lg  border-gray-100 ">
                                     {selectedImage ? (
                                         <img src={selectedImage as string} alt="Selected" className="h-full  w-full object-cover rounded-lg" />
                                     ) : (

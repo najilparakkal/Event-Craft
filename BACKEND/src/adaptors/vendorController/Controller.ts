@@ -135,95 +135,143 @@ export default {
       console.log(error);
     }
   },
-  getProfile:async(req:Request, res:Response)=>{
+  getProfile: async (req: Request, res: Response) => {
     try {
-      const response = await requesIterator.getProfile(req.params.vendorId)
+      const response = await requesIterator.getProfile(req.params.vendorId);
       res.status(200).json(response);
     } catch (error) {
       console.log(error);
-      
     }
   },
-  updateProfile:async(req: Request, res: Response)=>{
+  updateProfile: async (req: Request, res: Response) => {
     try {
       const { files, fields } = await multipartFormSubmission(req);
-      
-      const response = await requesIterator.updateProfile(req.params.vendorId,fields,files);
-      res.status(200).json(response)
-    } catch (error) {
-      console.log(error);
-      
-    }
-  },
-  getDates:async(req:Request, res:Response)=>{
-    try {
-      const response = await requesIterator.getDates(req.params.vendorId)
+
+      const response = await requesIterator.updateProfile(
+        req.params.vendorId,
+        fields,
+        files
+      );
       res.status(200).json(response);
     } catch (error) {
       console.log(error);
-      
     }
   },
-  updateDates:async(req: Request, res: Response)=>{
+  getDates: async (req: Request, res: Response) => {
     try {
-      const response = await requesIterator.updateDates(req.params.vendorId,req.body.dates);
-      res.status(200).json(response)
+      const response = await requesIterator.getDates(req.params.vendorId);
+      res.status(200).json(response);
     } catch (error) {
       console.log(error);
-      
     }
   },
-  updateBooking:async(req:Request, res:Response)=>{
+  updateDates: async (req: Request, res: Response) => {
     try {
-       await requesIterator.updateBooking(req.params.bookingId,req.body.status)
-      res.status(200)
+      const response = await requesIterator.updateDates(
+        req.params.vendorId,
+        req.body.dates
+      );
+      res.status(200).json(response);
     } catch (error) {
       console.log(error);
-      
-    } 
-  },
-  billing:async(req:Request, res:Response)=>{
-    try {
-      const {datas,bookingId,totalAmount} = req.body
-        const response = await requesIterator.billing(datas,bookingId,totalAmount)      
-        if(response?.success){
-          res.status(201).json({status:200,message:"Billed successfully"})
-        }else{
-          res.status(203).json({staus:203,message:"Failed to process"})
-        }
-    } catch (error) {
-      console.log(error);
-       
     }
   },
-  notification:async(req:Request,res:Response)=>{
+  updateBooking: async (req: Request, res: Response) => {
     try {
-      const response = await requesIterator.notification(req.params.userId)
-      res.status(200).json(response)
+      await requesIterator.updateBooking(req.params.bookingId, req.body.status);
+      res.status(200);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  billing: async (req: Request, res: Response) => {
+    try {
+      const { datas, bookingId, totalAmount } = req.body;
+      const response = await requesIterator.billing(
+        datas,
+        bookingId,
+        totalAmount
+      );
+      if (response?.success) {
+        res.status(201).json({ status: 200, message: "Billed successfully" });
+      } else {
+        res.status(203).json({ staus: 203, message: "Failed to process" });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  notification: async (req: Request, res: Response) => {
+    try {
+      const response = await requesIterator.notification(req.params.userId);
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  room: async (req: Request, res: Response) => {
+    try {
+      const response = await requesIterator.room(req.params.vendorId);
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  review: async (req: Request, res: Response) => {
+    try {
+      const response = await requesIterator.review(req.params.vendorId);
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  wallet: async (req: Request, res: Response) => {
+    try {
+      const response = await requesIterator.wallet(req.params.vendorId);
+      res.status(200).json(response?.wallet);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  enquerys: async (req: Request, res: Response) => {
+    try {
+      const response = await requesIterator.enquerys(req.params.vendorId);
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  readEnquery: async (req: Request, res: Response) => {
+    try {
+      const response = await requesIterator.readEnquery(
+        req.params.enqueryId,
+        req.params.vendorId
+      );
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  count: async (req: Request, res: Response) => {
+    try {
+      const response = await requesIterator.counts();
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  postData:async(req:Request,res:Response)=>{
+    try {
+      const response = await requesIterator.postData(req.params.postId)
+      res.status(200).json(response);
     } catch (error) {
       console.log(error)
     }
   },
-  room:async(req:Request,res:Response)=>{
+  deletePost:async(req:Request, res:Response)=>{
     try {
-      const response = await requesIterator.room(req.params.vendorId)
-      res.status(200).json(response)
-    } catch (error) {
-      console.log(error)
-    }
-  },
-  review:async(req:Request,res:Response)=>{
-    try {
-      const response = await requesIterator.review(req.params.vendorId)
-      res.status(200).json(response)
-    } catch (error) {
-      console.log(error)
-    }
-  },
-  wallet:async(req:Request,res:Response)=>{
-    try {
-      const response = await requesIterator.wallet(req.params.vendorId)
-      res.status(200).json(response?.wallet)
+      const response = await requesIterator.deletePost(req.params.postId)
+      res.status(200).json(response);
     } catch (error) {
       console.log(error)
     }

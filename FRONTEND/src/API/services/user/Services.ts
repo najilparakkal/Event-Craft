@@ -394,19 +394,19 @@ export const submitHelp = async (
   }
 };
 
-export const fetchCouts = async()=>{
-try {
-  const response = await authAxiosInstance.get('user/counts')
-  return response.status === 200 ?response.data:false
-} catch (error) {
-  console.log(error)
-}  
-}
-export const fetchAllVendors = async()=>{
-  try{
-    const response = await authAxiosInstance.get('user/allVendors')
-    return response.data
-  }catch(err){
-    console.log(err)
+export const fetchCouts = async () => {
+  try {
+    const response = await authAxiosInstance.get("user/counts");
+    return response.status === 200 ? response.data : false;
+  } catch (error) {
+    console.log(error);
   }
-}
+};
+export const fetchAllVendors = async () => {
+  try {
+    const response = await authAxiosInstance.get("user/allVendors");
+    return response.data;
+  } catch (err) {
+    console.log(err);
+  }
+};

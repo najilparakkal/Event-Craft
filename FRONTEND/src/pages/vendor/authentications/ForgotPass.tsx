@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import OtpInput from 'react-otp-input';
 import { validEmail, forgotVerifyOtp, resendOtp, changePassword } from '../../../API/services/vendor/vendorAuthService';
 import { toast, Toaster } from 'react-hot-toast';
@@ -6,11 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import { emailForgot, passwordForgot } from '../../../utils/validations/validateSchema';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import React from 'react';
-
+import FOG from 'vanta/dist/vanta.fog.min';
+import * as THREE from 'three';
 const ForgotPass: React.FC = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState("")
     const [otp, setOtp] = useState('');
+    const vantaRef = useRef<HTMLDivElement>(null);
+    const vantaEffect = useRef<any>(null);
     const [timer, setTimer] = useState<number>(() => {
         const savedTimer = localStorage.getItem('timer');
         return savedTimer ? parseInt(savedTimer, 10) : 60;
@@ -145,12 +148,37 @@ const ForgotPass: React.FC = () => {
         setStep(1);
         localStorage.setItem('step', '1');
     }, []);
+    useEffect(() => {
+        if (vantaRef.current && !vantaEffect.current) {
+            vantaEffect.current = FOG({
+                el: vantaRef.current,
+                THREE,
+                mouseControls: true,
+                touchControls: true,
+                gyroControls: false,
+                minHeight: 200.00,
+                minWidth: 200.00,
+                highlightColor: 0x4c4a45,
+                midtoneColor: 0xffffff,
+                lowlightColor: 0xd9d9d9,
+                baseColor: 0xf9f6f6,
+                speed: 5.00
+            });
+        }
+
+        return () => {
+            if (vantaEffect.current) {
+                vantaEffect.current.destroy();
+                vantaEffect.current = null;
+            }
+        };
+    }, []);
     return (
-        <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-[#0593AB] py-12" >
+        <div ref={vantaRef} className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-[#0593AB] py-12" >
             <Toaster position="top-center" reverseOrder={false} />
 
             {step === 1 ? (
-                <div className="relative bg-[#FEDC54] px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl" style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)' }}>
+                <div className="relative  px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl" style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)' }}>
                     <div className="mx-auto flex w-full max-w-md flex-col space-y-16">
                         <div className="flex flex-col items-center justify-center text-center space-y-2">
                             <div className="font-semibold text-3xl">
@@ -193,7 +221,7 @@ const ForgotPass: React.FC = () => {
                     </div>
                 </div>
             ) : step === 2 ? (
-                <div className="relative bg-[#FEDC54] px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl" style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)' }}>
+                <div className="relative  px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl" style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)' }}>
                     <div className="mx-auto flex w-full max-w-md flex-col space-y-16">
                         <div className="flex flex-col items-center justify-center text-center space-y-2">
                             <div className="font-semibold text-3xl">
@@ -256,7 +284,7 @@ const ForgotPass: React.FC = () => {
                     </div>
                 </div>
             ) : (
-                <div className="relative bg-[#FEDC54] px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl" style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)' }}>
+                <div className="relative  px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl" style={{ boxShadow: '0 0 9px 1px rgba(225, 225, 225, 0.9)' }}>
                     <div className="mx-auto flex w-full max-w-md flex-col space-y-16">
                         <div className="flex flex-col items-center justify-center text-center space-y-2">
                             <div className="font-semibold text-3xl">

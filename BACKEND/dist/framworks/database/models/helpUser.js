@@ -29,6 +29,7 @@ const HelpSchema = new mongoose_1.Schema({
     userId: { type: String, ref: "User" },
     phoneNumber: String,
     reason: String,
+    vendorReaded: { type: [String], default: [] },
 }, {
     timestamps: true,
 });

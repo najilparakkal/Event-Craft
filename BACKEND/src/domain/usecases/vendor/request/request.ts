@@ -105,21 +105,8 @@ export default{
   },
   getProfile:async(vendorId:string)=>{
     try {
-      const response = await requestRepo.getProfile(vendorId)
-      const datas = {
-        vendorName: response?.vendorName,
-        email: response?.email,
-        phoneNum: response?.phoneNum,
-        profilePicture: response?.profilePicture,
-        coverPicture: response?.coverPicture,
-        verified: response?.verified,
-        blocked: response?.blocked,
-        posts: response?.posts,
-        licence: response?.licence,
-        registered:response?.registered,
-        about:response?.about,
-      };      
-      return datas
+      return await requestRepo.getProfile(vendorId)
+    
     } catch (error) {
       console.log(error);
       
@@ -199,6 +186,41 @@ export default{
   wallet:async(vendorId:string)=>{
     try {
       return await requestRepo.wallet(vendorId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  enquerys:async(vendorId:string)=>{
+    try {
+      return await requestRepo.enquerys(vendorId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  readEnquery:async(enqId:string,vendorId:string)=>{
+    try {
+      return await requestRepo.readEnquery(enqId,vendorId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  counts:async()=>{
+    try {
+      return await requestRepo.counts()
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  postData:async(postId:string)=>{
+    try {
+      return await requestRepo.postData(postId)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  deletePost:async(postId:string)=>{
+    try {
+      return await requestRepo.deletePost(postId)
     } catch (error) {
       console.log(error)
     }

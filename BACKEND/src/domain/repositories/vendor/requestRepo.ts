@@ -20,6 +20,9 @@ import {
 import { Bookings } from "../../../framworks/database/models/booking";
 import mongoose from "mongoose";
 import BillModel from "../../../framworks/database/models/billing";
+import { HelpUsers } from "../../../framworks/database/models/helpUser";
+import { Comment, Reply } from "../../../framworks/database/models/comment";
+import { Posts } from "../../../framworks/database/models/post";
 
 export default {
   addRequest: async (datas: any, images: any) => {
@@ -241,11 +244,49 @@ export default {
         .populate("posts")
         .populate("licence");
 
-      return vendor;
+      if (!vendor) {
+        throw new Error("Vendor not found");
+      }
+
+      const postsWithCounts = vendor.posts
+        ? await Promise.all(
+            vendor.posts.map(async (post: any) => {
+              const commentsCount = await Comment.countDocuments({
+                postId: post._id,
+              });
+              const repliesCount = await Reply.countDocuments({
+                postId: post._id,
+              });
+              return {
+                ...post._doc,
+                likesCount: post.likes.length,
+                commentsCount: commentsCount + repliesCount,
+              };
+            })
+          )
+        : [];
+
+      const datas = {
+        vendorName: vendor.vendorName,
+        email: vendor.email,
+        phoneNum: vendor.phoneNum,
+        profilePicture: vendor.profilePicture,
+        coverPicture: vendor.coverPicture,
+        verified: vendor.verified,
+        blocked: vendor.blocked,
+        posts: postsWithCounts,
+        licence: vendor.licence,
+        registered: vendor.registered,
+        about: vendor.about,
+      };
+
+      return datas;
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      throw new Error("Failed to fetch vendor profile");
     }
   },
+
   updateVendor: async (vendorId: string, datas: any, files: any) => {
     try {
       let profile, cover;
@@ -306,13 +347,12 @@ export default {
     try {
       console.log(bookingId, status);
       const data = await Bookings.findById(bookingId);
-      if(data){
+      if (data) {
         data.status = status;
         await data.save();
         console.log("Status updated successfully");
         return true;
       }
-     
     } catch (error) {
       console.log(error);
     }
@@ -336,7 +376,7 @@ export default {
       }
       await BillModel.create({
         totalAmount,
-        bookingId,    
+        bookingId,
         items: datas,
         userId: booking[0].userId,
         vendorId: booking[0].vendorId,
@@ -377,13 +417,79 @@ export default {
       console.log(error);
     }
   },
-  wallet:async(vendorId:string)=>{
+  wallet: async (vendorId: string) => {
     try {
-      return await Vendors.findById(vendorId).select('wallet')
+      return await Vendors.findById(vendorId).select("wallet");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  },
+  enquerys: async (vendorId: string) => {
+    try {
+      const currentDate = new Date();
+      const twoMonthsAgo = new Date();
+      twoMonthsAgo.setMonth(currentDate.getMonth() - 2);
+      const unreadData = await HelpUsers.find({
+        vendorReaded: { $nin: [vendorId] },
+        createdAt: { $gte: twoMonthsAgo },
+      }).sort({ createdAt: -1 });
+      return unreadData;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  readEnquery: async (enqId: string, vendorId: string) => {
+    try {
+      const readData = await HelpUsers.findByIdAndUpdate(
+        enqId,
+        { $push: { vendorReaded: vendorId } },
+        { new: true }
+      );
+      return readData ? true : false;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  },
+  counts: async () => {
+    try {
+      const user = await Users.find();
+      const vendor = await Vendors.find();
+      const events = await Bookings.find({ status: "Completed" });
+      return {
+        userCount: user.length,
+        vendorCount: vendor.length,
+        eventsCount: events.length,
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  postData: async (postId: string) => {
+    try {
+      const comments = await Comment.find({ postId })
+        .populate({
+          path: "userId",
+          select: "profilePicture userName",
+        })
+        .populate({ path: "replies", select: "comment likes" });
+
+      return comments;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  },
+  deletePost: async (postId: string) => {
+    try {
+      const update = await Posts.findByIdAndDelete(postId);
+      if (update) {
+        return true;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
 export const fetchUsers = async (vendorId: string) => {

@@ -36,4 +36,9 @@ vendorRouter.get('/api/vendor/notifications/:userId',vendorAuth,Controller.notif
 vendorRouter.get('/api/vendor/roomIds/:vendorId',vendorAuth,Controller.room)
 vendorRouter.get('/api/vendor/reviews/:vendorId',vendorAuth,Controller.review)
 vendorRouter.get('/api/vendor/wallet/:vendorId',vendorAuth,Controller.wallet)
+vendorRouter.get('/api/vendor/enquerys/:vendorId',vendorAuth,Controller.enquerys)
+vendorRouter.put('/api/vendor/readEnquery/:vendorId/:enqueryId',vendorAuth,Controller.readEnquery)
+vendorRouter.get('/api/vendor/counts',Controller.count)
+vendorRouter.get('/api/vendor/postData/:postId',vendorAuth,Controller.postData)
+vendorRouter.delete('/api/vendor/deletePost/:postId',vendorAuth,Controller.deletePost)
 export default vendorRouter

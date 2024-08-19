@@ -47,7 +47,7 @@ const DatePicker: React.FC<Prop> = ({ vendorId }) => {
                 </div>
                 <div className="flex space-x-4">
                     <button
-                        className="p-2 text-white bg-blue-500 rounded-full"
+                        className="p-2 text-blue-500 font-extrabold"
                         onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
                     >
                         <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
@@ -58,7 +58,7 @@ const DatePicker: React.FC<Prop> = ({ vendorId }) => {
                         </svg>
                     </button>
                     <button
-                        className="p-2 text-white bg-blue-500 rounded-full"
+                        className="p-2 text-blue-500 font-extrabold "
                         onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
                     >
                         <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
@@ -69,10 +69,10 @@ const DatePicker: React.FC<Prop> = ({ vendorId }) => {
                         </svg>
                     </button>
                     <button
-                        className="p-2 text-white bg-green-500 rounded-full"
+                        className=" text-green-500 rounded-full"
                         onClick={handleUpdate}
                     >
-                        Update
+                        UPDATE
                     </button>
                 </div>
             </div>

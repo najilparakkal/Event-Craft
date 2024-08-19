@@ -13,9 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.adminAuth = exports.refund = void 0;
-const Razorpay_1 = __importDefault(require("Razorpay"));
+const razorpay_1 = __importDefault(require("razorpay"));
 const jwtGenarate_1 = require("../../domain/helpers/jwtGenarate");
-const razorpay = new Razorpay_1.default({
+const razorpay = new razorpay_1.default({
     key_id: process.env.REZORPAY_KEYID || "",
     key_secret: process.env.REZORPAY_SECRET_KEY || "",
 });

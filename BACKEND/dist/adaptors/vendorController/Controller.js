@@ -243,5 +243,50 @@ exports.default = {
         catch (error) {
             console.log(error);
         }
+    }),
+    enquerys: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.enquerys(req.params.vendorId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    readEnquery: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.readEnquery(req.params.enqueryId, req.params.vendorId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    count: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.counts();
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    postData: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.postData(req.params.postId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    deletePost: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield request_1.default.deletePost(req.params.postId);
+            res.status(200).json(response);
+        }
+        catch (error) {
+            console.log(error);
+        }
     })
 };

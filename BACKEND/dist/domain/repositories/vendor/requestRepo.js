@@ -23,6 +23,9 @@ const vendor_1 = require("../../../framworks/database/models/vendor");
 const booking_1 = require("../../../framworks/database/models/booking");
 const mongoose_1 = __importDefault(require("mongoose"));
 const billing_1 = __importDefault(require("../../../framworks/database/models/billing"));
+const helpUser_1 = require("../../../framworks/database/models/helpUser");
+const comment_1 = require("../../../framworks/database/models/comment");
+const post_1 = require("../../../framworks/database/models/post");
 exports.default = {
     addRequest: (datas, images) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -209,10 +212,38 @@ exports.default = {
             const vendor = yield vendor_1.Vendors.findById(vendorId)
                 .populate("posts")
                 .populate("licence");
-            return vendor;
+            if (!vendor) {
+                throw new Error("Vendor not found");
+            }
+            const postsWithCounts = vendor.posts
+                ? yield Promise.all(vendor.posts.map((post) => __awaiter(void 0, void 0, void 0, function* () {
+                    const commentsCount = yield comment_1.Comment.countDocuments({
+                        postId: post._id,
+                    });
+                    const repliesCount = yield comment_1.Reply.countDocuments({
+                        postId: post._id,
+                    });
+                    return Object.assign(Object.assign({}, post._doc), { likesCount: post.likes.length, commentsCount: commentsCount + repliesCount });
+                })))
+                : [];
+            const datas = {
+                vendorName: vendor.vendorName,
+                email: vendor.email,
+                phoneNum: vendor.phoneNum,
+                profilePicture: vendor.profilePicture,
+                coverPicture: vendor.coverPicture,
+                verified: vendor.verified,
+                blocked: vendor.blocked,
+                posts: postsWithCounts,
+                licence: vendor.licence,
+                registered: vendor.registered,
+                about: vendor.about,
+            };
+            return datas;
         }
         catch (error) {
-            console.log(error);
+            console.error(error);
+            throw new Error("Failed to fetch vendor profile");
         }
     }),
     updateVendor: (vendorId, datas, files) => __awaiter(void 0, void 0, void 0, function* () {
@@ -345,12 +376,78 @@ exports.default = {
     }),
     wallet: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return yield vendor_1.Vendors.findById(vendorId).select('wallet');
+            return yield vendor_1.Vendors.findById(vendorId).select("wallet");
         }
         catch (error) {
             console.log(error);
         }
-    })
+    }),
+    enquerys: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const currentDate = new Date();
+            const twoMonthsAgo = new Date();
+            twoMonthsAgo.setMonth(currentDate.getMonth() - 2);
+            const unreadData = yield helpUser_1.HelpUsers.find({
+                vendorReaded: { $nin: [vendorId] },
+                createdAt: { $gte: twoMonthsAgo },
+            }).sort({ createdAt: -1 });
+            return unreadData;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    readEnquery: (enqId, vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const readData = yield helpUser_1.HelpUsers.findByIdAndUpdate(enqId, { $push: { vendorReaded: vendorId } }, { new: true });
+            return readData ? true : false;
+        }
+        catch (error) {
+            console.log(error);
+            return false;
+        }
+    }),
+    counts: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const user = yield user_1.Users.find();
+            const vendor = yield vendor_1.Vendors.find();
+            const events = yield booking_1.Bookings.find({ status: "Completed" });
+            return {
+                userCount: user.length,
+                vendorCount: vendor.length,
+                eventsCount: events.length,
+            };
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    postData: (postId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const comments = yield comment_1.Comment.find({ postId })
+                .populate({
+                path: "userId",
+                select: "profilePicture userName",
+            })
+                .populate({ path: "replies", select: "comment likes" });
+            return comments;
+        }
+        catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }),
+    deletePost: (postId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const update = yield post_1.Posts.findByIdAndDelete(postId);
+            if (update) {
+                return true;
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
 };
 const fetchUsers = (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
     try {

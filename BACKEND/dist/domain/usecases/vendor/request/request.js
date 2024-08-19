@@ -113,21 +113,7 @@ exports.default = {
     }),
     getProfile: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const response = yield requestRepo_1.default.getProfile(vendorId);
-            const datas = {
-                vendorName: response === null || response === void 0 ? void 0 : response.vendorName,
-                email: response === null || response === void 0 ? void 0 : response.email,
-                phoneNum: response === null || response === void 0 ? void 0 : response.phoneNum,
-                profilePicture: response === null || response === void 0 ? void 0 : response.profilePicture,
-                coverPicture: response === null || response === void 0 ? void 0 : response.coverPicture,
-                verified: response === null || response === void 0 ? void 0 : response.verified,
-                blocked: response === null || response === void 0 ? void 0 : response.blocked,
-                posts: response === null || response === void 0 ? void 0 : response.posts,
-                licence: response === null || response === void 0 ? void 0 : response.licence,
-                registered: response === null || response === void 0 ? void 0 : response.registered,
-                about: response === null || response === void 0 ? void 0 : response.about,
-            };
-            return datas;
+            return yield requestRepo_1.default.getProfile(vendorId);
         }
         catch (error) {
             console.log(error);
@@ -209,6 +195,46 @@ exports.default = {
     wallet: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             return yield requestRepo_1.default.wallet(vendorId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    enquerys: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield requestRepo_1.default.enquerys(vendorId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    readEnquery: (enqId, vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield requestRepo_1.default.readEnquery(enqId, vendorId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    counts: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield requestRepo_1.default.counts();
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    postData: (postId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield requestRepo_1.default.postData(postId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }),
+    deletePost: (postId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            return yield requestRepo_1.default.deletePost(postId);
         }
         catch (error) {
             console.log(error);

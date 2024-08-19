@@ -236,39 +236,88 @@ export const billRequest = async (
   }
 };
 
-
-export const fetchUserNotification= async(userId:string)=>{
-  try{
-
-    const response = await authAxiosInstance.get(`/vendor/notifications/${userId}`);
+export const fetchUserNotification = async (userId: string) => {
+  try {
+    const response = await authAxiosInstance.get(
+      `/vendor/notifications/${userId}`
+    );
     return response.data;
-  }catch(err){
-    console.log(err)
+  } catch (err) {
+    console.log(err);
   }
-}
+};
 
-export const fetchRoomIds = async(vendorId:string)=>{
+export const fetchRoomIds = async (vendorId: string) => {
   try {
     const response = await authAxiosInstance.get(`/vendor/roomIds/${vendorId}`);
     return response.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
-export const fetchReviews = async(vendorId:string)=>{
+};
+export const fetchReviews = async (vendorId: string) => {
   try {
-    const response = await authAxiosInstance.get(`/vendor/reviews/${vendorId}`)
+    const response = await authAxiosInstance.get(`/vendor/reviews/${vendorId}`);
     return response.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
-export const fetchWallet = async(vendorId:string)=>{
+export const fetchWallet = async (vendorId: string) => {
   try {
-    const response = await authAxiosInstance.get(`/vendor/wallet/${vendorId}`)
+    const response = await authAxiosInstance.get(`/vendor/wallet/${vendorId}`);
     return response.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
+
+export const fetchEnquerys = async (vendorId: string) => {
+  try {
+    const response = await authAxiosInstance.get(
+      `/vendor/enquerys/${vendorId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const readEnqury = async (vendorId: string, enqueryId: string) => {
+  try {
+    const response = await authAxiosInstance.put(
+      `/vendor/readEnquery/${vendorId}/${enqueryId}`
+    );
+    return response.status === 200 ? true : false;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const fetchCoutsVendorSide = async () => {
+  try {
+    const response = await authAxiosInstance.get("/vendor/counts");
+    return response.status === 200 ? response.data : false;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchPostData = async (postId: string) => {
+  try {
+    const response = await authAxiosInstance.get(`vendor/postData/${postId}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const deletePost = async (postId: string) => {
+  try {
+    const response = await authAxiosInstance.delete(
+      `vendor/deletePost/${postId}`
+    );
+    return response.status === 200;
+  } catch (error) {
+    console.log(error);
+  }
+};

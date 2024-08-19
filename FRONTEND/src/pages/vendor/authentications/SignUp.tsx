@@ -71,13 +71,11 @@ const SignUp = () => {
         gyroControls: false,
         minHeight: 200.00,
         minWidth: 200.00,
-        highlightColor: 0xffffff,
+        highlightColor: 0x4c4a45,
         midtoneColor: 0xffffff,
-        lowlightColor: 0xe0e0f4,
-        baseColor: 0xdbd2d2,
-        blurFactor: 0.90,
-        speed: 5.00,
-        zoom: 1.40
+        lowlightColor: 0xd9d9d9,
+        baseColor: 0xf9f6f6,
+        speed: 5.00
       });
     }
 

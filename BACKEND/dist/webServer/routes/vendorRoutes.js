@@ -39,4 +39,9 @@ vendorRouter.get('/api/vendor/notifications/:userId', VendorMiddleware_1.default
 vendorRouter.get('/api/vendor/roomIds/:vendorId', VendorMiddleware_1.default, Controller_1.default.room);
 vendorRouter.get('/api/vendor/reviews/:vendorId', VendorMiddleware_1.default, Controller_1.default.review);
 vendorRouter.get('/api/vendor/wallet/:vendorId', VendorMiddleware_1.default, Controller_1.default.wallet);
+vendorRouter.get('/api/vendor/enquerys/:vendorId', VendorMiddleware_1.default, Controller_1.default.enquerys);
+vendorRouter.put('/api/vendor/readEnquery/:vendorId/:enqueryId', VendorMiddleware_1.default, Controller_1.default.readEnquery);
+vendorRouter.get('/api/vendor/counts', Controller_1.default.count);
+vendorRouter.get('/api/vendor/postData/:postId', VendorMiddleware_1.default, Controller_1.default.postData);
+vendorRouter.delete('/api/vendor/deletePost/:postId', VendorMiddleware_1.default, Controller_1.default.deletePost);
 exports.default = vendorRouter;

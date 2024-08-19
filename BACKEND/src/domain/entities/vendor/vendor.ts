@@ -208,3 +208,30 @@ export interface IRatingReviewResponse {
     review: string;
   }[];
 }
+
+export  interface IProflePost {
+  _id: string;
+  title: string;
+  images: string[];
+  vendorId: string;
+  is_blocked: boolean;
+  likes: string[];
+  category: string;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IProfileVendor {
+  vendorName: string;
+  email: string;
+  phoneNum: string;
+  profilePicture: string;
+  coverPicture: string;
+  verified: boolean;
+  blocked: boolean;
+  posts: IProflePost[];
+  licence: any; 
+  registered: Date;
+  about: string;
+}

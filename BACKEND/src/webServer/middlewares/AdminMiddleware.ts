@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import Razorpay from "Razorpay";
+import Razorpay from "razorpay";
 import { VerifyToken } from "../../domain/helpers/jwtGenarate";
 
 const razorpay = new Razorpay({
