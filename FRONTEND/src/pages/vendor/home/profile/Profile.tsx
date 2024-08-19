@@ -223,7 +223,7 @@ const Profile: React.FC = () => {
                             type="submit"
                             className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition duration-300"
                         >
-                            Update Profile
+                            UPDATE PROFILE
                         </button>
                     </form>
                 </div>
