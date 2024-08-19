@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { userRegister, login } from "./userAuthService";
 import Cookies from "js-cookie";
+import { authAxiosInstance } from "./axios/AxiosInstance";
 
 const storedUserDetails: UserDetails | null = JSON.parse(
   localStorage.getItem("userDetails") || "null"
@@ -132,7 +133,13 @@ const userSlice = createSlice({
             "userDetails",
             JSON.stringify(state.userDetails)
           );
-          if (action.payload.token) Cookies.set("jwt", action.payload.token);
+          if (action.payload.token) {
+            Cookies.set("jwt", action.payload.token);
+            authAxiosInstance.interceptors.request.use((config)=>{
+              config.headers.Authorization = "Bearer " + action.payload.token;
+              return config;
+            })
+          }
         }
       )
       .addCase(loginUser.rejected, (state, action) => {
