@@ -29,13 +29,16 @@ interface Post {
     _id: string;
     title: string;
     images: string[];
-    vendorId: string;
-    is_blocked: boolean;
-    category: string;
-    createdAt: string;
     updatedAt: string;
     __v: number;
     description: string;
+    likesCount?: number;
+    commentsCount?: number;
+    category?: string;  
+    createdAt?: string; 
+    likes?: string[];  
+    vendorId?:string;
+    is_blocked?: boolean;
 }
 
 interface VendorProfile {
