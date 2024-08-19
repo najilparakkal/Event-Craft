@@ -119,6 +119,7 @@ const userSlice = createSlice({
       .addCase(
         loginUser.fulfilled,
         (state, action: PayloadAction<AuthResponse>) => {
+          console.log(action.payload)
           state.status = "succeeded";
           state.userDetails = {
             _id: action.payload.userDetails?.id,
