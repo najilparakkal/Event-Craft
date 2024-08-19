@@ -6,6 +6,12 @@ export const adminLogin = async (values: any): Promise<boolean> => {
     const response = await authAxiosInstance.post("admin/login", values);
     if (response.status === 200) {
       Cookies.set("adminToken", response.data.response.accessToken);
+      authAxiosInstance.interceptors.request.use((config) => {
+        config.headers.Authorization =
+          "Bearer " + response.data.response.accessToken;
+        return config;
+      });
+
       return true;
     } else {
       return false;

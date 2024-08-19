@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { login, vendorRegister } from "./vendorAuthService";
 import Cookies from "js-cookie";
 import { IvendorDetails, IvendorState } from "./interfaces";
+import { authAxiosInstance } from "./axios/AxiosInstance";
 const storedVendorDetails: IvendorDetails | null = JSON.parse(
   localStorage.getItem("vendorDetails") || "null"
 );
@@ -87,8 +88,11 @@ const vendorSlice = createSlice({
         ...state.vendorDetails,
         ...action.payload,
       };
-      localStorage.setItem("vendorDetails", JSON.stringify(state.vendorDetails));
-    }
+      localStorage.setItem(
+        "vendorDetails",
+        JSON.stringify(state.vendorDetails)
+      );
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -108,7 +112,13 @@ const vendorSlice = createSlice({
           "vendorDetails",
           JSON.stringify(state.vendorDetails)
         );
-        if (action.payload.token) Cookies.set("jwt", action.payload.token);
+        if (action.payload.token) {
+          Cookies.set("jwt", action.payload.token);
+          authAxiosInstance.interceptors.request.use((config) => {
+            config.headers.Authorization = "Bearer " + action.payload.token;
+            return config;
+          });
+        }
       })
       .addCase(signupVendor.rejected, (state, action) => {
         state.status = "failed";
@@ -132,7 +142,13 @@ const vendorSlice = createSlice({
             "vendorDetails",
             JSON.stringify(state.vendorDetails)
           );
-          if (action.payload.token) Cookies.set("jwt", action.payload.token);
+          if (action.payload.token) {
+            Cookies.set("jwt", action.payload.token);
+            authAxiosInstance.interceptors.request.use((config) => {
+              config.headers.Authorization = "Bearer " + action.payload.token;
+              return config;
+            });
+          }
         }
       )
       .addCase(vendorLogin.rejected, (state, action) => {
@@ -155,7 +171,13 @@ const vendorSlice = createSlice({
           "vendorDetails",
           JSON.stringify(state.vendorDetails)
         );
-        if (action.payload.token) Cookies.set("jwt", action.payload.token);
+        if (action.payload.token) {
+          Cookies.set("jwt", action.payload.token);
+          authAxiosInstance.interceptors.request.use((config) => {
+            config.headers.Authorization = "Bearer " + action.payload.token;
+            return config;
+          });
+        }
       })
       .addCase(GoogleAuth.rejected, (state, action) => {
         state.status = "failed";
@@ -179,7 +201,13 @@ const vendorSlice = createSlice({
             "vendorDetails",
             JSON.stringify(state.vendorDetails)
           );
-          if (action.payload.token) Cookies.set("jwt", action.payload.token);
+          if (action.payload.token) {
+            Cookies.set("jwt", action.payload.token);
+            authAxiosInstance.interceptors.request.use((config) => {
+              config.headers.Authorization = "Bearer " + action.payload.token;
+              return config;
+            });
+          }
         }
       )
       .addCase(GoogleLogin.rejected, (state, action) => {
@@ -189,5 +217,5 @@ const vendorSlice = createSlice({
   },
 });
 
-export const { logout,updateVendorDetails } = vendorSlice.actions;
+export const { logout, updateVendorDetails } = vendorSlice.actions;
 export default vendorSlice.reducer;

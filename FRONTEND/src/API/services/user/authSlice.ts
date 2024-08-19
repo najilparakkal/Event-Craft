@@ -67,8 +67,6 @@ export const GoogleLogin = createAsyncThunk(
   }
 );
 
-
-
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -79,7 +77,7 @@ const userSlice = createSlice({
         name: null,
         email: null,
         phoneNum: null,
-        profilePicture:null
+        profilePicture: null,
       };
       state.status = "idle";
       state.error = null;
@@ -91,7 +89,7 @@ const userSlice = createSlice({
         ...action.payload,
       };
       localStorage.setItem("userDetails", JSON.stringify(state.userDetails));
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -108,7 +106,13 @@ const userSlice = createSlice({
           profilePicture: action.payload.user.userDatas.profilePicture,
         };
         localStorage.setItem("userDetails", JSON.stringify(state.userDetails));
-          if (action.payload.token) Cookies.set("jwt", action.payload.token);
+        if (action.payload.token) {
+          Cookies.set("jwt", action.payload.token);
+          authAxiosInstance.interceptors.request.use((config) => {
+            config.headers.Authorization = "Bearer " + action.payload.token;
+            return config;
+          });
+        }
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.status = "failed";
@@ -120,7 +124,6 @@ const userSlice = createSlice({
       .addCase(
         loginUser.fulfilled,
         (state, action: PayloadAction<AuthResponse>) => {
-          console.log(action.payload,"🧠🧠🧠")
           state.status = "succeeded";
           state.userDetails = {
             _id: action.payload.userDetails?.id,
@@ -135,10 +138,10 @@ const userSlice = createSlice({
           );
           if (action.payload.token) {
             Cookies.set("jwt", action.payload.token);
-            authAxiosInstance.interceptors.request.use((config)=>{
+            authAxiosInstance.interceptors.request.use((config) => {
               config.headers.Authorization = "Bearer " + action.payload.token;
               return config;
-            })
+            });
           }
         }
       )
@@ -160,7 +163,13 @@ const userSlice = createSlice({
           profilePicture: action.payload.response.userDatas.profilePicture,
         };
         localStorage.setItem("userDetails", JSON.stringify(state.userDetails));
-        if (action.payload.token) Cookies.set("jwt", action.payload.token);
+        if (action.payload.token) {
+          Cookies.set("jwt", action.payload.token);
+          authAxiosInstance.interceptors.request.use((config) => {
+            config.headers.Authorization = "Bearer " + action.payload.token;
+            return config;
+          });
+        }
       })
       .addCase(GoogleAuth.rejected, (state, action) => {
         state.status = "failed";
@@ -169,19 +178,30 @@ const userSlice = createSlice({
       .addCase(GoogleLogin.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(GoogleLogin.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
-        state.status = "succeeded";
-        state.userDetails = {
-          _id: action.payload.userDetails?.id,
-          name: action.payload.userDetails?.userName,
-          email: action.payload.userDetails?.email,
-          phoneNum: action.payload.userDetails?.phoneNum,
-          profilePicture: action.payload.userDetails?.profilePicture,
-        };
-        localStorage.setItem("userDetails", JSON.stringify(state.userDetails));
-        if (action.payload.token) Cookies.set("jwt", action.payload.token);
-
-      })
+      .addCase(
+        GoogleLogin.fulfilled,
+        (state, action: PayloadAction<AuthResponse>) => {
+          state.status = "succeeded";
+          state.userDetails = {
+            _id: action.payload.userDetails?.id,
+            name: action.payload.userDetails?.userName,
+            email: action.payload.userDetails?.email,
+            phoneNum: action.payload.userDetails?.phoneNum,
+            profilePicture: action.payload.userDetails?.profilePicture,
+          };
+          localStorage.setItem(
+            "userDetails",
+            JSON.stringify(state.userDetails)
+          );
+          if (action.payload.token) {
+            Cookies.set("jwt", action.payload.token);
+            authAxiosInstance.interceptors.request.use((config) => {
+              config.headers.Authorization = "Bearer " + action.payload.token;
+              return config;
+            });
+          }
+        }
+      )
       .addCase(GoogleLogin.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
@@ -189,5 +209,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout,updateUserDetails } = userSlice.actions;
+export const { logout, updateUserDetails } = userSlice.actions;
 export default userSlice.reducer;
