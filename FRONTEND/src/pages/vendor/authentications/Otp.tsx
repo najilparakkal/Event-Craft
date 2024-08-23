@@ -117,7 +117,9 @@ const Otp: React.FC = () => {
                 midtoneColor: 0xffffff,
                 lowlightColor: 0xd9d9d9,
                 baseColor: 0xf9f6f6,
-                speed: 5.00
+                speed: 5.00,
+                zoom: 1.40
+
             });
         }
 

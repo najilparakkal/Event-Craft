@@ -199,6 +199,7 @@ const Vendor: React.FC = () => {
     const popId = open ? 'simple-popover' : undefined;
 
     const isBooked = async () => {
+
         return await checkUserBooked(_id + "")
     }
     const request = async (vendorId: string) => {
@@ -210,7 +211,7 @@ const Vendor: React.FC = () => {
     return (
         <div className="bg-black min-h-screen flex flex-col items-center">
             <Header />
-            <Notification/>
+            <Notification />
 
             <main className="w-full max-w-6xl bg-pink-200 mt-[80px] h-[500px] p-6 rounded-lg shadow-lg relative flex flex-col justify-between bg-cover bg-center" style={{ backgroundImage: `url(${vendorDetails.coverPicture})` }}>
                 <div className="absolute top-4 right-4 w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
@@ -227,10 +228,10 @@ const Vendor: React.FC = () => {
                         </div>
                         <div className="flex flex-col items-end text-white">
                             <span className="text-sm font-semibold">RATING: {rating}</span>
-                            <p className='text-sm'>({vendorDetails.reviewCount} REVIEWS)</p>
+                            <p className="text-sm">({vendorDetails.reviewCount} REVIEWS)</p>
                         </div>
                     </div>
-                    <div className="flex justify-between space-x-2 mt-2">
+                    <div className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0 space-x-0 sm:space-x-2 mt-2">
                         <Button aria-describedby={id} variant="outlined" sx={{ backgroundColor: '#1F2937', color: 'white', border: "none" }} onClick={handleClick}>
                             CONTACT US
                         </Button>
@@ -250,7 +251,6 @@ const Vendor: React.FC = () => {
                             className="bg-gray-800 text-white py-1 px-2 rounded-md"
                             onClick={async () => {
                                 const booked = await isBooked();
-
                                 if (booked) {
                                     if (chat) {
                                         const requestAccepted = await request(vendorDetails._id);
@@ -269,7 +269,7 @@ const Vendor: React.FC = () => {
                         </button>
                         <button className="bg-gray-800 text-white py-1 px-2 rounded-md" onClick={() => window.scrollTo(0, window.screen.height)}>BOOKING</button>
                     </div>
-                    <div className="flex justify-between ">
+                    <div className="flex justify-between mt-2">
                         <a className="text-white px-2 rounded-md flex items-center" onClick={(e) => {
                             e.stopPropagation()
                             handleFavoriteClick(vendorDetails._id)
@@ -280,12 +280,12 @@ const Vendor: React.FC = () => {
                         </a>
                         <a className="text-white py-1 px-2 rounded-md">WRITE REVIEW</a>
                         <a className="text-red-500 py-2 px-4 rounded-md" onClick={repModal}>REPORT</a>
-
                     </div>
                 </div>
             </main>
+
             <div className="w-full max-w-6xl p-6 mb-10">
-                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 justify-between sm:space-x-2 mb-4 sm:mb-8 w-full max-w-6xl p-6">
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 justify-between sm:space-x-2 mb-4 sm:mb-8 w-full p-6">
                     <h2 className="text-white text-2xl mb-4">Posts & Services</h2>
 
                     <input
@@ -308,11 +308,12 @@ const Vendor: React.FC = () => {
                     ))}
                 </Slider>
             </div>
-            <div className="w-full max-w-6xl p-6 mb-10 ">
+
+            <div className="w-full max-w-6xl p-6 mb-10">
                 {filteredPosts.length > 0 ? (
-                    <div className="flex flex-wrap gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {filteredPosts.map((post, index) => (
-                            <div key={index} className="flex flex-col gap-4 w-1/2 md:w-1/4">
+                            <div key={index} className="flex flex-col gap-4">
                                 {post.images.map((image, imgIndex) => (
                                     <div key={imgIndex}>
                                         <img className="h-auto max-w-full rounded-lg" src={image} alt="" />
@@ -332,9 +333,8 @@ const Vendor: React.FC = () => {
                 <RatingReview vendorId={id + ""} vendorServices={services} />
             </div>
 
-
             {isModalOpen && (
-                <div className="fixed inset-0 flex items-center justify-center z-50">
+                <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-lg p-6 w-full max-w-md">
                         <h2 className="text-xl font-semibold mb-4">Send a Message</h2>
                         <textarea
@@ -353,7 +353,7 @@ const Vendor: React.FC = () => {
             )}
 
             {showBookingMessage && (
-                <div className="fixed inset-0 flex items-center justify-center z-50">
+                <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-lg p-6 w-full max-w-md">
                         <h2 className="text-xl font-semibold mb-4">Booking Required</h2>
                         <p className="mb-4">Please book the vendor's services before you can send a message.</p>
@@ -365,10 +365,11 @@ const Vendor: React.FC = () => {
             )}
 
             {reportModal && (
-                <Report isOpen={reportModal} setReportModal={setReportModal} vendorId={vendorDetails._id}/>
+                <Report isOpen={reportModal} setReportModal={setReportModal} vendorId={vendorDetails._id} />
             )}
             <Toaster />
         </div>
+
     );
 };
 

@@ -18,9 +18,6 @@ const vendorAuth: RequestHandler = async (req, res, next) => {
         return next();
       })
       .catch(async ({ err, payload }) => {
-        
-        console.log(payload, err);
-        
         if (err.name === "TokenExpiredError") {
           const data = await Vendors.findById(payload.id);
           if (!data) {

@@ -294,7 +294,7 @@ export const fetchLikedVendors = async (userId: string) => {
 export const checkUserBooked = async (userId: string) => {
   try {
     const response = await authAxiosInstance.get(`user/userBooked/${userId}`);
-    console.log(response);
+    console.log(response,"❌❌");
     return response.status === 200;
   } catch (error) {
     console.log(error);

@@ -132,7 +132,11 @@ const License: React.FC = () => {
 
                                     <div>
                                         <label className="block mb-1  font-bold text-gray-500">
-                                            Business name:
+                                            {errors.businessName && touched.businessName ? (
+                                                <span className="text-red-500">{errors.businessName}</span>
+                                            ) : (
+                                                "Business name:"
+                                            )}
                                         </label>
                                         <Field
                                             autoComplete="off"
@@ -147,7 +151,12 @@ const License: React.FC = () => {
                                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
                                     <div>
                                         <label className="block mb-1  font-bold text-gray-500">
-                                            Certificate expiration date:
+                                            {errors.certificateExpirationDate && touched.certificateExpirationDate ? (
+                                                <span className="text-red-500">{errors.certificateExpirationDate}</span>
+
+                                            ) : (
+                                                'Certificate expiration date:'
+                                            )}
                                         </label>
                                         <Field
                                             type="date"
@@ -157,7 +166,12 @@ const License: React.FC = () => {
                                     </div>
                                     <div>
                                         <label className="block mb-1  font-bold text-gray-500">
-                                            Email address:
+                                            {errors.emailAddress && touched.emailAddress ? (
+                                                <span className="text-red-500">{errors.emailAddress}</span>
+                                            ) : (
+                                                'Email address:'
+
+                                            )}
                                         </label>
                                         <Field
                                             autoComplete="off"
@@ -168,7 +182,11 @@ const License: React.FC = () => {
                                     </div>
                                     <div>
                                         <label className="block mb-1  font-bold text-gray-500">
-                                            Phone number:
+                                            {errors.phoneNumber && touched.phoneNumber ? (
+                                                <span className="text-red-500">{errors.phoneNumber}</span>
+                                            ) : (
+                                                'Phone number:'
+                                            )}
                                         </label>
                                         <Field
                                             autoComplete="off"
@@ -180,7 +198,11 @@ const License: React.FC = () => {
                                     </div>
                                     <div>
                                         <label className="block mb-1  font-bold text-gray-500">
-                                            Location:
+                                            {errors.location && touched.location ? (
+                                                <span className="text-red-500">{errors.location}</span>
+                                            ) : (
+                                                'Location:'
+                                            )}
                                         </label>
                                         <Field
                                             autoComplete="off"
@@ -195,7 +217,11 @@ const License: React.FC = () => {
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                     <div>
                                         <label className="block mb-1  font-bold text-gray-500">
-                                            UPI ID or Verified Phone number:
+                                            {errors.upiIdOrPhoneNumber && touched.upiIdOrPhoneNumber ? (
+                                                <span className="text-red-500">{errors.upiIdOrPhoneNumber}</span>
+                                            ) : (
+                                                'UPI ID or Phone number:'
+                                            )}
                                         </label>
                                         <Field
                                             autoComplete="off"
@@ -208,7 +234,11 @@ const License: React.FC = () => {
 
                                     <div>
                                         <label className="block mb-1  font-bold text-gray-500">
-                                            Account Number:
+                                            {errors.accountNumber && touched.accountNumber ? (
+                                                <span className="text-red-500">{errors.accountNumber}</span>
+                                            ) : (
+                                                'Account number:'
+                                            )}
                                         </label>
                                         <Field
                                             autoComplete="off"
@@ -234,7 +264,11 @@ const License: React.FC = () => {
                                     </div>
                                     <div>
                                         <label className="block mb-1  font-bold text-gray-500">
-                                            What will you sell?:
+                                            {errors.whatWillYouSell && touched.whatWillYouSell?(
+                                                 <span className="text-red-500">{errors.whatWillYouSell}</span>
+                                            ):(
+                                             'What will you sell:'
+                                            )}
                                         </label>
                                         <Field
                                             autoComplete="off"

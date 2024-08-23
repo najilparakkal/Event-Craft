@@ -246,13 +246,20 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
   return (
     <div className={`flex flex-col ${sidebarOpen ? 'w-full' : 'w-0'} h-full bg-white shadow-lg rounded-md transition-all duration-300 overflow-hidden`}>
       <div className="flex items-center p-4 bg-black text-white rounded-t-md border-white border-b-2">
-        <h1 className="text-lg font-bold">{selectedVendor ? selectedVendor.vendorName : 'Select a vendor to start chatting'}</h1>
+        <h1 className="text-lg font-bold">{selectedVendor ? selectedVendor.vendorName : "..."}</h1>
       </div>
       <div
-        className="p-4 space-y-4 scrollNoDiv overflow-y-auto scrollbar-hidden flex-1 bg-gray-100"
-        style={{ backgroundImage: 'url(/user/85ecdf1c3611ecc9b7fa85282d9526e0.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+        className="p-4 space-y-4 scrollNoDiv overflow-y-auto scrollbar-hidden flex-1 bg-gray-100  items-center justify-center"
+        style={
+          selectedVendor
+            ? { backgroundImage: `url(/user/85ecdf1c3611ecc9b7fa85282d9526e0.jpg)` }
+            : { backgroundImage: `url(/user/85ecdf1c3611ecc9b7fa85282d9526e0.jpg)` }
+        }
         ref={divRef}
       >
+        {!selectedVendor && (
+          <span className="text-white text-lg font-bold">Select a Vendor to Chat</span>
+        )}
         {messages.length === 0 && req?.is_accepted === false ? (
           <div className="flex justify-center items-center h-full">
             <div id="alert-additional-content-1" className="p-4 mb-4 text-blue-800 border rounded-lg bg-transparent dark:text-blue-400 w-1/2" role="alert">
@@ -418,7 +425,7 @@ const Messages = ({ selectedVendor, sidebarOpen }: MessagesProps) => {
             className="flex-1 mr-2 p-2 bg-black text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {isRecording ? (
-            <VoiceRecorder   />
+            <VoiceRecorder />
           ) : (
 
             <button

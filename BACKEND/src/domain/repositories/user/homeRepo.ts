@@ -698,7 +698,7 @@ export const requestCheck = async (userId: string, vendorId: string) => {
         ],
       },
     });
-    if (request.is_accepted) {
+    if (request[0].is_accepted) {
       return { success: true };
     } else {
       return { success: false };
@@ -858,7 +858,7 @@ export const allVendors = async () => {
       .populate("posts")
       .populate({
         path: "licence",
-        select: "services", 
+        select: "services",
       })
       .exec();
     console.log(vendors);

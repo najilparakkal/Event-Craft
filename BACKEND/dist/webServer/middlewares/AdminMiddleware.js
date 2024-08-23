@@ -22,7 +22,6 @@ const razorpay = new razorpay_1.default({
 const refund = (paymentId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const payment = yield razorpay.payments.fetch(paymentId);
-        console.log("Payment details:", payment);
         const captureResponse = yield razorpay.payments.capture(paymentId, payment.amount, "INR");
         console.log("Capture response:", captureResponse);
         const refundResponse = yield razorpay.payments.refund(payment.id, {
@@ -38,8 +37,10 @@ const refund = (paymentId) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.refund = refund;
 const adminAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const token = req.cookies.adminToken;
+        console.log(req.cookies, req.headers);
+        const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
         (0, jwtGenarate_1.VerifyToken)(token)
             .then((data) => {
             const currentTime = Math.floor(Date.now() / 1000);

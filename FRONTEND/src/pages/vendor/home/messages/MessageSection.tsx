@@ -34,22 +34,12 @@ const MessageSection:React.FC = () => {
           };
         }
       }, [socket, _id,users]); 
-    // useEffect(() => {
-    //     const fetchAcceptedUsers = async () => {
-    //         try {
-    //             const acceptedUsers = await fetchUsers(_id+"");
-    //             setUsers(acceptedUsers);
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     };
-    //     fetchAcceptedUsers();
-    // }, [_id]);
+
 
     return (
-        <div className='overflow-hidden  '>
+        <div className='overflow-hidden h-screen '>
             <Navbar />
-            <div className="flex ml-1 mr-1 rounded-e-none">
+            <div className="flex ml-1 mr-1 rounded-e-none h-[calc(100vh-5rem)]">
                 <Sidebar users={users} onUserClick={handleUserClick} sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
                 <Messages selectedUser={selectedUser} sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
             </div>

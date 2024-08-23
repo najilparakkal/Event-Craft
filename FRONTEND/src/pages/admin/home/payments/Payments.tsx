@@ -29,7 +29,7 @@ const Payments: React.FC = () => {
     script.onload = () => setIsRazorpayLoaded(true);
     script.onerror = () => {
       setIsRazorpayLoaded(false);
-      alert("Failed to load Razorpay SDK");
+      toast.error("Failed to load Razorpay SDK");
     };
     document.body.appendChild(script);
   }, []);

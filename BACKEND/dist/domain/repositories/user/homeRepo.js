@@ -661,7 +661,7 @@ const requestCheck = (userId, vendorId) => __awaiter(void 0, void 0, void 0, fun
                 ],
             },
         });
-        if (request.is_accepted) {
+        if (request[0].is_accepted) {
             return { success: true };
         }
         else {

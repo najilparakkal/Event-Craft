@@ -79,7 +79,7 @@ const Bills: React.FC = () => {
 
     const handleSubmitBill = (billingId: string, amount: number) => {
         if (!isRazorpayLoaded) {
-            alert('Razorpay SDK is still loading or failed to load. Please try again later.');
+            toast.error('Razorpay SDK is still loading or failed to load. Please try again later.');
             return;
         }
 
@@ -106,7 +106,7 @@ const Bills: React.FC = () => {
             },
             modal: {
                 ondismiss: () => {
-                    alert('Payment dismissed');
+                    toast.error('Payment dismissed');
                 },
             },
         };

@@ -69,7 +69,7 @@ const Booking: React.FC<BookingProps> = ({ vendorId }) => {
 
     const handleModalSubmit = async () => {
         if (!isRazorpayLoaded) {
-            alert('Razorpay SDK is still loading or failed to load. Please try again later.');
+            toast.error('Razorpay SDK is still loading or failed to load. Please try again later.');
             return;
         }
 
@@ -105,7 +105,7 @@ const Booking: React.FC<BookingProps> = ({ vendorId }) => {
             },
             modal: {
                 ondismiss: function () {
-                    alert('Payment dismissed');
+                    toast.error('Payment dismissed');
                 },
             },
         };
@@ -140,173 +140,180 @@ const Booking: React.FC<BookingProps> = ({ vendorId }) => {
 
     return (
         <>
-            <form onSubmit={formik.handleSubmit} className="bg-transparent p-6 rounded-lg mt-10 shadow-lg space-y-4">
-                <h1 className='text-white font-bold text-center'>Booking</h1>
-                <div className="flex space-x-4">
-                    <div className="flex-1">
-                        <label className="block mb-1 text-sm font-medium text-gray-600">First Name</label>
-                        <input
-                            type="text"
-                            name="clientName"
-                            value={formik.values.clientName}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
-                        />
-                        {formik.touched.clientName && formik.errors.clientName ? (
-                            <div className="text-red-600">{formik.errors.clientName}</div>
-                        ) : null}
-                    </div>
+         <form onSubmit={formik.handleSubmit} className="bg-transparent p-6 rounded-lg mt-10 shadow-lg space-y-4 max-w-full">
+    <h1 className="text-white font-bold text-center text-lg md:text-xl">Booking</h1>
+    <div className="flex flex-wrap space-y-4 md:space-y-0 md:space-x-4">
+        <div className="flex-1 min-w-[250px]">
+            <label className="block mb-1 text-sm font-medium text-gray-600">First Name</label>
+            <input
+                type="text"
+                name="clientName"
+                value={formik.values.clientName}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
+            />
+            {formik.touched.clientName && formik.errors.clientName ? (
+                <div className="text-red-600">{formik.errors.clientName}</div>
+            ) : null}
+        </div>
 
-                    <div className="flex-1">
-                        <label className="block mb-1 text-sm font-medium text-gray-600">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            value={formik.values.email}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
-                        />
-                        {formik.touched.email && formik.errors.email ? (
-                            <div className="text-red-600">{formik.errors.email}</div>
-                        ) : null}
-                    </div>
-                    <div className="flex-1">
-                        <label className="block mb-1 text-sm font-medium text-gray-600">Event Date</label>
-                        <DatePicker
-                            selected={formik.values.eventDate}
-                            onChange={handleDateChange}
-                            minDate={new Date()}
-                            highlightDates={absentDates}
-                            filterDate={date => !absentDates.some((absentDate:Date) => absentDate.getTime() === date.getTime())}
-                            dayClassName={dayClassName}
-                            className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
-                            placeholderText="Select event date"
-                        />
-                        {formik.touched.eventDate && formik.errors.eventDate ? (
-                            <div className="text-red-600">{formik.errors.eventDate}</div>
-                        ) : null}
-                    </div>
-                </div>
-                <div className="flex space-x-4">
-                    <div className="flex-1">
-                        <label className="block mb-1 text-sm font-medium text-gray-600">Phone Number</label>
-                        <input
-                            type="tel"
-                            name="phoneNumber"
-                            value={formik.values.phoneNumber}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
-                        />
-                        {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
-                            <div className="text-red-600">{formik.errors.phoneNumber}</div>
-                        ) : null}
-                    </div>
+        <div className="flex-1 min-w-[250px]">
+            <label className="block mb-1 text-sm font-medium text-gray-600">Email</label>
+            <input
+                type="email"
+                name="email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
+            />
+            {formik.touched.email && formik.errors.email ? (
+                <div className="text-red-600">{formik.errors.email}</div>
+            ) : null}
+        </div>
 
-                    <div className="flex-1">
-                        <label className="block mb-1 text-sm font-medium text-gray-600">Arrival Time</label>
-                        <input
-                            type="time"
-                            name="arrivalTime"
-                            value={formik.values.arrivalTime}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
-                        />
-                        {formik.touched.arrivalTime && formik.errors.arrivalTime ? (
-                            <div className="text-red-600">{formik.errors.arrivalTime}</div>
-                        ) : null}
-                    </div>
-                    <div className="flex-1">
-                        <label className="block mb-1 text-sm font-medium text-gray-600">Ending Time</label>
-                        <input
-                            type="time"
-                            name="endingTime"
-                            value={formik.values.endingTime}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
-                        />
-                        {formik.touched.endingTime && formik.errors.endingTime ? (
-                            <div className="text-red-600">{formik.errors.endingTime}</div>
-                        ) : null}
-                    </div>
-                </div>
-                <div className="flex space-x-4">
-                    <div className="flex-1">
-                        <label className="block mb-1 text-sm font-medium text-gray-600">Event</label>
-                        <input
-                            type="text"
-                            name="event"
-                            value={formik.values.event}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
-                        />
-                        {formik.touched.event && formik.errors.event ? (
-                            <div className="text-red-600">{formik.errors.event}</div>
-                        ) : null}
-                    </div>
+        <div className="flex-1 min-w-[250px]">
+            <label className="block mb-1 text-sm font-medium text-gray-600">Event Date</label>
+            <DatePicker
+                selected={formik.values.eventDate}
+                onChange={handleDateChange}
+                minDate={new Date()}
+                highlightDates={absentDates}
+                filterDate={date => !absentDates.some((absentDate: Date) => absentDate.getTime() === date.getTime())}
+                dayClassName={dayClassName}
+                className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
+                placeholderText="Select event date"
+            />
+            {formik.touched.eventDate && formik.errors.eventDate ? (
+                <div className="text-red-600">{formik.errors.eventDate}</div>
+            ) : null}
+        </div>
+    </div>
 
-                    <div className="flex-1">
-                        <label className="block mb-1 text-sm font-medium text-gray-600">Guests</label>
-                        <input
-                            type="number"
-                            name="guests"
-                            value={formik.values.guests}
-                            onChange={(e) => {
-                                formik.handleChange(e);
-                                setGuest(Number(e.target.value));
-                            }}
-                            onBlur={formik.handleBlur}
-                            className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
-                        />
-                        {formik.touched.guests && formik.errors.guests ? (
-                            <div className="text-red-600">{formik.errors.guests}</div>
-                        ) : null}
-                    </div>
-                    <div className="flex-1">
-                        <label className="block mb-1 text-sm font-medium text-gray-600">Location</label>
-                        <input
-                            type="text"
-                            name="location"
-                            value={formik.values.location}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
-                        />
-                        {formik.touched.location && formik.errors.location ? (
-                            <div className="text-red-600">{formik.errors.location}</div>
-                        ) : null}
-                    </div>
-                </div>
-                <div className="flex space-x-4">
-                    <div className="flex-1">
-                        <label className="block mb-1 text-sm font-medium text-gray-600">Pincode</label>
-                        <input
-                            type="text"
-                            name="pincode"
-                            value={formik.values.pincode}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
-                        />
-                        {formik.touched.pincode && formik.errors.pincode ? (
-                            <div className="text-red-600">{formik.errors.pincode}</div>
-                        ) : null}
-                    </div>
-                </div>
-                <div className="flex justify-center">
-                    <button
-                        type="submit"
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                    >
-                        Book Vendor
-                    </button>
-                </div>
-            </form>
+    <div className="flex flex-wrap space-y-4 md:space-y-0 md:space-x-4">
+        <div className="flex-1 min-w-[250px]">
+            <label className="block mb-1 text-sm font-medium text-gray-600">Phone Number</label>
+            <input
+                type="tel"
+                name="phoneNumber"
+                value={formik.values.phoneNumber}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
+            />
+            {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
+                <div className="text-red-600">{formik.errors.phoneNumber}</div>
+            ) : null}
+        </div>
+
+        <div className="flex-1 min-w-[250px]">
+            <label className="block mb-1 text-sm font-medium text-gray-600">Arrival Time</label>
+            <input
+                type="time"
+                name="arrivalTime"
+                value={formik.values.arrivalTime}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
+            />
+            {formik.touched.arrivalTime && formik.errors.arrivalTime ? (
+                <div className="text-red-600">{formik.errors.arrivalTime}</div>
+            ) : null}
+        </div>
+
+        <div className="flex-1 min-w-[250px]">
+            <label className="block mb-1 text-sm font-medium text-gray-600">Ending Time</label>
+            <input
+                type="time"
+                name="endingTime"
+                value={formik.values.endingTime}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
+            />
+            {formik.touched.endingTime && formik.errors.endingTime ? (
+                <div className="text-red-600">{formik.errors.endingTime}</div>
+            ) : null}
+        </div>
+    </div>
+
+    <div className="flex flex-wrap space-y-4 md:space-y-0 md:space-x-4">
+        <div className="flex-1 min-w-[250px]">
+            <label className="block mb-1 text-sm font-medium text-gray-600">Event</label>
+            <input
+                type="text"
+                name="event"
+                value={formik.values.event}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
+            />
+            {formik.touched.event && formik.errors.event ? (
+                <div className="text-red-600">{formik.errors.event}</div>
+            ) : null}
+        </div>
+
+        <div className="flex-1 min-w-[250px]">
+            <label className="block mb-1 text-sm font-medium text-gray-600">Guests</label>
+            <input
+                type="number"
+                name="guests"
+                value={formik.values.guests}
+                onChange={(e) => {
+                    formik.handleChange(e);
+                    setGuest(Number(e.target.value));
+                }}
+                onBlur={formik.handleBlur}
+                className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
+            />
+            {formik.touched.guests && formik.errors.guests ? (
+                <div className="text-red-600">{formik.errors.guests}</div>
+            ) : null}
+        </div>
+
+        <div className="flex-1 min-w-[250px]">
+            <label className="block mb-1 text-sm font-medium text-gray-600">Location</label>
+            <input
+                type="text"
+                name="location"
+                value={formik.values.location}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
+            />
+            {formik.touched.location && formik.errors.location ? (
+                <div className="text-red-600">{formik.errors.location}</div>
+            ) : null}
+        </div>
+    </div>
+
+    <div className="flex flex-wrap space-y-4 md:space-y-0 md:space-x-4">
+        <div className="flex-1 min-w-[250px]">
+            <label className="block mb-1 text-sm font-medium text-gray-600">Pincode</label>
+            <input
+                type="text"
+                name="pincode"
+                value={formik.values.pincode}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent text-gray-600"
+            />
+            {formik.touched.pincode && formik.errors.pincode ? (
+                <div className="text-red-600">{formik.errors.pincode}</div>
+            ) : null}
+        </div>
+    </div>
+
+    <div className="flex justify-center">
+        <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+        >
+            Book Vendor
+        </button>
+    </div>
+</form>
 
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">

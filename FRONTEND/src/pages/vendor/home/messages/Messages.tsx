@@ -128,7 +128,6 @@ const Messages: React.FC<MessagesProps> = ({ selectedUser, sidebarOpen }) => {
           type: 'text',
           senderModel: 'Vendor'
         };
-alert(roomId)
         socket.emit('send message', messageToSend);
         setNewMessage('');
       }
@@ -265,16 +264,22 @@ alert(roomId)
   );
 
   return (
-    <div className={`flex flex-col ${sidebarOpen ? 'w-full' : 'w-full'} h-[550px] bg-blue-500 transition-all duration-300`}>
+    <div className={`flex flex-col ${sidebarOpen ? 'w-full' : 'w-full'} h-full bg-blue-500 transition-all duration-300`}>
       <div className="flex items-center p-2 bg-[#edebeb] text-black border-white border-b-2 border-t-2">
         <h1 className="text-lg font-bold ml-2">
-          {selectedUser ? selectedUser.userName : 'Select a user to start chatting'}
+          {selectedUser ? selectedUser.userName : '...'}
         </h1>
       </div>
-      <div className="p-2 space-y-4 overflow-y-auto flex-1 bg-[#EFE8DE]" ref={divRef}>
-        {req?.is_accepted === false ? (
+
+      <div
+        className="p-2 space-y-4 overflow-y-auto flex-1 bg-[#EFE8DE] scrollNoDiv items-center justify-center"
+        ref={divRef}
+      >
+        {!selectedUser ? (
+          <span className="font-bold text-lg text-center w-full">Select a User to Chat</span>
+        ) : req?.is_accepted === false ? (
           <div className="flex justify-center items-center h-full">
-            <div id="alert-additional-content-1" className="p-4 mb-4 border rounded-lg bg-transparent dark:text-blue-400 w-1/2" role="alert">
+            <div id="alert-additional-content-1" className="p-4 mb-4 border rounded-lg bg-transparent dark:text-blue-400 w-full max-w-lg" role="alert">
               <div className="flex items-start space-x-2">
                 <svg className="flex-shrink-0 w-4 h-4 mt-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 1 1 1 1v4h1a1 1 0 0 1 0 2Z" />
@@ -283,20 +288,19 @@ alert(roomId)
                   <h3 className={`text-lg font-medium ${isRejected ? 'text-red-500' : 'text-blue-800'}`}>
                     {isRejected ? 'Request Rejected' : 'Connection Request'}
                   </h3>
-                  <p className='text-sm text-gray-600'>{messages[0].content+""}</p>
+                  <p className='text-sm text-gray-600'>{messages[0].content + ""}</p>
                 </div>
               </div>
-
               {!isRejected && (
                 <>
                   <div className="mt-2 mb-4 text-sm">
                     {req?.request}
                   </div>
-                  <div className="flex">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <button
                       type="button"
                       onClick={() => selectedUser && acceptUser(selectedUser._id)}
-                      className="text-white bg-blue-800 hover:bg-blue-900 focus:ring-4 focus:outline-none focus:ring-blue-200 font-medium rounded-lg text-xs px-3 py-1.5 me-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      className="text-white bg-blue-800 hover:bg-blue-900 focus:ring-4 focus:outline-none focus:ring-blue-200 font-medium rounded-lg text-xs px-3 py-1.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                     >
                       Accept
                     </button>
@@ -304,7 +308,6 @@ alert(roomId)
                       type="button"
                       onClick={() => selectedUser && rejectUser(selectedUser._id)}
                       className="text-blue-800 bg-transparent border border-blue-800 hover:bg-blue-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-200 font-medium rounded-lg text-xs px-3 py-1.5 text-center dark:hover:bg-blue-600 dark:border-blue-600 dark:text-blue-400 dark:hover:text-white dark:focus:ring-blue-800"
-                      data-dismiss-target="#alert-additional-content-1"
                       aria-label="Close"
                     >
                       Reject
@@ -323,20 +326,12 @@ alert(roomId)
             const isDocumentMessage = message.type === 'document';
             const isImageMessage = message.type === 'image';
             const messageTime = formatDistanceToNow(parseISO(message?.createdAt), { addSuffix: true });
-            const readIndicator = message.read
-              ? '✔✔'
-              : '✔';
+            const readIndicator = message.read ? '✔✔' : '✔';
+
             return (
-              <div
-                key={index}
-                className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-2`}
-              >
-                <div className={`relative p-2 rounded-lg max-w-md ${!isAudioMessage && (isCurrentUser ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black')}`}>
-                  {isTextMessage && (
-                    <div className="ml-1">
-                      <p>{message.content + ""}</p>
-                    </div>
-                  )}
+              <div key={index} className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-2`}>
+                <div className={`relative p-2 rounded-lg max-w-full ${!isAudioMessage && (isCurrentUser ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black')}`}>
+                  {isTextMessage && <p>{message.content + ""}</p>}
                   {isAudioMessage && (
                     <div className="w-full mt-2">
                       <audio controls>
@@ -344,19 +339,15 @@ alert(roomId)
                         Your browser does not support the audio element.
                       </audio>
                       <div className="flex justify-end mt-1">
-                        <span className="text-xs text-gray-400 mr-1">
-                          {messageTime}
-                        </span>
+                        <span className="text-xs text-gray-400 mr-1">{messageTime}</span>
                         {isCurrentUser && (
-                          <span className={`text-xs ${message.read ? 'text-blue-100' : 'text-gray-400'}`}>
-                            {readIndicator}
-                          </span>
+                          <span className={`text-xs ${message.read ? 'text-blue-100' : 'text-gray-400'}`}>{readIndicator}</span>
                         )}
                       </div>
                     </div>
                   )}
                   {isVideoMessage && (
-                    <div className="relative small-line-border">
+                    <div className="relative">
                       <video controls className="rounded-lg w-full max-w-xs">
                         <source src={message.content + ""} type="video/mp4" />
                         Your browser does not support the video element.
@@ -364,26 +355,18 @@ alert(roomId)
                       <div className="absolute bottom-1 right-1 flex items-center text-xs text-white bg-black bg-opacity-50 rounded px-1">
                         <span>{messageTime}</span>
                         {isCurrentUser && (
-                          <span className={`ml-1 ${message.read ? 'text-blue-500' : 'text-gray-400'}`}>
-                            {readIndicator}
-                          </span>
+                          <span className={`ml-1 ${message.read ? 'text-blue-500' : 'text-gray-400'}`}>{readIndicator}</span>
                         )}
                       </div>
                     </div>
                   )}
                   {isDocumentMessage && (
                     <div className="mt-2">
-                      <a href={message.content + ""} download className="underline text-blue-500">
-                        Download Document
-                      </a>
+                      <a href={message.content + ""} download className="underline text-blue-500">Download Document</a>
                       <div className="flex justify-end mt-1">
-                        <span className="text-xs text-gray-400 mr-1">
-                          {messageTime}
-                        </span>
+                        <span className="text-xs text-gray-400 mr-1">{messageTime}</span>
                         {isCurrentUser && (
-                          <span className={`text-xs ${message.read ? 'text-blue-500' : 'text-gray-400'}`}>
-                            {readIndicator}
-                          </span>
+                          <span className={`text-xs ${message.read ? 'text-blue-500' : 'text-gray-400'}`}>{readIndicator}</span>
                         )}
                       </div>
                     </div>
@@ -394,22 +377,16 @@ alert(roomId)
                       <div className="absolute bottom-1 right-1 flex items-center text-xs text-white bg-black bg-opacity-50 rounded px-1">
                         <span>{messageTime}</span>
                         {isCurrentUser && (
-                          <span className={`ml-1 ${message.read ? 'text-blue-500' : 'text-gray-400'}`}>
-                            {readIndicator}
-                          </span>
+                          <span className={`ml-1 ${message.read ? 'text-blue-500' : 'text-gray-400'}`}>{readIndicator}</span>
                         )}
                       </div>
                     </div>
                   )}
                   {!isImageMessage && !isVideoMessage && !isAudioMessage && (
-                    <div className="flex justify-end  relative text-xs text-gray-400">
-                      <span className="mr-1">
-                        {messageTime}
-                      </span>
+                    <div className="flex justify-end relative text-xs text-gray-400">
+                      <span className="mr-1">{messageTime}</span>
                       {isCurrentUser && (
-                        <span className={`${message.read ? 'text-blue-500' : 'text-gray-400'}`}>
-                          {readIndicator}
-                        </span>
+                        <span className={`${message.read ? 'text-blue-500' : 'text-gray-400'}`}>{readIndicator}</span>
                       )}
                     </div>
                   )}
@@ -419,6 +396,7 @@ alert(roomId)
           })
         )}
       </div>
+
       {selectedUser && req?.is_accepted && (
         <div className="p-2 bg-[#EFE8DE] flex">
           <input
@@ -500,6 +478,7 @@ alert(roomId)
         </div>
       )}
     </div>
+
   );
 };
 

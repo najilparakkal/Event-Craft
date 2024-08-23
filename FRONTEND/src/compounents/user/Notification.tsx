@@ -61,8 +61,6 @@ const Notification:React.FC = () => {
                         }).catch((err) => {
                             console.log(err);
                         });
-                    } else {
-                        alert("You are already in the messages section");
                     }
                 }
             });

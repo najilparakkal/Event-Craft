@@ -12,8 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const jwtGenarate_1 = require("../../domain/helpers/jwtGenarate");
 const user_1 = require("../../framworks/database/models/user");
 const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const token = req.cookies.jwt;
+        const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
         if (!token) {
             return res.status(401).json({ error: "Token not provided" });
         }
@@ -21,8 +22,7 @@ const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             .then((payload) => {
             return next();
         })
-            .catch((_a) => __awaiter(void 0, [_a], void 0, function* ({ err, payload }) {
-            console.log(payload, err);
+            .catch((_b) => __awaiter(void 0, [_b], void 0, function* ({ err, payload }) {
             if (err.name === "TokenExpiredError") {
                 const data = yield user_1.Users.findById(payload.id);
                 if (!data) {
@@ -30,7 +30,7 @@ const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
                 }
                 (0, jwtGenarate_1.VerifyRefreshToken)(data.refreshToken)
                     .then((refreshTokenPayload) => __awaiter(void 0, void 0, void 0, function* () {
-                    const sevenDaysAgo = Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60);
+                    const sevenDaysAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
                     if (refreshTokenPayload.exp < sevenDaysAgo) {
                         console.log("Refresh token expired");
                         return res.status(401).json({ error: "Refresh token expired" });

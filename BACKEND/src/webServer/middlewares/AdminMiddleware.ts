@@ -10,8 +10,6 @@ const razorpay = new Razorpay({
 export const refund = async (paymentId:string) => {
   try {
     const payment = await razorpay.payments.fetch(paymentId);
-    console.log("Payment details:", payment);
-
       const captureResponse = await razorpay.payments.capture(
         paymentId,
         payment.amount,

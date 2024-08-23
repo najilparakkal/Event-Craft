@@ -9,7 +9,7 @@ const express_session_1 = __importDefault(require("express-session"));
 const cors = require("cors");
 const database_1 = require("./database");
 const corsOptions = {
-    origin: "http://localhost:5173",
+    origin: process.env.ORIGIN,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
 };

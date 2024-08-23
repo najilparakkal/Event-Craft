@@ -30,7 +30,7 @@ interface Vendor {
   verified?: boolean;
   licence?: Licence[];
   likes?: string[];
-  ratingAndReviewCount?: number;
+  ratingAndReview?: string[];
   likesCount?: number;
   views?: number;
   postedTime?: string;
@@ -56,7 +56,6 @@ const VendorsCard: React.FC<VendorsProps> = ({ vendors }) => {
     autoplaySpeed: 3000,
     arrows: false,
   };
-
   useEffect(() => {
     const likedVendors = vendors.reduce((acc, vendor) => {
       if (vendor.likes?.includes(_id + "")) {
@@ -67,7 +66,7 @@ const VendorsCard: React.FC<VendorsProps> = ({ vendors }) => {
     setVendorLike(likedVendors);
   }, [vendors, _id]);
 
-  
+
 
   const handleShowMore = () => {
     setVisibleCount((prevCount) => prevCount + 6);
@@ -108,20 +107,31 @@ const VendorsCard: React.FC<VendorsProps> = ({ vendors }) => {
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
         {filteredVendors.slice(0, visibleCount).map((vendor) => (
-          <div key={vendor._id} className="flex bg-gray-800  transition-all duration-700 hover:scale-105 hover:shadow-2xl p-4 rounded-lg shadow-md">
+          <div
+            key={vendor._id}
+            className="flex bg-gray-800 transition-all duration-700 hover:scale-105 hover:shadow-2xl p-4 rounded-lg shadow-md"
+          >
             <div className="w-3/6 relative">
               {vendor.posts.length > 0 ? (
-                <Slider {...postSettings} className="rounded-lg">
-                  {vendor.posts.map((post, index) => (
-                    <div key={index}>
-                      <img
-                        src={post.images}
-                        alt={`Post ${index}`}
-                        className="w-full h-24 object-cover rounded-lg  transition-transform duration-700 hover:scale-90 hover:shadow-2xl"
-                      />
-                    </div>
-                  ))}
-                </Slider>
+                vendor.posts.length > 1 ? (
+                  <Slider {...postSettings} className="rounded-lg">
+                    {vendor.posts.map((post, index) => (
+                      <div key={index}>
+                        <img
+                          src={post.images}
+                          alt={`Post ${index}`}
+                          className="w-full h-24 object-cover rounded-lg transition-transform duration-700 hover:scale-90 hover:shadow-2xl"
+                        />
+                      </div>
+                    ))}
+                  </Slider>
+                ) : (
+                  <img
+                    src={vendor.posts[0].images}
+                    alt="Vendor post"
+                    className="w-full h-24 object-cover rounded-lg transition-transform duration-700 hover:scale-90 hover:shadow-2xl"
+                  />
+                )
               ) : (
                 <img
                   src={vendor.coverPicture}
@@ -152,7 +162,7 @@ const VendorsCard: React.FC<VendorsProps> = ({ vendors }) => {
                     >
                       <path d="M1664 960q-152-236-381-353 61 104 61 225 0 185-131.5 316.5t-316.5 131.5-316.5-131.5-131.5-316.5q0-121 61-225-229 117-381 353 133 205 333.5 326.5t434.5 121.5 434.5-121.5 333.5-326.5zm-720-384q0-20-14-34t-34-14q-125 0-214.5 89.5t-89.5 214.5q0 20 14 34t34 14 34-14 14-34q0-86 61-147t147-61q20 0 34-14t14-34zm848 384q0 34-20 69-140 230-376.5 368.5t-499.5 138.5-499.5-139-376.5-368q-20-35-20-69t20-69q140-229 376.5-368t499.5-139 499.5 139 376.5 368q20 35 20 69z"></path>
                     </svg>
-                    {vendor.ratingAndReviewCount} Reviews
+                    {vendor.ratingAndReview ? vendor.ratingAndReview.length : "0"} Reviews
                   </div>
                   <div className="flex items-center">
                     <svg
@@ -165,7 +175,7 @@ const VendorsCard: React.FC<VendorsProps> = ({ vendors }) => {
                     >
                       <path d="M1664 596q0-81-21.5-143t-55-98.5-81.5-59.5-94-31-98-8-112 25.5-110.5 64-86.5 72-60 61.5q-18 22-49 22t-49-22q-24-28-60-61.5t-86.5-72-110.5-64-112-25.5-98 8-94 31-81.5 59.5-55 98.5-21.5 143q0 168 187 355l581 560 580-559q188-188 188-356zm128 0q0 221-229 450l-623 600q-18 18-44 18t-44-18l-624-602q-10-8-27.5-26t-55.5-65.5-68-97.5-53.5-121-23.5-138q0-220 127-344t351-124q62 0 126.5 21.5t120 58 95.5 68.5 76 68q36-36 76-68t95.5-68.5 120-58 126.5-21.5q224 0 351 124t127 344z"></path>
                     </svg>
-                    {vendor.likesCount} Likes
+                    {vendor.likes?.length} Likes
                   </div>
                 </div>
               </div>
@@ -180,7 +190,7 @@ const VendorsCard: React.FC<VendorsProps> = ({ vendors }) => {
 
                 <button
                   onClick={() => navigate(`/vendorProfile/${vendor._id}`)}
-                  className=" hover:cursor-pointer hover:text-white p-1 text-blue-800 font-bold rounded"
+                  className="hover:cursor-pointer hover:text-white p-1 text-blue-800 font-bold rounded"
                 >
                   Get Closer
                 </button>
